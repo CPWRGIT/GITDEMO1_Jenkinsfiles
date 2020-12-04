@@ -323,7 +323,7 @@ def initialize(){
     RESULTS_FILE_NVT_CICS       = 'Non Virtualized CICS'
 
     executionBranch             = BRANCH_NAME
-    sharedLibName               = 'RNU_Shared_Lib'                  /* Rename in Jenkins server */
+    sharedLibName               = 'GITDEMO_Shared_Lib'                  /* Rename in Jenkins server */
     synchConfigFile             = './git2ispw/synchronization.yml'
     automaticBuildFile          = './automaticBuildParams.txt'
     changedProgramsFile         = './changedPrograms.json'
