@@ -94,11 +94,11 @@ node{
 
     stage("Create Sonar project and set Quality Gate"){
 
-        if(checkForProject(sonarProjectName) == "NOT FOUND") {
+        if(checkForProject(sonarProjectName, sonarQubeToken) == "NOT FOUND") {
 
-            createProject(projectName)
+            createProject(projectName, sonarQubeToken)
 
-            setQualityGate(sonarQualityGateId, sonarProjectName)
+            setQualityGate(sonarQualityGateId, sonarProjectName, sonarQubeToken)
 
         }
         else{
@@ -144,7 +144,7 @@ def replaceFileContent(fileName, stringsList){
     writeFile(file: fileName, text: fileNewContent)
 }
 
-def checkForProject(String projectName)
+def checkForProject(projectName, sonarQubeToken)
 {
     def response = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
@@ -180,7 +180,7 @@ def checkForProject(String projectName)
     return response
 }
 
-def createProject(String projectName)
+def createProject(String projectName, sonarQubeToken)
 {
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
@@ -206,7 +206,7 @@ def createProject(String projectName)
     }
 }
 
-def setQualityGate(String qualityGateId, String projectName)
+def setQualityGate(String qualityGateId, String projectName, sonarQubeToken)
 {
 
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
