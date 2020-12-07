@@ -146,7 +146,8 @@ def replaceFileContent(fileName, stringsList){
     writeFile(file: fileName, text: fileNewContent)
 }
 
-def checkForProject(projectName, sonarServerUrl, sonarQubeToken){
+def checkForProject(sonarProjectName, sonarServerUrl, sonarQubeToken){
+
     def response = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
         ignoreSslErrors:            true, 
@@ -181,13 +182,13 @@ def checkForProject(projectName, sonarServerUrl, sonarQubeToken){
     return response
 }
 
-def createProject(projectName, sonarServerUrl, sonarQubeToken){
+def createProject(sonarProjectName, sonarServerUrl, sonarQubeToken){
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
         ignoreSslErrors:            true, 
         responseHandle:             'NONE', 
         consoleLogResponseBody:     true,
-        url:                        "${sonarServerUrl}/api/projects/create?project=${projectName}&name=${projectName}"
+        url:                        "${sonarServerUrl}/api/projects/create?project=${sonarProjectName}&name=${sonarProjectName}"
 
     def jsonSlurper = new JsonSlurper()
     def httpResp    = jsonSlurper.parseText(httpResponse.getContent())
@@ -206,14 +207,14 @@ def createProject(projectName, sonarServerUrl, sonarQubeToken){
     }
 }
 
-def setQualityGate(qualityGateId, projectName, sonarServerUrl, sonarQubeToken){
+def setQualityGate(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken){
 
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
         ignoreSslErrors:            true, 
         responseHandle:             'NONE', 
         consoleLogResponseBody:     true,
-        url:                        "${sonarServerUrl}/api/qualitygates/select?gateId=${qualityGateId}&projectKey=${projectName}"
+        url:                        "${sonarServerUrl}/api/qualitygates/select?gateId=${qualityGateId}&projectKey=${sonarProjectName}"
 
-    echo "Assigned QualityGate ${qualityGateId} to project ${projectName}."
+    echo "Assigned QualityGate ${qualityGateId} to project ${sonarProjectName}."
 }
