@@ -25,7 +25,7 @@ node{
         deleteDir()
     }
 
-    stage("checkout git repo"){
+    stage("Clone Git repository"){
         
         checkout(
             changelog: false, 
@@ -44,7 +44,7 @@ node{
         )
     }
 
-    stage("Modify content of main branch"){
+    stage("Modify jeninsfile, ispwconfig, properties"){
 
         def filesStringsList = [
             [jenkinsfile, 
@@ -101,7 +101,7 @@ node{
         }
     }
 
-    stage("Create Sonar project and set Quality Gate"){
+    stage("Create Sonar and configure"){
 
         if(checkForProject(sonarProjectName, sonarServerUrl, sonarQubeToken) == "NOT FOUND") {
 
