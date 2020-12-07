@@ -104,7 +104,7 @@ node{
 
         }
         else{
-            echo "Sonar project ${projectName} already exists."
+            echo "Sonar project ${sonarProjectName} already exists."
         }
     }
     
@@ -204,7 +204,7 @@ def createProject(sonarProjectName, sonarServerUrl, sonarQubeToken){
     }
     else
     {
-        echo "Created SonarQube project ${projectName}."
+        echo "Created SonarQube project ${sonarProjectName}."
     }
 }
 
