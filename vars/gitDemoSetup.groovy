@@ -11,6 +11,8 @@ String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ
 
 node{
 
+    WindowsProfile      = WindowsProfile.replace('\\','/')
+
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
     CodeCoverageRepo    = CodeCoverageRepo.toUpperCase()
@@ -58,7 +60,10 @@ node{
                 [['${ispw_app}', IspwApp]]
             ],
             [projectSettingsFile,
-                [['${mf_userid}', HostUserId]]
+                [
+                    ['${mf_userid}', HostUserId],
+                    ['${windows_profile}', WindowsProfile]
+                ]
             ]
         ]
 
