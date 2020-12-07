@@ -85,6 +85,8 @@ node{
 
         contextFiles.each{
 
+            println "Modfying file: " + it.path.toString()
+
             def content = readFile(file: it.path)
             
             replaceFileContent(it.path, stringsList)            
@@ -94,11 +96,11 @@ node{
 
     stage("Create Sonar project and set Quality Gate"){
 
-        if(checkForProject(sonarProjectName, sonarQubeToken) == "NOT FOUND") {
+        if(checkForProject(sonarProjectName, sonarServerUrl, sonarQubeToken) == "NOT FOUND") {
 
-            createProject(projectName, sonarQubeToken)
+            createProject(sonarProjectName, sonarServerUrl, sonarQubeToken)
 
-            setQualityGate(sonarQualityGateId, sonarProjectName, sonarQubeToken)
+            setQualityGate(sonarQualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken)
 
         }
         else{
@@ -144,8 +146,7 @@ def replaceFileContent(fileName, stringsList){
     writeFile(file: fileName, text: fileNewContent)
 }
 
-def checkForProject(projectName, sonarQubeToken)
-{
+def checkForProject(projectName, sonarServerUrl, sonarQubeToken){
     def response = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
         ignoreSslErrors:            true, 
@@ -180,8 +181,7 @@ def checkForProject(projectName, sonarQubeToken)
     return response
 }
 
-def createProject(String projectName, sonarQubeToken)
-{
+def createProject(projectName, sonarServerUrl, sonarQubeToken){
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
         ignoreSslErrors:            true, 
@@ -206,8 +206,7 @@ def createProject(String projectName, sonarQubeToken)
     }
 }
 
-def setQualityGate(String qualityGateId, String projectName, sonarQubeToken)
-{
+def setQualityGate(qualityGateId, projectName, sonarServerUrl, sonarQubeToken){
 
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
