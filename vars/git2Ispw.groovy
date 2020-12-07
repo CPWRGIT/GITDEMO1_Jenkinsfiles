@@ -469,7 +469,7 @@ def getSonarResults(resultsFileList){
 
         testExecutions.file.each {
 
-            resultsList = resultsList + it.@path.toString().replace('.result', '.sonar.xml') + ','
+            resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
 
         }
     }
