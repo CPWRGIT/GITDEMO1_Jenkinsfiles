@@ -24,7 +24,7 @@ node{
                 extensions: [], 
                 submoduleCfg: [], 
                 userRemoteConfigs: [[
-                        credentialsId: 'GitCredentials', 
+                        credentialsId: 'GitCredentialsId', 
                         url: "https://github.com/CPWRGIT/${HostUserId}.git"
                 ]]
             ]
@@ -117,7 +117,7 @@ node{
 
 def replaceFileContent(fileName, stringsList){
 
-    def fileOldContent  = readFile(file: fileName)
+    def fileNewContent  = readFile(file: fileName)
 
     stringsList.each{
     
