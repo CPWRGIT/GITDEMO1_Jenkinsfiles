@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 String jenkinsfile              = "./Jenkinsfile.jenkinsfile"
 String ispwConfigFile           = "./General_Insurance/ispwconfig.yml"
 String projectSettingsFile      = "./General_Insurance/.settings/General_Insurance.prefs"
