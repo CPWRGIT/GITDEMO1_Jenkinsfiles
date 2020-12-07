@@ -87,7 +87,7 @@ node{
 
             def content = readFile(file: it.path)
             
-            replaceFileContent(it.name, stringsList)            
+            replaceFileContent(it.path, stringsList)            
 
         }
     }
@@ -135,7 +135,7 @@ def replaceFileContent(fileName, stringsList){
         def newString = it[1]
 
         println "Replace: " + oldString 
-        println "With     : " + newString
+        println "With   : " + newString
 
         fileNewContent  = fileNewContent.replace(oldString, newString)
 
