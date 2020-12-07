@@ -77,10 +77,11 @@ node{
             ]
 
         contextFiles.each{
-            
+
             def content = readFile(file: it.path)
             
-            replaceFileContent(fileName, stringsList)            
+            replaceFileContent(it.name, stringsList)            
+
         }
     }
 
@@ -126,8 +127,7 @@ def replaceFileContent(fileName, stringsList){
         def oldString = it[0]
         def newString = it[1]
 
-        println "Replace: " + oldString
-        println "By     : " + newString
+        println "Replace: " + oldString "\nwith     : " + newString
 
         fileNewContent  = fileNewContent.replace(oldString, newString)
 
