@@ -104,7 +104,7 @@ node{
 
             setQualityGate(sonarQualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken)
 
-            renameBranch(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken)
+            renameBranch(sonarProjectName, sonarServerUrl, sonarQubeToken)
 
         }
         else{
@@ -221,10 +221,10 @@ def setQualityGate(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeTok
         consoleLogResponseBody:     true,
         url:                        "${sonarServerUrl}/api/qualitygates/select?gateId=${qualityGateId}&projectKey=${sonarProjectName}"
 
-    echo "Assigned QualityGate ${qualityGateId} to project ${sonarProjectName}."
+    echo "Assigned QualityGate 'Git2IspwDemo' to project ${sonarProjectName}."
 }
 
-def renameBranch(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken){
+def renameBranch(sonarProjectName, sonarServerUrl, sonarQubeToken){
 
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
@@ -233,5 +233,5 @@ def renameBranch(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken
         consoleLogResponseBody:     true,
         url:                        "${sonarServerUrl}/api/project_branches/rename?name=main&project=${sonarProjectName}"
 
-    echo "Assigned QualityGate ${qualityGateId} to project ${sonarProjectName}."
+    echo "Renamed master branch of SonarQube project ${sonarProjectName} to 'main'."
 }
