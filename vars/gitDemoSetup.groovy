@@ -10,6 +10,11 @@ String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken           = '499439fb6560eaedf147f62a945646d16ad3ae56'
 
 node{
+
+    HostUserId          = HostUserId.toUpperCase()
+    IspwApp             = IspwApp.toUpperCase()
+    CodeCoverageRepo    = CodeCoverageRepo.toUpperCase()
+
     dir("./"){
         deleteDir()
     }
