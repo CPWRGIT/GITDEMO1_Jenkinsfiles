@@ -5,10 +5,10 @@ String ispwConfigFile           = "./General_Insurance/ispwconfig.yml"
 String projectSettingsFile      = "./General_Insurance/.settings/General_Insurance.prefs"
 
 String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
-String sonarProjectName         = "GITDEMO1_${IspwApp}"
+String sonarProjectName
 String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
-String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=
-                                                                             //499439fb6560eaedf147f62a945646d16ad3ae56
+String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
+
 node{
 
     HostUserId          = HostUserId.toUpperCase()
@@ -16,6 +16,8 @@ node{
     CodeCoverageRepo    = CodeCoverageRepo.toUpperCase()
     DefaultUtLevel      = DefaultUtLevel.toUpperCase()
     DefaultFtLevel      = DefaultFtLevel.toUpperCase()
+
+    sonarProjectName    = "GITDEMO1_${IspwApp}"
 
     dir("./"){
         deleteDir()
@@ -101,6 +103,8 @@ node{
             createProject(sonarProjectName, sonarServerUrl, sonarQubeToken)
 
             setQualityGate(sonarQualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken)
+
+            renameBranch(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken)
 
         }
         else{
@@ -216,6 +220,18 @@ def setQualityGate(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeTok
         responseHandle:             'NONE', 
         consoleLogResponseBody:     true,
         url:                        "${sonarServerUrl}/api/qualitygates/select?gateId=${qualityGateId}&projectKey=${sonarProjectName}"
+
+    echo "Assigned QualityGate ${qualityGateId} to project ${sonarProjectName}."
+}
+
+def renameBranch(qualityGateId, sonarProjectName, sonarServerUrl, sonarQubeToken){
+
+    def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
+        httpMode:                   'POST',
+        ignoreSslErrors:            true, 
+        responseHandle:             'NONE', 
+        consoleLogResponseBody:     true,
+        url:                        "${sonarServerUrl}/api/project_branches/rename?name=main&project=${sonarProjectName}"
 
     echo "Assigned QualityGate ${qualityGateId} to project ${sonarProjectName}."
 }
