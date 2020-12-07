@@ -7,8 +7,8 @@ String projectSettingsFile      = "./General_Insurance/.settings/General_Insuran
 String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
 String sonarProjectName         = "GITDEMO1_${IspwApp}"
 String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
-String sonarQubeToken           = '499439fb6560eaedf147f62a945646d16ad3ae56' //Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=
-
+String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=
+                                                                             //499439fb6560eaedf147f62a945646d16ad3ae56
 node{
 
     HostUserId          = HostUserId.toUpperCase()
@@ -183,7 +183,7 @@ def checkForProject(sonarProjectName, sonarServerUrl, sonarQubeToken){
 }
 
 def createProject(sonarProjectName, sonarServerUrl, sonarQubeToken){
-    
+
     def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'POST',
         ignoreSslErrors:            true, 
