@@ -148,7 +148,7 @@ def replaceFileContent(fileName, stringsList){
 
 def checkForProject(sonarProjectName, sonarServerUrl, sonarQubeToken){
 
-    def response = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
+    def httpResponse = httpRequest customHeaders: [[maskValue: true, name: 'authorization', value: sonarQubeToken]],
         httpMode:                   'GET',
         ignoreSslErrors:            true, 
         responseHandle:             'NONE', 
