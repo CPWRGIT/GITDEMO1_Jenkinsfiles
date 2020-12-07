@@ -14,6 +14,8 @@ node{
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
     CodeCoverageRepo    = CodeCoverageRepo.toUpperCase()
+    DefaultUtLevel      = DefaultUtLevel.toUpperCase()
+    DefaultFtLevel      = DefaultFtLevel.toUpperCase()
 
     dir("./"){
         deleteDir()
@@ -60,7 +62,7 @@ node{
 
         filesStringsList.each{
     
-            def fileName = it[0]
+            def fileName    = it[0]
             def stringsList = it[1]
 
             println "Modfying file: " + fileName.toString()
@@ -132,7 +134,8 @@ def replaceFileContent(fileName, stringsList){
         def oldString = it[0]
         def newString = it[1]
 
-        println "Replace: " + oldString "\nwith     : " + newString
+        println "Replace: " + oldString 
+        println "With     : " + newString
 
         fileNewContent  = fileNewContent.replace(oldString, newString)
 
