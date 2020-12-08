@@ -1,13 +1,16 @@
 import groovy.json.JsonSlurper
 
+String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
+
 String jenkinsfile              = "./Jenkinsfile.jenkinsfile"
 String ispwConfigFile           = "./General_Insurance/ispwconfig.yml"
 String projectSettingsFile      = "./General_Insurance/.settings/General_Insurance.prefs"
 
 String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
-String sonarProjectName
 String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
+
+String sonarProjectName
 
 node{
 
@@ -134,6 +137,19 @@ node{
             
         }
     }
+
+    stage("Allocate and copy TEST datasets"){
+
+        def jobJcl = buildJcl(IspwApp)
+
+        topazSubmitFreeFormJcl(
+            connectionId: hciConnectionId, 
+            credentialsId: HostCredentialsId, 
+            jcl: jobJcl, 
+            maxConditionCode: '0'
+        )    
+
+    }
 }
 
 def replaceFileContent(fileName, stringsList){
@@ -239,4 +255,159 @@ def renameBranch(sonarProjectName, sonarServerUrl, sonarQubeToken){
         url:                        "${sonarServerUrl}/api/project_branches/rename?name=main&project=${sonarProjectName}"
 
     echo "Renamed master branch of SonarQube project ${sonarProjectName} to 'main'."
+}
+
+def buildJcl(ispwApp){
+
+    def jobRecords = []
+    def jobJcl = ''
+
+    jobRecords.add(/\/\/GITDEMO1 JOB ('GITDEMO'),'${ispwApp} TEST FILES',NOTIFY=&SYSUID,/)
+    jobRecords.add(/\/\/             MSGLEVEL=(1,1),MSGCLASS=X,CLASS=A,REGION=0M/)
+    jobRecords.add(/\/*JOBPARM S=*/)
+    jobRecords.add(/\/\/****************************************************************/)
+    jobRecords.add(/\/\/DELETE   EXEC PGM=IDCAMS/)
+    jobRecords.add(/\/\/SYSPRINT DD  SYSOUT=*/)
+    jobRecords.add(/\/\/SYSIN    DD  */)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWKTDB2/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTDATA/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTRPT/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTRPT.EOM/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTRPT.EXPECT/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTRPT.EOM.EXPECT/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWKTKSDS/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWKTKSDS.COPY/)
+    jobRecords.add(/  SET MAXCC = 0/)
+    jobRecords.add(/\/\/*/)
+    jobRecords.add(/\/\/ALLOCSEQ EXEC PGM=IEFBR14/)
+    jobRecords.add(/\/\/CWKTDB2  DD DISP=(,CATLG,DELETE),/)
+    jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
+    jobRecords.add(/\/\/            DCB=(LRECL=80,RECFM=F,BLKSIZE=0),/)
+    jobRecords.add(/\/\/            UNIT=SYSDA,/)
+    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWKTDB2/)
+    jobRecords.add(/\/\/*/)
+    jobRecords.add(/\/\/CWXTDATA DD DISP=(,CATLG,DELETE),/)
+    jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
+    jobRecords.add(/\/\/            DCB=(LRECL=80,RECFM=F,BLKSIZE=0),/)
+    jobRecords.add(/\/\/            UNIT=SYSDA,/)
+    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWXTDATA/)
+    jobRecords.add(/\/\/*/)
+    jobRecords.add(/\/\/CWXTRPT  DD DISP=(,CATLG,DELETE),/)
+    jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
+    jobRecords.add(/\/\/            DCB=(LRECL=80,RECFM=FA,BLKSIZE=0),/)
+    jobRecords.add(/\/\/            UNIT=SYSDA,/)
+    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT/)
+    jobRecords.add(/\/\/*/)
+    jobRecords.add(/\/\/RPTEOM   DD DISP=(,CATLG,DELETE),/)
+    jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
+    jobRecords.add(/\/\/            DCB=(LRECL=80,RECFM=FA,BLKSIZE=0),/)
+    jobRecords.add(/\/\/            UNIT=SYSDA,/)
+    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT.EOM/)
+    jobRecords.add(/\/\/*/)
+    jobRecords.add(/\/\/CWXTRPTX DD DISP=(,CATLG,DELETE),/)
+    jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
+    jobRecords.add(/\/\/            DCB=(LRECL=80,RECFM=FA,BLKSIZE=0),/)
+    jobRecords.add(/\/\/            UNIT=SYSDA,/)
+    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT.EXPECT/)
+    jobRecords.add(/\/\/*/)
+    jobRecords.add(/\/\/RPTEOMX  DD DISP=(,CATLG,DELETE),/)
+    jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
+    jobRecords.add(/\/\/            DCB=(LRECL=80,RECFM=FA,BLKSIZE=0),/)
+    jobRecords.add(/\/\/            UNIT=SYSDA,/)
+    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT.EOM.EXPECT/)
+    jobRecords.add(/\/\/****************************************************************/)
+    jobRecords.add(/\/\/ALLOCVSM EXEC PGM=IDCAMS/)
+    jobRecords.add(/\/\/SYSPRINT DD  SYSOUT=*/)
+    jobRecords.add(/\/\/SYSIN    DD  */)
+    jobRecords.add(/    DEFINE CLUSTER -/)
+    jobRecords.add(/    (NAME(SALESSUP.${ispwApp}.TEST.CWKTKSDS) -/)
+    jobRecords.add(/    BUFFERSPACE(37376) -/)
+    jobRecords.add(/    INDEXED -/)
+    jobRecords.add(/    KEYS(5 0) -/)
+    jobRecords.add(/    MANAGEMENTCLASS(STANDARD) -/)
+    jobRecords.add(/    OWNER(HDDRXM0) -/)
+    jobRecords.add(/    RECORDSIZE(80 80) -/)
+    jobRecords.add(/    SHAREOPTIONS(4 4) -/)
+    jobRecords.add(/    RECOVERY -/)
+    jobRecords.add(/    STORAGECLASS(STDNOCSH)) -/)
+    jobRecords.add(/    DATA(NAME(SALESSUP.${ispwApp}.TEST.CWKTKSDS.DATA) -/)
+    jobRecords.add(/    TRACKS(3 15) -/)
+    jobRecords.add(/    CONTROLINTERVALSIZE(18432)) -/)
+    jobRecords.add(/    INDEX(NAME(SALESSUP.${ispwApp}.TEST.CWKTKSDS.INDEX) -/)
+    jobRecords.add(/    TRACKS(1 1) -/)
+    jobRecords.add(/    CONTROLINTERVALSIZE(512))/)
+    jobRecords.add(/ /)
+    jobRecords.add(/    DEFINE CLUSTER -/)
+    jobRecords.add(/    (NAME(SALESSUP.${ispwApp}.TEST.CWKTKSDS.COPY) -/)
+    jobRecords.add(/    BUFFERSPACE(37376) -/)
+    jobRecords.add(/    INDEXED -/)
+    jobRecords.add(/    KEYS(5 0) -/)
+    jobRecords.add(/    MANAGEMENTCLASS(STANDARD) -/)
+    jobRecords.add(/    OWNER(HDDRXM0) -/)
+    jobRecords.add(/    RECORDSIZE(80 80) -/)
+    jobRecords.add(/    SHAREOPTIONS(4 4) -/)
+    jobRecords.add(/    RECOVERY -/)
+    jobRecords.add(/    STORAGECLASS(STDNOCSH)) -/)
+    jobRecords.add(/    DATA(NAME(SALESSUP.${ispwApp}.TEST.CWKTKSDS.COPY.DATA) -/)
+    jobRecords.add(/    TRACKS(3 15) -/)
+    jobRecords.add(/    CONTROLINTERVALSIZE(18432)) -/)
+    jobRecords.add(/    INDEX(NAME(SALESSUP.${ispwApp}.TEST.CWKTKSDS.COPY.INDEX) -/)
+    jobRecords.add(/    TRACKS(1 1) -/)
+    jobRecords.add(/    CONTROLINTERVALSIZE(512))/)
+    jobRecords.add(/\/*/)
+    jobRecords.add(/\/\/****************************************************************/)
+    jobRecords.add(/\/\/COPYDS   EXEC PGM=FILEAID,REGION=08M/)
+    jobRecords.add(/\/\/STEPLIB  DD DISP=SHR,DSN=SYS2.CW.VJ.#CWCC.CXVJLOAD/)
+    jobRecords.add(/\/\/         DD DISP=SHR,DSN=SYS2.CW.VJR17B.SXVJLOAD/)
+    jobRecords.add(/\/\/SYSPRINT DD  SYSOUT=*/)
+    jobRecords.add(/\/\/SYSLIST  DD  SYSOUT=*/)
+    jobRecords.add(/\/\/DD01     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWKTDB2/)
+    jobRecords.add(/\/\/DD02     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWXTDATA/)
+    jobRecords.add(/\/\/DD03     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWXTRPT/)
+    jobRecords.add(/\/\/DD04     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWXTRPT.EOM/)
+    jobRecords.add(/\/\/DD05     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWXTRPT.EXP/)
+    jobRecords.add(/\/\/DD06     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWXTRPT.EOM.EXP/)
+    jobRecords.add(/\/\/DD07     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWKTKS/)
+    jobRecords.add(/\/\/DD08     DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWKTKS.CPY/)
+    jobRecords.add(/\/\/DD01O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWKTDB2/)
+    jobRecords.add(/\/\/DD02O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWXTDATA/)
+    jobRecords.add(/\/\/DD03O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT/)
+    jobRecords.add(/\/\/DD04O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT.EOM/)
+    jobRecords.add(/\/\/DD05O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT.EXPECT/)
+    jobRecords.add(/\/\/DD06O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWXTRPT.EOM.EXPECT/)
+    jobRecords.add(/\/\/DD07O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWKTKSDS/)
+    jobRecords.add(/\/\/DD08O    DD  DISP=SHR,/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWKTKSDS.COPY/)
+    jobRecords.add(/\/\/SYSIN    DD  */)
+    jobRecords.add('$$DD01 COPY')
+    jobRecords.add('$$DD02 COPY')
+    jobRecords.add('$$DD03 COPY')
+    jobRecords.add('$$DD04 COPY')
+    jobRecords.add('$$DD05 COPY')
+    jobRecords.add('$$DD06 COPY')
+    jobRecords.add('$$DD07 COPY')
+    jobRecords.add('$$DD08 COPY')
+    jobRecords.add(/\/*/)
+
+    jobRecords.each{
+        jobJcl = jobJcl + it + '\n'
+    }
+
+    return jobJcl
+
 }
