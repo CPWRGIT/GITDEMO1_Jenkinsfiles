@@ -415,11 +415,12 @@ def initialize(){
     }
 
     //*********************************************************************************
-    // Build DDIO override parameter for Code Coverage, replacing application marker by actual name
+    // Build DDIO override parameter to use the VT load library (making use of ESS)
     //*********************************************************************************
-    synchConfig.ccDdioOverrides.each {
+    /*synchConfig.ccDdioOverrides.each {
         ccDdioOverrides = ccDdioOverrides + it.toString().replace('<ispwApplication>', ispwConfig.ispwApplication.application)
-    }
+    }*/
+    ccDdioOverrides = tttVtExecutionLoad
 
     //*********************************************************************************
     // The .tttcfg file and JCL skeleton are located in the pipeline shared library, resources folder
