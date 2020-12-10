@@ -27,6 +27,8 @@ ${JOBCARD}
 //STEPLIB DD DISP=SHR,DSN=${lpar_tttrunner_lib}
 //        DD DISP=SHR,DSN=${loadlibraries}
 //*
+//SLSF001  DD DISP=SHR,DSN=${loadlibraries}
+//XPSL0001 DD DISP=SHR,DSN=${loadlibraries}
 //* The following lines will initialize storage to zeroes to avoid
 //* uninitialized storage assertion miscompares.
 //CEEOPTS  DD  *
