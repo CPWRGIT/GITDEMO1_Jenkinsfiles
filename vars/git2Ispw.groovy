@@ -110,10 +110,10 @@ def call(Map pipelineParms){
         }
 
         topazSubmitFreeFormJcl(
-            connectionId: , 
-            credentialsId: , 
-            jcl: , 
-            maxConditionCode: '4'
+            connectionId:       hciConnectionId, 
+            credentialsId:      hostCredentialsId, 
+            jcl:                ispwImpactScanJcl, 
+            maxConditionCode:   '4'
         )
 
         // If the automaticBuildParams.txt has not been created, it means no programs
