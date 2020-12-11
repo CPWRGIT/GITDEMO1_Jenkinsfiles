@@ -407,7 +407,7 @@ def initialize(){
 
             ispwTargetLevel     = it.value.ispwLevel
             tttVtExecutionLoad  = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwConfig.ispwApplication.application).replace('<ispwLevel>', ispwTargetLevel)
-echo "Identified Target Level: " + ispwTargetLevel
+
         }
     }
 
