@@ -428,9 +428,9 @@ def initialize(){
 
     ispwImpactScanJcl   = libraryResource ispwImpactScanFile
 
-    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<runtimeConfig>', ${ispwConfig.ispwApplication.runtimeConfig})
-    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwApplication>', ${ispwConfig.ispwApplication.application})
-    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', ${ispwTargetLevel})
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<runtimeConfig>', ispwConfig.ispwApplication.runtimeConfig)
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwApplication>', ispwConfig.ispwApplication.application)
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', ispwTargetLevel)
 
     //*********************************************************************************
     // If load library name is empty the branch name could not be mapped
