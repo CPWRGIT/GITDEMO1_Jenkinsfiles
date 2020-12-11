@@ -12,6 +12,7 @@ String ispwConfigFile
 String automaticBuildFile  
 String changedProgramsFile 
 String branchMappingString     
+String ispwTargetLevel
 String tttConfigFolder         
 String tttVtExecutionLoad    
 String tttUtJclSkeletonFile  
@@ -323,11 +324,12 @@ def initialize(){
     RESULTS_FILE_NVT_CICS       = 'Non Virtualized CICS'
 
     executionBranch             = BRANCH_NAME
-    sharedLibName               = 'GITDEMO_Shared_Lib'                  /* Rename in Jenkins server */
+    sharedLibName               = 'GITDEMO_Shared_Lib'
     synchConfigFile             = './git2ispw/synchronization.yml'
     automaticBuildFile          = './automaticBuildParams.txt'
     changedProgramsFile         = './changedPrograms.json'
-    branchMappingString         = ''    
+    branchMappingString         = ''
+    ispwTargetLevel             = ''    
     tttConfigFolder             = ''
     tttVtExecutionLoad          = ''
     ccDdioOverrides             = ''
@@ -402,7 +404,10 @@ def initialize(){
         branchMappingString = branchMappingString + it.key + '** => ' + it.value.ispwLevel + ',' + it.value.mapRule + '\n'
 
         if(executionBranch.contains(it.key)) {
-            tttVtExecutionLoad = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwConfig.ispwApplication.application).replace('<ispwLevel>', it.value.ispwLevel)
+
+            ispwTargetLevel     = it.value.ispwLevel
+            tttVtExecutionLoad  = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwConfig.ispwApplication.application).replace('<ispwLevel>', ispwTargetLevel)
+echo "Identified Target Level: " + ispwTargetLevel
         }
     }
 
