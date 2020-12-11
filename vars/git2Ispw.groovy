@@ -9,10 +9,12 @@ String sharedLibName
 String synchConfigFolder       
 String synchConfigFile         
 String ispwConfigFile      
+String ispwImpactScanFile
 String automaticBuildFile  
 String changedProgramsFile 
 String branchMappingString     
 String ispwTargetLevel
+String ispwImpactScanJcl
 String tttConfigFolder         
 String tttVtExecutionLoad    
 String tttUtJclSkeletonFile  
@@ -106,6 +108,13 @@ def call(Map pipelineParms){
             }
 
         }
+
+        topazSubmitFreeFormJcl(
+            connectionId: , 
+            credentialsId: , 
+            jcl: , 
+            maxConditionCode: '4'
+        )
 
         // If the automaticBuildParams.txt has not been created, it means no programs
         // have been changed and the pipeline was triggered for other changes (e.g. in configuration files)
@@ -326,10 +335,12 @@ def initialize(){
     executionBranch             = BRANCH_NAME
     sharedLibName               = 'GITDEMO_Shared_Lib'
     synchConfigFile             = './git2ispw/synchronization.yml'
+    ispwImpactScanFile          = './git2ispw/impact_scan.jcl'
     automaticBuildFile          = './automaticBuildParams.txt'
     changedProgramsFile         = './changedPrograms.json'
     branchMappingString         = ''
     ispwTargetLevel             = ''    
+    ispwImpactScanJcl           = ''
     tttConfigFolder             = ''
     tttVtExecutionLoad          = ''
     ccDdioOverrides             = ''
@@ -410,6 +421,16 @@ def initialize(){
 
         }
     }
+
+    //*********************************************************************************
+    // Build JCL to scan for impacts once code has been loaded to the ISPW target level
+    //*********************************************************************************
+
+    ispwImpactScanJcl   = libraryResource ispwImpactScanFile
+
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<runtimeConfig>', ${ispwConfig.ispwApplication.runtimeConfig})
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwApplication>', ${ispwConfig.ispwApplication.application})
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', ${ispwTargetLevel})
 
     //*********************************************************************************
     // If load library name is empty the branch name could not be mapped
