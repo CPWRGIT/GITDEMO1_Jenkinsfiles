@@ -69,7 +69,7 @@ def call(Map execParms){
 
             checkout scm
 
-            initialize()
+            initialize(execParms)
 
             setVtLoadlibrary()  /* Will be replaced by 20.05.01 features */
 
@@ -342,26 +342,6 @@ def setVtLoadlibrary(){
 
 }
 
-// If the automaticBuildParams.txt has not been created, it means no programs
-// have been changed and the pipeline was triggered for other changes (e.g. in configuration files)
-// These changes do not need to be "built".
-def checkForBuildParams(){
-
-    try {
-        automaticBuildInfo = readJSON(file: automaticBuildFile)
-    }
-    catch(Exception e) {
-
-        echo "[Info] - No Automatic Build Params file was found.  Meaning, no mainframe sources have been changed.\n" +
-        "[Info] - Mainframe Build and Test steps will be skipped. Sonar scan will be executed against code only."
-
-        executionType   = EXECUTION_TYPE_NO_MF_CODE
-        skipTests       = true
-        skipReason      = skipReason + "\n[Info] - No changes to mainframe code."
-
-    }
-}
-
 def runMainframeLoad() {
 
     try {
@@ -388,6 +368,26 @@ def runMainframeLoad() {
 
         skipReason = "[Info] - Due to error during synchronization."
         return
+
+    }
+}
+
+// If the automaticBuildParams.txt has not been created, it means no programs
+// have been changed and the pipeline was triggered for other changes (e.g. in configuration files)
+// These changes do not need to be "built".
+def checkForBuildParams(){
+
+    try {
+        automaticBuildInfo = readJSON(file: automaticBuildFile)
+    }
+    catch(Exception e) {
+
+        echo "[Info] - No Automatic Build Params file was found.  Meaning, no mainframe sources have been changed.\n" +
+        "[Info] - Mainframe Build and Test steps will be skipped. Sonar scan will be executed against code only."
+
+        executionType   = EXECUTION_TYPE_NO_MF_CODE
+        skipTests       = true
+        skipReason      = skipReason + "\n[Info] - No changes to mainframe code."
 
     }
 }
