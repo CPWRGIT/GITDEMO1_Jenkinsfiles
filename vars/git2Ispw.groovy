@@ -57,6 +57,7 @@ def call(Map pipelineParms){
     // Start of Script
     //**********************************************************************
     node {
+
         stage ('Checkout and initialize') {
             // Clear workspace
             dir('./') {
@@ -74,6 +75,8 @@ def call(Map pipelineParms){
         stage('Load code to mainframe') {
 
             if(!(executionType == EXECUTION_TYPE_NO_TESTS)) {
+
+                echo "[Info] - Loading code to mainframe level " + ispwTargetLevel "."
 
                 try {
 
@@ -109,13 +112,6 @@ def call(Map pipelineParms){
 
         }
 
-        topazSubmitFreeFormJcl(
-            connectionId:       synchConfig.hciConnectionId, 
-            credentialsId:      pipelineParms.hostCredentialsId, 
-            jcl:                ispwImpactScanJcl, 
-            maxConditionCode:   '4'
-        )
-
         // If the automaticBuildParams.txt has not been created, it means no programs
         // have been changed and the pipeline was triggered for other changes (e.g. in configuration files)
         // These changes do not need to be "built".
@@ -137,6 +133,17 @@ def call(Map pipelineParms){
 
             if(!(executionType == EXECUTION_TYPE_NO_TESTS)){
 
+                echo "[Info] - Building code at mainframe level " + ispwTargetLevel "."
+
+                /* After loading code to ISPW execute job to initiate impacts scan */
+                topazSubmitFreeFormJcl(
+                    connectionId:       synchConfig.hciConnectionId, 
+                    credentialsId:      pipelineParms.hostCredentialsId, 
+                    jcl:                ispwImpactScanJcl, 
+                    maxConditionCode:   '4'
+                )
+
+                /* Build mainframe code */
                 ispwOperation(
                     connectionId:           synchConfig.hciConnectionId, 
                     credentialsId:          pipelineParms.cesCredentialsId,       
@@ -158,8 +165,9 @@ def call(Map pipelineParms){
             executionType == EXECUTION_TYPE_BOTH
         ){
 
-            stage('Execute Unit Tests') {
-            
+            stage('Execute Unit Tests') {           
+
+                echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel "."
 
                 totaltest(
                     serverUrl:                          synchConfig.cesUrl, 
@@ -201,6 +209,8 @@ def call(Map pipelineParms){
         ){
 
             stage('Execute Module Integration Tests') {
+echo "executionType " + executionType
+                echo "[Info] - Execute Module Integration Tests at mainframe level " + ispwTargetLevel "."
 
                 /* Execute batch scenarios */
                 totaltest(
@@ -353,84 +363,37 @@ def initialize(){
     sonarCodeCoverageFile       = './Coverage/CodeCoverage.xml'
     jUnitResultsFile            = './TTTUnit/generated.cli.suite.junit.xml'
 
-    /* Determine execution type of the pipeline */
-    /* If it executes for the first time, i.e. the branch has just been created, only scan sources and don't execute any tests      */
-    /* Else, depending on the branch type or branch name (feature, development, fix or main) determine the type of tests to execute */
-    if (BUILD_NUMBER == "1") {
-        executionType   = EXECUTION_TYPE_NO_TESTS
-        skipReason      = "[Info] - First build for branch '${BRANCH_NAME}'."
-    }    
-    else if (executionBranch.contains("feature")) {
-        executionType   = EXECUTION_TYPE_VT_ONLY
-        skipReason      = "[Info] - '${BRANCH_NAME}' is a feature branch."
-    }
-    else if (executionBranch.contains("bugfix")) {
-        executionType = EXECUTION_TYPE_VT_ONLY
-        skipReason      = "[Info] - Branch '${BRANCH_NAME}'."
-    }
-    else if (executionBranch.contains("development")) {
-        executionType   = EXECUTION_TYPE_BOTH
-        skipReason      = "[Info] - Branch '${BRANCH_NAME}'."
-    }
-    else if (executionBranch.contains("main")) {
-        executionType   = EXECUTION_TYPE_NVT_ONLY
-        skipReason      = "[Info] - Branch '${BRANCH_NAME}'."
-    }
-
     //*********************************************************************************
     // Read synchconfig.yml from Shared Library resources folder
     //*********************************************************************************
-    def fileText    = libraryResource synchConfigFile
-    
-    synchConfig     = readYaml(text: fileText)
+    def fileText                = libraryResource synchConfigFile
+    synchConfig                 = readYaml(text: fileText)
 
     //*********************************************************************************
     // Build paths to subfolders of the project root
     //*********************************************************************************
 
-    ispwConfigFile          = synchConfig.mfProjectRootFolder + '/ispwconfig.yml'
-    tttRootFolder           = synchConfig.mfProjectRootFolder + '/Tests'
-    ccSources               = synchConfig.mfProjectRootFolder + '/Sources'
-    sonarCobolFolder        = synchConfig.mfProjectRootFolder + '/Sources'
-    sonarCopybookFolder     = synchConfig.mfProjectRootFolder + '/Sources'
+    ispwConfigFile              = synchConfig.mfProjectRootFolder + '/ispwconfig.yml'
+    tttRootFolder               = synchConfig.mfProjectRootFolder + '/Tests'
+    ccSources                   = synchConfig.mfProjectRootFolder + '/Sources'
+    sonarCobolFolder            = synchConfig.mfProjectRootFolder + '/Sources'
+    sonarCopybookFolder         = synchConfig.mfProjectRootFolder + '/Sources'
 
     //*********************************************************************************
     // Read ispwconfig.yml
     // Strip the first line of ispwconfig.yml because readYaml can't handle the !! tag
     //*********************************************************************************
-    def tmpText     = readFile(file: ispwConfigFile)
+    def tmpText                 = readFile(file: ispwConfigFile)
 
     // remove the first line (i.e. the substring following the first carriage return '\n')
-    tmpText         = tmpText.substring(tmpText.indexOf('\n') + 1)
+    tmpText                     = tmpText.substring(tmpText.indexOf('\n') + 1)
 
     // convert the text to yaml
-    ispwConfig      = readYaml(text: tmpText)
+    ispwConfig                  = readYaml(text: tmpText)
 
-    //*********************************************************************************
-    // Build branch mapping string to be used as parameter in the gitToIspwIntegration
-    // Build load library name from configuration, replacing application marker by actual name
-    //*********************************************************************************
-    synchConfig.branchInfo.each {
+    determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
 
-        branchMappingString = branchMappingString + it.key + '** => ' + it.value.ispwLevel + ',' + it.value.mapRule + '\n'
-
-        if(executionBranch.contains(it.key)) {
-
-            ispwTargetLevel     = it.value.ispwLevel
-            tttVtExecutionLoad  = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwConfig.ispwApplication.application).replace('<ispwLevel>', ispwTargetLevel)
-
-        }
-    }
-
-    //*********************************************************************************
-    // Build JCL to scan for impacts once code has been loaded to the ISPW target level
-    //*********************************************************************************
-
-    ispwImpactScanJcl   = libraryResource ispwImpactScanFile
-
-    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<runtimeConfig>', ispwConfig.ispwApplication.runtimeConfig)
-    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwApplication>', ispwConfig.ispwApplication.application)
-    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', ispwTargetLevel)
+    processBranchInfo(synchConfig.branchInfo, ispwConfig.ispwApplication.application, ispwTargetLevel)
 
     //*********************************************************************************
     // If load library name is empty the branch name could not be mapped
@@ -448,18 +411,85 @@ def initialize(){
     }*/
     ccDdioOverrides = tttVtExecutionLoad
 
+    ispwImpactScanJcl           = buildImpactScanJcl(ispwImpactScanFile, ispwConfig.ispwApplication.runtimeConfig, ispwConfig.ispwApplication.application, ispwTargetLevel)
+
     //*********************************************************************************
     // The .tttcfg file and JCL skeleton are located in the pipeline shared library, resources folder
     // Determine path relative to current workspace
     //*********************************************************************************
-    def tmpWorkspace        = workspace.replace('\\', '/')
-    tttConfigFolder         = '..' + tmpWorkspace.substring(tmpWorkspace.lastIndexOf('/')) + '@libs/' + sharedLibName + '/resources' + '/' + synchConfig.tttConfigFolder
-    tttUtJclSkeletonFile    = tttConfigFolder + '/JCLSkeletons/TTTRUNNER.jcl' 
+    def tmpWorkspace            = workspace.replace('\\', '/')
+    tttConfigFolder             = '..' + tmpWorkspace.substring(tmpWorkspace.lastIndexOf('/')) + '@libs/' + sharedLibName + '/resources' + '/' + synchConfig.tttConfigFolder
+    tttUtJclSkeletonFile        = tttConfigFolder + '/JCLSkeletons/TTTRUNNER.jcl' 
 
-    //*********************************************************************************
-    // Build Code Coverage System ID from current branch, System ID must not be longer than 15 characters
-    // Build Code Coverage Test ID from Build Number
-    //*********************************************************************************
+    buildCocoParms(BRANCH_NAME)
+
+}
+
+/* Determine execution type of the pipeline */
+/* If it executes for the first time, i.e. the branch has just been created, only scan sources and don't execute any tests      */
+/* Else, depending on the branch type or branch name (feature, development, fix or main) determine the type of tests to execute */
+def determinePipelineBehavior(branchName, buildNumber){
+
+    if (buildNumber == "1") {
+        executionType   = EXECUTION_TYPE_NO_TESTS
+        skipReason      = "[Info] - First build for branch '${branchName}'."
+    }    
+    else if (executionBranch.contains("feature")) {
+        executionType   = EXECUTION_TYPE_VT_ONLY
+        skipReason      = "[Info] - '${branchName}' is a feature branch."
+    }
+    else if (executionBranch.contains("bugfix")) {
+        executionType = EXECUTION_TYPE_VT_ONLY
+        skipReason      = "[Info] - Branch '${branchName}'."
+    }
+    else if (executionBranch.contains("development")) {
+        executionType   = EXECUTION_TYPE_BOTH
+        skipReason      = "[Info] - Branch '${branchName}'."
+    }
+    else if (executionBranch.contains("main")) {
+        executionType   = EXECUTION_TYPE_NVT_ONLY
+        skipReason      = "[Info] - Branch '${branchName}'."
+    }
+}
+
+//*********************************************************************************
+// Build branch mapping string to be used as parameter in the gitToIspwIntegration
+// Build load library name from configuration, replacing application marker by actual name
+//*********************************************************************************
+def processBranchInfo(branchInfo, ispwApplication, ispwLevel){
+
+    branchInfo.each {
+
+        branchMappingString = branchMappingString + it.key + '** => ' + it.value.ispwLevel + ',' + it.value.mapRule + '\n'
+
+        if(executionBranch.contains(it.key)) {
+
+            ispwTargetLevel     = it.value.ispwLevel
+            tttVtExecutionLoad  = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwApplication).replace('<ispwLevel>', ispwLevel)
+
+        }
+    }
+}
+
+//*********************************************************************************
+// Build JCL to scan for impacts once code has been loaded to the ISPW target level
+//*********************************************************************************
+def buildImpactScanJcl(ispwImpactScanFile, runtimeConfig, application, ispwTargetLevel){
+
+    ispwImpactScanJcl   = libraryResource ispwImpactScanFile
+
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<runtimeConfig>', runtimeConfig)
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwApplication>', application)
+    ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', ispwTargetLevel)
+
+}
+
+//*********************************************************************************
+// Build Code Coverage System ID from current branch, System ID must not be longer than 15 characters
+// Build Code Coverage Test ID from Build Number
+//*********************************************************************************
+def buildCocoParms(executionBranch){
+
     if(executionBranch.length() > CC_SYSTEM_ID_MAX_LEN) {
         ccSystemId  = executionBranch.substring(executionBranch.length() - CC_SYSTEM_ID_MAX_LEN)
     }
@@ -468,6 +498,7 @@ def initialize(){
     }
     
     ccTestId    = BUILD_NUMBER
+
 }
 
 /* Modify JCL Skeleton to use correct load library for VTs */
