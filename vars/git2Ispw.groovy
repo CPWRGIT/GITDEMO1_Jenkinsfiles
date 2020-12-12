@@ -76,7 +76,7 @@ def call(Map pipelineParms){
 
             if(!(executionType == EXECUTION_TYPE_NO_TESTS)) {
 
-                echo "[Info] - Loading code to mainframe level " + ispwTargetLevel "."
+                echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
 
                 try {
 
@@ -133,7 +133,7 @@ def call(Map pipelineParms){
 
             if(!(executionType == EXECUTION_TYPE_NO_TESTS)){
 
-                echo "[Info] - Building code at mainframe level " + ispwTargetLevel "."
+                echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
 
                 /* After loading code to ISPW execute job to initiate impacts scan */
                 topazSubmitFreeFormJcl(
@@ -167,7 +167,7 @@ def call(Map pipelineParms){
 
             stage('Execute Unit Tests') {           
 
-                echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel "."
+                echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
 
                 totaltest(
                     serverUrl:                          synchConfig.cesUrl, 
@@ -210,7 +210,7 @@ def call(Map pipelineParms){
 
             stage('Execute Module Integration Tests') {
 echo "executionType " + executionType
-                echo "[Info] - Execute Module Integration Tests at mainframe level " + ispwTargetLevel "."
+                echo "[Info] - Execute Module Integration Tests at mainframe level " + ispwTargetLevel + "."
 
                 /* Execute batch scenarios */
                 totaltest(
