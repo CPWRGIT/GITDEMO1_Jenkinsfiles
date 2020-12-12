@@ -33,6 +33,7 @@ String skipReason
 
 Boolean skipTests
 
+def pipelineParms
 def branchMapping             
 def ispwConfig
 def synchConfig
@@ -53,7 +54,7 @@ def RESULTS_FILE_VT
 def RESULTS_FILE_NVT_BATCH
 def RESULTS_FILE_NVT_CICS
 
-def call(Map pipelineParms){
+def call(Map execParms){
 
     //**********************************************************************
     // Start of Script
@@ -148,7 +149,9 @@ def call(Map pipelineParms){
     }
 }
 
-def initialize(){
+def initialize(execParms){
+
+    pipelineParms               = execParms
 
     CC_TEST_ID_MAX_LEN          = 15
     CC_SYSTEM_ID_MAX_LEN        = 15
