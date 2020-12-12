@@ -76,89 +76,37 @@ def call(Map pipelineParms){
 
         stage('Load code to mainframe') {
 
-            if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)) {
-
-                echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
-
-                try {
-
-                    gitToIspwIntegration( 
-                        connectionId:       synchConfig.hciConnectionId,                    
-                        credentialsId:      pipelineParms.hostCredentialsId,                     
-                        runtimeConfig:      ispwConfig.ispwApplication.runtimeConfig,
-                        stream:             ispwConfig.ispwApplication.stream,
-                        app:                ispwConfig.ispwApplication.application, 
-                        branchMapping:      branchMappingString,
-                        ispwConfigPath:     ispwConfigFile, 
-                        gitCredentialsId:   pipelineParms.gitCredentialsId, 
-                        gitRepoUrl:         pipelineParms.gitRepoUrl
-                    )
-
-                }
-                catch(Exception e) {
-
-                    echo "[Error] - Error during synchronisation to the mainframe.\n"
-                    "[Error] - " + e.toString()
-                    currentBuild.result = 'FAILURE'
-
-                    skipReason = "[Info] - Due to error during synchronization."
-                    return
-
-                }
-            }
-            else {
+            if(executionType == EXECUTION_TYPE_NO_MF_CODE) {
 
                 echo skipReason + "\n[Info] - No code will be loaded to the mainframe."
 
             }
+            else {
 
+                echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
+
+                runMainframeLoad()
+
+            }
         }
 
-        // If the automaticBuildParams.txt has not been created, it means no programs
-        // have been changed and the pipeline was triggered for other changes (e.g. in configuration files)
-        // These changes do not need to be "built".
-        try {
-            automaticBuildInfo = readJSON(file: automaticBuildFile)
-        }
-        catch(Exception e) {
-
-            echo "[Info] - No Automatic Build Params file was found.  Meaning, no mainframe sources have been changed.\n" +
-            "[Info] - Mainframe Build and Test steps will be skipped. Sonar scan will be executed against code only."
-
-            executionType   = EXECUTION_TYPE_NO_MF_CODE
-            skipTests       = true
-            skipReason      = skipReason + "\n[Info] - No changes to mainframe code."
-
-        }
+        checkForBuildParams()
 
         stage('Build mainframe code') {
 
-            if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
+            if(executionType == EXECUTION_TYPE_NO_MF_CODE){
 
-                echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
-
-                /* After loading code to ISPW execute job to initiate impacts scan */
-                topazSubmitFreeFormJcl(
-                    connectionId:       synchConfig.hciConnectionId, 
-                    credentialsId:      pipelineParms.hostCredentialsId, 
-                    jcl:                ispwImpactScanJcl, 
-                    maxConditionCode:   '4'
-                )
-
-                /* Build mainframe code */
-                ispwOperation(
-                    connectionId:           synchConfig.hciConnectionId, 
-                    credentialsId:          pipelineParms.cesCredentialsId,       
-                    consoleLogResponseBody: true, 
-                    ispwAction:             'BuildTask', 
-                    ispwRequestBody:        '''buildautomatically = true'''
-                )
+                echo skipReason + "\n[Info] - Skipping Mainframe Build."
 
             }
             else{
 
-                echo skipReason + "\n[Info] - Skipping Mainframe Build."
-            
+                echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
+
+                runImpactScan()
+
+                runMainframeBuild()
+
             }
         }
 
@@ -169,37 +117,8 @@ def call(Map pipelineParms){
 
             stage('Execute Unit Tests') {           
 
-                if(skipTests){
+                runUnitTests()
 
-                    echo skipReason + "\n[Info] - Skipping Unit Tests."
-
-                }
-                else{
-                    echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
-
-                    totaltest(
-                        serverUrl:                          synchConfig.cesUrl, 
-                        credentialsId:                      pipelineParms.hostCredentialsId, 
-                        environmentId:                      synchConfig.tttVtEnvironmentId,
-                        localConfig:                        true, 
-                        localConfigLocation:                tttConfigFolder, 
-                        folderPath:                         tttRootFolder, 
-                        recursive:                          true, 
-                        selectProgramsOption:               true, 
-                        jsonFile:                           changedProgramsFile,
-                        haltPipelineOnFailure:              false,                 
-                        stopIfTestFailsOrThresholdReached:  false,
-                        collectCodeCoverage:                true,
-                        collectCCRepository:                pipelineParms.ccRepo,
-                        collectCCSystem:                    ccSystemId,
-                        collectCCTestID:                    ccTestId,
-                        clearCodeCoverage:                  false,
-                    //    ccThreshold:                        synchConfig.ccThreshold,     
-                        logLevel:                           'INFO'
-                    )
-
-                    secureResultsFile(sonarResultsFileVt, RESULTS_FILE_VT)
-                }
             }
         }
 
@@ -210,119 +129,21 @@ def call(Map pipelineParms){
 
             stage('Execute Module Integration Tests') {
 
-                if(skipTests){
-    
-                    echo skipReason + "\n[Info] - Skipping Integration Tests."
+                runIntegrationTests()
 
-                }
-                else{
-
-                    echo "[Info] - Execute Module Integration Tests at mainframe level " + ispwTargetLevel + "."
-
-                    /* Execute batch scenarios */
-                    totaltest(
-                        serverUrl:                          synchConfig.cesUrl, 
-                        credentialsId:                      pipelineParms.hostCredentialsId, 
-                        environmentId:                      synchConfig.tttNvtBatchEnvironmentId, 
-                        localConfig:                        false,
-                        localConfigLocation:                tttConfigFolder, 
-                        folderPath:                         tttRootFolder, 
-                        recursive:                          true, 
-                        selectProgramsOption:               true, 
-                        jsonFile:                           changedProgramsFile,
-                        haltPipelineOnFailure:              false,                 
-                        stopIfTestFailsOrThresholdReached:  false,
-                        collectCodeCoverage:                true,
-                        collectCCRepository:                pipelineParms.ccRepo,
-                        collectCCSystem:                    ccSystemId,
-                        collectCCTestID:                    ccTestId,
-                        clearCodeCoverage:                  false,
-                    //    ccThreshold:                        pipelineParms.ccThreshold,     
-                        logLevel:                           'INFO'
-                    )
-
-                    secureResultsFile(sonarResultsFileNvtBatch, RESULTS_FILE_NVT_BATCH)
-
-                    /* Execute CICS scenarios */
-                    totaltest(
-                        serverUrl:                          synchConfig.cesUrl, 
-                        credentialsId:                      pipelineParms.hostCredentialsId, 
-                        environmentId:                      synchConfig.tttNvtCicsEnvironmentId, 
-                        localConfig:                        false,
-                        localConfigLocation:                tttConfigFolder, 
-                        folderPath:                         tttRootFolder, 
-                        recursive:                          true, 
-                        selectProgramsOption:               true, 
-                        jsonFile:                           changedProgramsFile,
-                        haltPipelineOnFailure:              false,                 
-                        stopIfTestFailsOrThresholdReached:  false,
-                        collectCodeCoverage:                true,
-                        collectCCRepository:                pipelineParms.ccRepo,
-                        collectCCSystem:                    ccSystemId,
-                        collectCCTestID:                    ccTestId,
-                        clearCodeCoverage:                  false,
-                    //    ccThreshold:                        pipelineParms.ccThreshold,     
-                        logLevel:                           'INFO'
-                    )
-
-                    secureResultsFile(sonarResultsFileNvtCics, RESULTS_FILE_NVT_CICS)
-                }
             }
         }
 
         if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
 
-            step([
-                $class:             'CodeCoverageBuilder', 
-                connectionId:       synchConfig.hciConnectionId, 
-                credentialsId:      pipelineParms.hostCredentialsId,
-                analysisProperties: """
-                    cc.sources=${ccSources}
-                    cc.repos=${pipelineParms.ccRepo}
-                    cc.system=${ccSystemId}
-                    cc.test=${ccTestId}
-                    cc.ddio.overrides=${ccDdioOverrides}
-                """
-            ])
+            getCocoResults()
 
         }
             
         stage("SonarQube Scan") {
 
-            def sonarBranchParm         = ''
-            def sonarTestResults        = ''
-            def sonarTestsParm          = ''
-            def sonarTestReportsParm    = ''
-            def sonarCodeCoverageParm   = ''
-            def scannerHome             = tool synchConfig.sonarScanner            
+            runSonarScan()
 
-            if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
-
-                sonarTestResults        = getSonarResults(sonarResultsFileList)
-                sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
-                sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarTestResults + '"'
-                sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
-
-            }
-
-            withSonarQubeEnv(synchConfig.sonarServer) {
-
-                bat '"' + scannerHome + '/bin/sonar-scanner"' + 
-                ' -Dsonar.branch.name=' + executionBranch +
-                ' -Dsonar.projectKey=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application + 
-                ' -Dsonar.projectName=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application +
-                ' -Dsonar.projectVersion=1.0' +
-                ' -Dsonar.sources=' + sonarCobolFolder + 
-                ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
-                ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result' + 
-                ' -Dsonar.cobol.copy.suffixes=cpy' +
-                sonarTestsParm +
-                sonarTestReportsParm +
-                sonarCodeCoverageParm +
-                ' -Dsonar.ws.timeout=480' +
-                ' -Dsonar.sourceEncoding=UTF-8'
-
-            }
         }   
     }
 }
@@ -518,25 +339,172 @@ def setVtLoadlibrary(){
 
 }
 
-def getSonarResults(resultsFileList){
+// If the automaticBuildParams.txt has not been created, it means no programs
+// have been changed and the pipeline was triggered for other changes (e.g. in configuration files)
+// These changes do not need to be "built".
+def checkForBuildParams(){
 
-    def resultsList         = ''
-
-    resultsFileList.each{
-
-        def resultsFileContent
-        resultsFileContent  = readFile(file: sonarResultsFolder + '/' + it)
-        resultsFileContent  = resultsFileContent.substring(resultsFileContent.indexOf('\n') + 1)
-        def testExecutions  = new XmlSlurper().parseText(resultsFileContent)
-
-        testExecutions.file.each {
-
-            resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
-
-        }
+    try {
+        automaticBuildInfo = readJSON(file: automaticBuildFile)
     }
+    catch(Exception e) {
 
-    return resultsList
+        echo "[Info] - No Automatic Build Params file was found.  Meaning, no mainframe sources have been changed.\n" +
+        "[Info] - Mainframe Build and Test steps will be skipped. Sonar scan will be executed against code only."
+
+        executionType   = EXECUTION_TYPE_NO_MF_CODE
+        skipTests       = true
+        skipReason      = skipReason + "\n[Info] - No changes to mainframe code."
+
+    }
+}
+
+def runMainframeLoad() {
+
+    try {
+
+        gitToIspwIntegration( 
+            connectionId:       synchConfig.hciConnectionId,                    
+            credentialsId:      pipelineParms.hostCredentialsId,                     
+            runtimeConfig:      ispwConfig.ispwApplication.runtimeConfig,
+            stream:             ispwConfig.ispwApplication.stream,
+            app:                ispwConfig.ispwApplication.application, 
+            branchMapping:      branchMappingString,
+            ispwConfigPath:     ispwConfigFile, 
+            gitCredentialsId:   pipelineParms.gitCredentialsId, 
+            gitRepoUrl:         pipelineParms.gitRepoUrl
+        )
+
+    }
+    catch(Exception e) {
+
+        echo "[Error] - Error during synchronisation to the mainframe.\n"
+        "[Error] - " + e.toString()
+        currentBuild.result = 'FAILURE'
+
+        skipReason = "[Info] - Due to error during synchronization."
+        return
+
+    }
+}
+
+/* After loading code to ISPW execute job to initiate impacts scan */
+def runImpactScan(){
+
+    topazSubmitFreeFormJcl(
+        connectionId:       synchConfig.hciConnectionId, 
+        credentialsId:      pipelineParms.hostCredentialsId, 
+        jcl:                ispwImpactScanJcl, 
+        maxConditionCode:   '4'
+    )
+}
+
+/* Build mainframe code */
+def runMainframeBuild(){
+
+    ispwOperation(
+        connectionId:           synchConfig.hciConnectionId, 
+        credentialsId:          pipelineParms.cesCredentialsId,       
+        consoleLogResponseBody: true, 
+        ispwAction:             'BuildTask', 
+        ispwRequestBody:        '''buildautomatically = true'''
+    )
+}
+
+def runUnitTests() {
+
+    if(skipTests){
+
+        echo skipReason + "\n[Info] - Skipping Unit Tests."
+
+    }
+    else{
+        echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
+
+        totaltest(
+            serverUrl:                          synchConfig.cesUrl, 
+            credentialsId:                      pipelineParms.hostCredentialsId, 
+            environmentId:                      synchConfig.tttVtEnvironmentId,
+            localConfig:                        true, 
+            localConfigLocation:                tttConfigFolder, 
+            folderPath:                         tttRootFolder, 
+            recursive:                          true, 
+            selectProgramsOption:               true, 
+            jsonFile:                           changedProgramsFile,
+            haltPipelineOnFailure:              false,                 
+            stopIfTestFailsOrThresholdReached:  false,
+            collectCodeCoverage:                true,
+            collectCCRepository:                pipelineParms.ccRepo,
+            collectCCSystem:                    ccSystemId,
+            collectCCTestID:                    ccTestId,
+            clearCodeCoverage:                  false,
+        //    ccThreshold:                        synchConfig.ccThreshold,     
+            logLevel:                           'INFO'
+        )
+
+        secureResultsFile(sonarResultsFileVt, RESULTS_FILE_VT)
+    }
+}
+
+def runIntegrationTests(){
+
+    if(skipTests){
+
+        echo skipReason + "\n[Info] - Skipping Integration Tests."
+
+    }
+    else{
+
+        echo "[Info] - Execute Module Integration Tests at mainframe level " + ispwTargetLevel + "."
+
+        /* Execute batch scenarios */
+        totaltest(
+            serverUrl:                          synchConfig.cesUrl, 
+            credentialsId:                      pipelineParms.hostCredentialsId, 
+            environmentId:                      synchConfig.tttNvtBatchEnvironmentId, 
+            localConfig:                        false,
+            localConfigLocation:                tttConfigFolder, 
+            folderPath:                         tttRootFolder, 
+            recursive:                          true, 
+            selectProgramsOption:               true, 
+            jsonFile:                           changedProgramsFile,
+            haltPipelineOnFailure:              false,                 
+            stopIfTestFailsOrThresholdReached:  false,
+            collectCodeCoverage:                true,
+            collectCCRepository:                pipelineParms.ccRepo,
+            collectCCSystem:                    ccSystemId,
+            collectCCTestID:                    ccTestId,
+            clearCodeCoverage:                  false,
+        //    ccThreshold:                        pipelineParms.ccThreshold,     
+            logLevel:                           'INFO'
+        )
+
+        secureResultsFile(sonarResultsFileNvtBatch, RESULTS_FILE_NVT_BATCH)
+
+        /* Execute CICS scenarios */
+        totaltest(
+            serverUrl:                          synchConfig.cesUrl, 
+            credentialsId:                      pipelineParms.hostCredentialsId, 
+            environmentId:                      synchConfig.tttNvtCicsEnvironmentId, 
+            localConfig:                        false,
+            localConfigLocation:                tttConfigFolder, 
+            folderPath:                         tttRootFolder, 
+            recursive:                          true, 
+            selectProgramsOption:               true, 
+            jsonFile:                           changedProgramsFile,
+            haltPipelineOnFailure:              false,                 
+            stopIfTestFailsOrThresholdReached:  false,
+            collectCodeCoverage:                true,
+            collectCCRepository:                pipelineParms.ccRepo,
+            collectCCSystem:                    ccSystemId,
+            collectCCTestID:                    ccTestId,
+            clearCodeCoverage:                  false,
+        //    ccThreshold:                        pipelineParms.ccThreshold,     
+            logLevel:                           'INFO'
+        )
+
+        secureResultsFile(sonarResultsFileNvtCics, RESULTS_FILE_NVT_CICS)
+    }
 }
 
 def secureResultsFile(resultsFileNameNew, resultsFileType) {
@@ -563,4 +531,79 @@ def secureResultsFile(resultsFileNameNew, resultsFileType) {
     }
 
     return
+}
+
+def getCocoResults() {
+
+    step([
+        $class:             'CodeCoverageBuilder', 
+        connectionId:       synchConfig.hciConnectionId, 
+        credentialsId:      pipelineParms.hostCredentialsId,
+        analysisProperties: """
+            cc.sources=${ccSources}
+            cc.repos=${pipelineParms.ccRepo}
+            cc.system=${ccSystemId}
+            cc.test=${ccTestId}
+            cc.ddio.overrides=${ccDdioOverrides}
+        """
+    ])
+}
+
+def runSonarScan() {
+
+    def sonarBranchParm         = ''
+    def sonarTestResults        = ''
+    def sonarTestsParm          = ''
+    def sonarTestReportsParm    = ''
+    def sonarCodeCoverageParm   = ''
+    def scannerHome             = tool synchConfig.sonarScanner            
+
+    if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
+
+        sonarTestResults        = getSonarResults(sonarResultsFileList)
+        sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
+        sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarTestResults + '"'
+        sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
+
+    }
+
+    withSonarQubeEnv(synchConfig.sonarServer) {
+
+        bat '"' + scannerHome + '/bin/sonar-scanner"' + 
+        ' -Dsonar.branch.name=' + executionBranch +
+        ' -Dsonar.projectKey=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application + 
+        ' -Dsonar.projectName=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application +
+        ' -Dsonar.projectVersion=1.0' +
+        ' -Dsonar.sources=' + sonarCobolFolder + 
+        ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
+        ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result' + 
+        ' -Dsonar.cobol.copy.suffixes=cpy' +
+        sonarTestsParm +
+        sonarTestReportsParm +
+        sonarCodeCoverageParm +
+        ' -Dsonar.ws.timeout=480' +
+        ' -Dsonar.sourceEncoding=UTF-8'
+
+    }
+}
+
+def getSonarResults(resultsFileList){
+
+    def resultsList         = ''
+
+    resultsFileList.each{
+
+        def resultsFileContent
+        resultsFileContent  = readFile(file: sonarResultsFolder + '/' + it)
+        resultsFileContent  = resultsFileContent.substring(resultsFileContent.indexOf('\n') + 1)
+        def testExecutions  = new XmlSlurper().parseText(resultsFileContent)
+
+        testExecutions.file.each {
+
+            resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
+
+        }
+    }
+
+    return resultsList
 }
