@@ -30,7 +30,7 @@ def call(Map pipelineParms)
 
             topazSubmitFreeFormJcl(
                 connectionId:       synchConfig.hciConnectionId, 
-                credentialsId:      pipelineParms.hostCredentialsId, 
+                credentialsId:      hostCredentialsId, 
                 jcl:                ispwImpactScanJcl, 
                 maxConditionCode:   '4'
             )
