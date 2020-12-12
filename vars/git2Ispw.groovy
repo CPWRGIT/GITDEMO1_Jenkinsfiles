@@ -363,6 +363,9 @@ def runMainframeLoad() {
 
     try {
 
+echo "Using"
+echo "Conn: " + synchConfig.hciConnectionId
+
         gitToIspwIntegration( 
             connectionId:       synchConfig.hciConnectionId,                    
             credentialsId:      pipelineParms.hostCredentialsId,                     
