@@ -394,7 +394,7 @@ def initialize(){
 
     determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
 
-    processBranchInfo(synchConfig.branchInfo, ispwConfig.ispwApplication.application, ispwTargetLevel)
+    processBranchInfo(synchConfig.branchInfo, ispwConfig.ispwApplication.application)
 
     //*********************************************************************************
     // If load library name is empty the branch name could not be mapped
@@ -464,10 +464,12 @@ def processBranchInfo(branchInfo, ispwApplication, ispwLevel){
 
         branchMappingString = branchMappingString + it.key + '** => ' + it.value.ispwLevel + ',' + it.value.mapRule + '\n'
 
+
+        /* Get target Level and load bib for VTs from branch Mapping info for current build cranch */
         if(executionBranch.contains(it.key)) {
 
             ispwTargetLevel     = it.value.ispwLevel
-            tttVtExecutionLoad  = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwApplication).replace('<ispwLevel>', ispwLevel)
+            tttVtExecutionLoad  = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwApplication).replace('<ispwLevel>', ispwTargetLevel)
 
         }
     }
