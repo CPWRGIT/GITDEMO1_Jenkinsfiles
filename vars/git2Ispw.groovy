@@ -363,9 +363,6 @@ def runMainframeLoad() {
 
     try {
 
-echo "Using"
-echo "Conn: " + synchConfig.hciConnectionId
-
         gitToIspwIntegration( 
             connectionId:       synchConfig.hciConnectionId,                    
             credentialsId:      pipelineParms.hostCredentialsId,                     
@@ -381,8 +378,9 @@ echo "Conn: " + synchConfig.hciConnectionId
     }
     catch(Exception e) {
 
-        echo "[Error] - Error during synchronisation to the mainframe.\n"
-        "[Error] - " + e.toString()
+        echo "[Error] - Error during synchronisation to the mainframe.\n" +
+             "[Error] - " + e.toString()
+
         currentBuild.result = 'FAILURE'
 
         skipReason = "[Info] - Due to error during synchronization."
