@@ -458,7 +458,7 @@ def determinePipelineBehavior(branchName, buildNumber){
 // Build branch mapping string to be used as parameter in the gitToIspwIntegration
 // Build load library name from configuration, replacing application marker by actual name
 //*********************************************************************************
-def processBranchInfo(branchInfo, ispwApplication, ispwLevel){
+def processBranchInfo(branchInfo, ispwApplication){
 
     branchInfo.each {
 
