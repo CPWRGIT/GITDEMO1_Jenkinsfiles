@@ -26,6 +26,8 @@ def call(Map pipelineParms)
         ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwApplication>', pipelineParms.ispwApplication)
         ispwImpactScanJcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', pipelineParms.ispwLevel)
 
+        echo "Submitting: \n" + ispwImpactScanJcl
+
         stage("Scan for Impacts"){
 
             topazSubmitFreeFormJcl(
