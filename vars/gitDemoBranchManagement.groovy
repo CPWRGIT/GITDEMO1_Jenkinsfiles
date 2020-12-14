@@ -36,7 +36,8 @@ node {
                     
                     def contextFileContent  = readFile(file: it.path)
                     contextFileContent      = contextFileContent.replace("FT1", IspwTargetLevel).replace("UT1", ispwUtLevel).replace("FT2", IspwTargetLevel).replace("UT2", ispwUtLevel).replace("FT3", IspwTargetLevel).replace("UT3", ispwUtLevel).replace("FT4", IspwTargetLevel).replace("UT4", ispwUtLevel)
-
+                    
+                    writeFile(file: it.path, text: contextFileContent)
                 }
                 
             }
