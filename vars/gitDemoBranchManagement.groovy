@@ -1,4 +1,6 @@
-def ispwUtLevel     = "UT" + IspwTargetLevel.substring(2, 3)
+def ispwFtLevelRepl = "." + IspwTargetLevel + "."
+def ispwUtLevelRepl = ".UT" + IspwTargetLevel.substring(2, 3) + "."
+
 def gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
 def newBranchName
 
@@ -28,20 +30,6 @@ node {
 
         if(BranchAction == 'Create'){
 
-            contextFileList.each {
-                
-                if (!(it.name.contains('Jenkins'))){
-                    
-                    echo "Reading: " + it.name
-                    
-                    def contextFileContent  = readFile(file: it.path)
-                    contextFileContent      = contextFileContent.replace("FT1", IspwTargetLevel).replace("UT1", ispwUtLevel).replace("FT2", IspwTargetLevel).replace("UT2", ispwUtLevel).replace("FT3", IspwTargetLevel).replace("UT3", ispwUtLevel).replace("FT4", IspwTargetLevel).replace("UT4", ispwUtLevel)
-                    
-                    writeFile(file: it.path, text: contextFileContent)
-                }
-                
-            }
-
             if (BranchType == "Feature")
             {
 
@@ -55,11 +43,43 @@ node {
             }
 
             echo "Branch: " + newBranchName
+
+            dir("./")
+            {
+
+                bat(returnStdout: true, script: "git branch ${newBranchName}")
+                
+            }
+
+            contextFileList.each {
+                
+                if (!(it.name.contains('Jenkins'))){
+                    
+                    echo "Modifying: " + it.path
+                    
+                    def contextFileContent  = readFile(file: it.path)
+                    contextFileContent      = contextFileContent.replace(".FT1.", ispwFtLevelRepl).replace(".UT1.", ispwUtLevelRepl).replace(".FT2.", ispwFtLevelRepl).replace(".UT2.", ispwUtLevelRepl).replace(".FT3.", ispwFtLevelRepl).replace(".UT3.", ispwUtLevelRepl).replace(".FT4.", ispwFtLevelRepl).replace(".UT4.", ispwUtLevelRepl)
+                    
+                    writeFile(file: it.path, text: contextFileContent)
+                }
+                
+            }
         }
         else{
 
             echo "delete not implemented yet"
 
         }
+    }
+
+    stage("Branch Action"){
+
+        dir("./")
+        {
+            def message = '"Inital Setup new Branch"'
+            bat(returnStdout: true, script: 'git commit -a -m ' + message)
+            bat(returnStdout: true, script: "git push  https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} HEAD:main -f")
+        }
+
     }
 }
