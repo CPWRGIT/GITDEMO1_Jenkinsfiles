@@ -1,6 +1,8 @@
-def ispwUtLevel = "UT" + IspwTargetLevel.substring(2, 3)
-def gitRepo     = "https://github.com/CPWRGIT/${HostUserId}.git"
+def ispwUtLevel     = "UT" + IspwTargetLevel.substring(2, 3)
+def gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
 def newBranchName
+
+HostUserId          = HostUserId.toUpperCase()
 
 node {
     
@@ -23,6 +25,7 @@ node {
     def contextFileList = findFiles(glob: '**/Tests/**/*.context')
     
     stage("Modify .context files"){
+
         if(BranchAction == 'Create'){
 
             contextFileList.each {
@@ -38,18 +41,24 @@ node {
                 
             }
 
-            if (BranchType = "Feature")
+            if (BranchType == "Feature")
             {
+
                 newBranchName = 'feature/' + IspwTargetLevel + '/' + branchName
+
             }
             else{
+
                 newBranchName = 'bugfix'
+
             }
 
             echo "Branch: " + newBranchName
         }
         else{
+
             echo "delete not implemented yet"
+
         }
     }
 }
