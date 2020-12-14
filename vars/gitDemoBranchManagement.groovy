@@ -2,7 +2,7 @@ def ispwFtLevelRepl = "." + IspwTargetLevel + "."
 def ispwUtLevelRepl = ".UT" + IspwTargetLevel.substring(2, 3) + "."
 
 def gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
-def newBranchName
+def newBranchName   = 'feature/' + IspwTargetLevel + '/' + branchName
 def consoleMessage
 
 HostUserId          = HostUserId.toUpperCase()
@@ -22,6 +22,7 @@ node {
                 $class: 'GitSCM', 
                 branches: [[name: '*/development']], 
                 doGenerateSubmoduleConfigurations: false, 
+                extensions: [[$class: 'LocalBranch', localBranch: newBranchName]]
                 extensions: [], 
                 submoduleCfg: [], 
                 userRemoteConfigs: [[url: gitRepo]]
@@ -49,14 +50,6 @@ node {
 
             echo "Branch: " + newBranchName
 
-            dir("./")
-            {
-
-                consoleMessage = bat(returnStdout: true, script: "git branch ${newBranchName}")
-                echo consoleMessage
-                
-            }
-
             contextFileList.each {
                 
                 if (!(it.name.contains('Jenkins'))){
@@ -67,8 +60,7 @@ node {
                     contextFileContent      = contextFileContent.replace(".FT1.", ispwFtLevelRepl).replace(".UT1.", ispwUtLevelRepl).replace(".FT2.", ispwFtLevelRepl).replace(".UT2.", ispwUtLevelRepl).replace(".FT3.", ispwFtLevelRepl).replace(".UT3.", ispwUtLevelRepl).replace(".FT4.", ispwFtLevelRepl).replace(".UT4.", ispwUtLevelRepl)
                     
                     writeFile(file: it.path, text: contextFileContent)
-                }
-                
+                }                
             }
         }
         else{
