@@ -7,7 +7,11 @@ def newBranchName
 HostUserId          = HostUserId.toUpperCase()
 
 node {
-    
+
+    dir("./"){
+        deleteDir()
+    }
+
     stage("Checkout"){
 
         checkout(
