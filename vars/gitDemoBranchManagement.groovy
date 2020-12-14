@@ -22,8 +22,7 @@ node {
                 $class: 'GitSCM', 
                 branches: [[name: '*/development']], 
                 doGenerateSubmoduleConfigurations: false, 
-                extensions: [[$class: 'LocalBranch', localBranch: newBranchName]]
-                extensions: [], 
+                extensions: [[$class: 'LocalBranch', localBranch: newBranchName]],
                 submoduleCfg: [], 
                 userRemoteConfigs: [[url: gitRepo]]
             ]
