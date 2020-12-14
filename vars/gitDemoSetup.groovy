@@ -132,7 +132,7 @@ node{
             bat(returnStdout: true, script: 'git branch development')
             bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/development:refs/heads/development -f")
 
-            bat(returnStdout: true, script: 'git branch feature/FT1_demo_feature')
+            bat(returnStdout: true, script: 'git branch feature/FT1/demo_feature')
             bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/feature/FT1_demo_feature:refs/heads/feature/FT1_demo_feature -f")
             
         }
