@@ -81,6 +81,7 @@ node {
         dir("./")
         {
             def message = '"Inital Setup new Branch"'
+            bat(returnStdout: true, script: 'git status)
             bat(returnStdout: true, script: 'git commit -a -m ' + message)
             bat(returnStdout: true, script: "git push  https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/${newBranchName}:refs/heads/${newBranchName} -f")
         }
