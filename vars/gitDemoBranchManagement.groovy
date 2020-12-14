@@ -3,6 +3,7 @@ def ispwUtLevelRepl = ".UT" + IspwTargetLevel.substring(2, 3) + "."
 
 def gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
 def newBranchName
+def consoleMessage
 
 HostUserId          = HostUserId.toUpperCase()
 
@@ -51,7 +52,8 @@ node {
             dir("./")
             {
 
-                bat(returnStdout: true, script: "git branch ${newBranchName}")
+                consoleMessage = bat(returnStdout: true, script: "git branch ${newBranchName}")
+                echo consoleMessage
                 
             }
 
@@ -81,9 +83,12 @@ node {
         dir("./")
         {
             def message = '"Inital Setup new Branch"'
-            bat(returnStdout: true, script: 'git status')
-            bat(returnStdout: true, script: 'git commit -a -m ' + message)
-            bat(returnStdout: true, script: "git push  https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/${newBranchName}:refs/heads/${newBranchName} -f")
+            consoleMessage = bat(returnStdout: true, script: 'git status')
+            echo consoleMessage
+            consoleMessage = bat(returnStdout: true, script: 'git commit -a -m ' + message)
+            echo consoleMessage
+            consoleMessage = bat(returnStdout: true, script: "git push  https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/${newBranchName}:refs/heads/${newBranchName} -f")
+            echo consoleMessage
         }
 
     }
