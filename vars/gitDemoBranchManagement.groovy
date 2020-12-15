@@ -19,7 +19,7 @@ node {
 
         }
 
-        if(BranchName = ''){
+        if(BranchName == ''){
 
             error "[ERROR] - The Branch Name needs to be specified. Aborting execution."
 
