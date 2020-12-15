@@ -163,7 +163,7 @@ node {
 
             dir("./")
             {
-                echo "[INFO] - Creating branch " + localBranchName + "on remote repository."
+                echo "[INFO] - Creating branch " + localBranchName + " on remote repository."
 
                 def message     = '"Inital Setup for Branch ' + localBranchName + '"'
                 consoleMessage  = bat(returnStdout: true, script: 'git status')
@@ -178,13 +178,13 @@ node {
 
             dir("./")
             {
-                echo "[INFO] - Creating branch " + localBranchName + "on remote repository."
+                echo "[INFO] - Deleting branch " + localBranchName + " from remote repository."
 
                 def message     = '"Delete Branch ' + localBranchName + '"'
-                consoleMessage  = bat(returnStdout: true, script: "git branch -d ${localBranchName}")
+                /*consoleMessage  = bat(returnStdout: true, script: "git branch -d ${localBranchName}")
                 echo consoleMessage
                 consoleMessage  = bat(returnStdout: true, script: 'git commit -a -m ' + message)
-                echo consoleMessage
+                echo consoleMessage*/
                 consoleMessage  = bat(returnStdout: true, script: "git push  https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} --delete refs/heads/${localBranchName} -f")
                 echo consoleMessage
             }
