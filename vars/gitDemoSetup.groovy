@@ -47,7 +47,7 @@ node{
         )
     }
 
-    stage("Modify jeninsfile, ispwconfig, properties"){
+    stage("Modify jenkinsfile, ispwconfig, properties"){
 
         def filesStringsList = [
             [jenkinsfile, 
@@ -133,7 +133,7 @@ node{
             bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/development:refs/heads/development -f")
 
             bat(returnStdout: true, script: 'git branch feature/FT1/demo_feature')
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/feature/FT1_demo_feature:refs/heads/feature/FT1_demo_feature -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/feature/FT1/demo_feature:refs/heads/feature/FT1/demo_feature -f")
             
         }
     }
