@@ -170,7 +170,7 @@ node {
                 echo consoleMessage
                 consoleMessage  = bat(returnStdout: true, script: 'git commit -a -m ' + message)
                 echo consoleMessage
-                consoleMessage  = bat(returnStdout: true, script: "git push  https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/${localBranchName}:refs/heads/${localBranchName} -f")
+                consoleMessage  = bat(returnStdout: true, script: "git push https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/${localBranchName}:refs/heads/${localBranchName} -f")
                 echo consoleMessage
             }
         }
@@ -181,11 +181,7 @@ node {
                 echo "[INFO] - Deleting branch " + localBranchName + " from remote repository."
 
                 def message     = '"Delete Branch ' + localBranchName + '"'
-                /*consoleMessage  = bat(returnStdout: true, script: "git branch -d ${localBranchName}")
-                echo consoleMessage
-                consoleMessage  = bat(returnStdout: true, script: 'git commit -a -m ' + message)
-                echo consoleMessage*/
-                consoleMessage  = bat(returnStdout: true, script: "git push  https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} --delete refs/heads/${localBranchName} -f")
+                consoleMessage  = bat(returnStdout: true, script: "git push https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} --delete refs/heads/${localBranchName} -f")
                 echo consoleMessage
             }
 
