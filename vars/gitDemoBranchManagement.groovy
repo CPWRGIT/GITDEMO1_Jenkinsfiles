@@ -63,7 +63,7 @@ node {
 
         }
 
-        def gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
+        gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
 
         dir("./"){
             deleteDir()
