@@ -42,15 +42,21 @@ node {
             if(BranchType == "Feature"){
                 
                 if(!(IspwTargetLevel.contains("FT"))){
+
                     error "[ERROR] - The Branch Name needs to be specified. Aborting execution."
+                
                 }
                 else
                 {
-                    localBranchName = 'feature/' + IspwTargetLevel + '/' + branchName
+                
+                    localBranchName = 'feature/' + IspwTargetLevel + '/' + BranchName
+                
                 }
             }
             else{
+                
                 localBranchName = 'bugfix'
+            
             }
         }
         else{
@@ -58,6 +64,11 @@ node {
             if(!(BranchName.contains('feature/FT'))){
 
                 error "[ERROR] - For a DELETE Action you need to specify the full Branch Name."
+
+            }
+            else{
+
+                localBranchName = branchName
 
             }
 
@@ -72,12 +83,25 @@ node {
 
     stage("Checkout"){
 
+        def sourceBranchName
+
+        if(BranchAction == "Create"){
+
+            sourceBranchName = 'development'
+
+        }
+        else{
+
+            sourceBranchName = localBranchName
+
+        }
+
         checkout(
             changelog: false, 
             poll: false, 
             scm: [
                 $class: 'GitSCM', 
-                branches: [[name: '*/development']], 
+                branches: [[name: '*/' + sourceBranchName]], 
                 doGenerateSubmoduleConfigurations: false, 
                 extensions: [[$class: 'LocalBranch', localBranch: localBranchName]],
                 submoduleCfg: [], 
@@ -95,7 +119,7 @@ node {
             if (BranchType == "Feature")
             {
 
-                localBranchName = 'feature/' + IspwTargetLevel + '/' + branchName
+                localBranchName = 'feature/' + IspwTargetLevel + '/' + BranchName
 
             }
             else{
@@ -122,7 +146,7 @@ node {
         }
         else{
 
-            echo "Deleting branch. No files to modify."
+            echo "[INFO] - Deleting branch. No files to modify."
 
         }
     }
