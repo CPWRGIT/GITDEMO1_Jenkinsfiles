@@ -13,6 +13,12 @@ node {
 
         HostUserId          = HostUserId.toUpperCase()
 
+        if(BranchAction == "<select>"){
+
+            error "[ERROR] - You need to select a Branch Action. Aborting execution."
+
+        }
+
         if (HostUserId == ''){
 
             error "[ERROR] - The Host User Id needs to be specified. Aborting execution."
