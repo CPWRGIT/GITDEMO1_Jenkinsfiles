@@ -261,7 +261,8 @@ def determinePipelineBehavior(branchName, buildNumber){
         skipReason      = "[Info] - First build for branch '${branchName}'."
     }    
     else if (executionBranch.contains("feature")) {
-        executionType   = EXECUTION_TYPE_VT_ONLY
+        //executionType   = EXECUTION_TYPE_VT_ONLY
+        executionType   = EXECUTION_TYPE_BOTH
         skipReason      = "[Info] - '${branchName}' is a feature branch."
     }
     else if (executionBranch.contains("bugfix")) {
