@@ -199,8 +199,9 @@ def initialize(execParms){
     //*********************************************************************************
 
     ispwConfigFile              = synchConfig.mfProjectRootFolder + '/ispwconfig.yml'
-    tttVtRootFolder             = synchConfig.mfProjectRootFolder + synchConfig.tttVtFolder
-    tttNvtRootFolder            = synchConfig.mfProjectRootFolder + synchConfig.tttNvtFolder
+    tttRootFolder               = synchConfig.mfProjectRootFolder + synchConfig.tttRootFolder
+    tttVtFolder                 = tttRootFolder + synchConfig.tttVtFolder
+    tttNvtFolder                = tttRootFolder + synchConfig.tttNvtFolder
     ccSources                   = synchConfig.mfProjectRootFolder + synchConfig.mfProjectSourcesFolder
     sonarCobolFolder            = synchConfig.mfProjectRootFolder + synchConfig.mfProjectSourcesFolder
     sonarCopybookFolder         = synchConfig.mfProjectRootFolder + synchConfig.mfProjectSourcesFolder
@@ -433,7 +434,7 @@ def runUnitTests() {
             environmentId:                      synchConfig.tttVtEnvironmentId,
             localConfig:                        true, 
             localConfigLocation:                tttConfigFolder, 
-            folderPath:                         tttVtRootFolder, 
+            folderPath:                         tttVtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
             jsonFile:                           changedProgramsFile,
@@ -470,7 +471,7 @@ def runIntegrationTests(){
             environmentId:                      synchConfig.tttNvtBatchEnvironmentId, 
             localConfig:                        false,
             localConfigLocation:                tttConfigFolder, 
-            folderPath:                         tttNvtRootFolder, 
+            folderPath:                         tttNvtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
             jsonFile:                           changedProgramsFile,
@@ -494,7 +495,7 @@ def runIntegrationTests(){
             environmentId:                      synchConfig.tttNvtCicsEnvironmentId, 
             localConfig:                        false,
             localConfigLocation:                tttConfigFolder, 
-            folderPath:                         tttNvtRootFolder, 
+            folderPath:                         tttNvtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
             jsonFile:                           changedProgramsFile,
