@@ -565,7 +565,7 @@ def runSonarScan() {
     def sonarCodeCoverageParm   = ''
     def scannerHome             = tool synchConfig.sonarScanner            
 
-    if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
+    if(executionType == EXECUTION_TYPE_VT_ONLY | executionType == EXECUTION_TYPE_BOTH){
 
         sonarTestResults        = getSonarResults(sonarResultsFileList)
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
@@ -601,14 +601,16 @@ def getSonarResults(resultsFileList){
     resultsFileList.each{
 
         def resultsFileContent
+        def resultsFileName = it
         resultsFileContent  = readFile(file: sonarResultsFolder + '/' + it)
         resultsFileContent  = resultsFileContent.substring(resultsFileContent.indexOf('\n') + 1)
         def testExecutions  = new XmlSlurper().parseText(resultsFileContent)
-
+        /* For now - only pass VT sonar results to sonar */
         testExecutions.file.each {
-
-            resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
-
+            
+            if(resultsFileName.contains('.vt.')){
+                resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
+            }
         }
     }
 
