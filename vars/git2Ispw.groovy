@@ -263,8 +263,7 @@ def determinePipelineBehavior(branchName, buildNumber){
         skipReason      = "[Info] - First build for branch '${branchName}'."
     }    
     else if (executionBranch.contains("feature")) {
-        //executionType   = EXECUTION_TYPE_VT_ONLY
-        executionType   = EXECUTION_TYPE_BOTH
+        executionType   = EXECUTION_TYPE_VT_ONLY
         skipReason      = "[Info] - '${branchName}' is a feature branch."
     }
     else if (executionBranch.contains("bugfix")) {
@@ -577,19 +576,19 @@ def runSonarScan() {
     withSonarQubeEnv(synchConfig.sonarServer) {
 
         bat '"' + scannerHome + '/bin/sonar-scanner"' + 
-        ' -Dsonar.branch.name=' + executionBranch +
-        ' -Dsonar.projectKey=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application + 
-        ' -Dsonar.projectName=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application +
-        ' -Dsonar.projectVersion=1.0' +
-        ' -Dsonar.sources=' + sonarCobolFolder + 
-        ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
-        ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result' + 
-        ' -Dsonar.cobol.copy.suffixes=cpy' +
-        sonarTestsParm +
-        sonarTestReportsParm +
-        sonarCodeCoverageParm +
-        ' -Dsonar.ws.timeout=480' +
-        ' -Dsonar.sourceEncoding=UTF-8'
+            ' -Dsonar.branch.name=' + executionBranch +
+            ' -Dsonar.projectKey=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application + 
+            ' -Dsonar.projectName=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application +
+            ' -Dsonar.projectVersion=1.0' +
+            ' -Dsonar.sources=' + sonarCobolFolder + 
+            ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
+            ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result' + 
+            ' -Dsonar.cobol.copy.suffixes=cpy' +
+            sonarTestsParm +
+            sonarTestReportsParm +
+            sonarCodeCoverageParm +
+            ' -Dsonar.ws.timeout=480' +
+            ' -Dsonar.sourceEncoding=UTF-8'
 
     }
 }
