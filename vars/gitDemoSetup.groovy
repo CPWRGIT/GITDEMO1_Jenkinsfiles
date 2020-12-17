@@ -104,6 +104,27 @@ node{
         }
     }
 
+    stage("Modify NVT scenario"){
+        
+        def scenarioFiles = findFiles(glob: '**/*.scenario')
+
+        def stringsList = [
+                ['<Variable id="userid">${userid}</Variable>', '<Variable id="userid">' + HostUserId + '</Variable>']
+                ['<Variable id="ispw_app">${ispw_app}</Variable>', '<Variable id="ispw_app">' + IspwApp + '</Variable>']
+                ['<Variable id="ispw_level">${ispw_level}</Variable>', '<Variable id="ispw_level">' + DefaultFtLevel + '</Variable>']
+            ]
+
+        scenarioFiles.each{
+
+            println "Modfying file: " + it.path.toString()
+
+            def content = readFile(file: it.path)
+            
+            replaceFileContent(it.path, stringsList)            
+
+        }
+    }
+
     stage("Create Sonar and configure"){
 
         if(checkForProject(sonarProjectName, sonarServerUrl, sonarQubeToken) == "NOT FOUND") {
