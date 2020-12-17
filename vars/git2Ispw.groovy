@@ -199,10 +199,12 @@ def initialize(execParms){
     //*********************************************************************************
 
     ispwConfigFile              = synchConfig.mfProjectRootFolder + '/ispwconfig.yml'
-    tttRootFolder               = synchConfig.mfProjectRootFolder + '/Tests'
-    ccSources                   = synchConfig.mfProjectRootFolder + '/Sources'
-    sonarCobolFolder            = synchConfig.mfProjectRootFolder + '/Sources'
-    sonarCopybookFolder         = synchConfig.mfProjectRootFolder + '/Sources'
+    tttRootFolder               = synchConfig.mfProjectRootFolder + synchConfig.tttRootFolder
+    tttVtFolder                 = tttRootFolder + synchConfig.tttVtFolder
+    tttNvtFolder                = tttRootFolder + synchConfig.tttNvtFolder
+    ccSources                   = synchConfig.mfProjectRootFolder + synchConfig.mfProjectSourcesFolder
+    sonarCobolFolder            = synchConfig.mfProjectRootFolder + synchConfig.mfProjectSourcesFolder
+    sonarCopybookFolder         = synchConfig.mfProjectRootFolder + synchConfig.mfProjectSourcesFolder
 
     //*********************************************************************************
     // Read ispwconfig.yml
@@ -431,7 +433,7 @@ def runUnitTests() {
             environmentId:                      synchConfig.tttVtEnvironmentId,
             localConfig:                        true, 
             localConfigLocation:                tttConfigFolder, 
-            folderPath:                         tttRootFolder, 
+            folderPath:                         tttVtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
             jsonFile:                           changedProgramsFile,
@@ -468,7 +470,7 @@ def runIntegrationTests(){
             environmentId:                      synchConfig.tttNvtBatchEnvironmentId, 
             localConfig:                        false,
             localConfigLocation:                tttConfigFolder, 
-            folderPath:                         tttRootFolder, 
+            folderPath:                         tttNvtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
             jsonFile:                           changedProgramsFile,
@@ -492,7 +494,7 @@ def runIntegrationTests(){
             environmentId:                      synchConfig.tttNvtCicsEnvironmentId, 
             localConfig:                        false,
             localConfigLocation:                tttConfigFolder, 
-            folderPath:                         tttRootFolder, 
+            folderPath:                         tttNvtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
             jsonFile:                           changedProgramsFile,
@@ -562,7 +564,7 @@ def runSonarScan() {
     def sonarCodeCoverageParm   = ''
     def scannerHome             = tool synchConfig.sonarScanner            
 
-    if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
+    if(executionType == EXECUTION_TYPE_VT_ONLY | executionType == EXECUTION_TYPE_BOTH){
 
         sonarTestResults        = getSonarResults(sonarResultsFileList)
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
@@ -574,19 +576,19 @@ def runSonarScan() {
     withSonarQubeEnv(synchConfig.sonarServer) {
 
         bat '"' + scannerHome + '/bin/sonar-scanner"' + 
-        ' -Dsonar.branch.name=' + executionBranch +
-        ' -Dsonar.projectKey=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application + 
-        ' -Dsonar.projectName=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application +
-        ' -Dsonar.projectVersion=1.0' +
-        ' -Dsonar.sources=' + sonarCobolFolder + 
-        ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
-        ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result' + 
-        ' -Dsonar.cobol.copy.suffixes=cpy' +
-        sonarTestsParm +
-        sonarTestReportsParm +
-        sonarCodeCoverageParm +
-        ' -Dsonar.ws.timeout=480' +
-        ' -Dsonar.sourceEncoding=UTF-8'
+            ' -Dsonar.branch.name=' + executionBranch +
+            ' -Dsonar.projectKey=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application + 
+            ' -Dsonar.projectName=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application +
+            ' -Dsonar.projectVersion=1.0' +
+            ' -Dsonar.sources=' + sonarCobolFolder + 
+            ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
+            ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result' + 
+            ' -Dsonar.cobol.copy.suffixes=cpy' +
+            sonarTestsParm +
+            sonarTestReportsParm +
+            sonarCodeCoverageParm +
+            ' -Dsonar.ws.timeout=480' +
+            ' -Dsonar.sourceEncoding=UTF-8'
 
     }
 }
@@ -598,14 +600,16 @@ def getSonarResults(resultsFileList){
     resultsFileList.each{
 
         def resultsFileContent
+        def resultsFileName = it
         resultsFileContent  = readFile(file: sonarResultsFolder + '/' + it)
         resultsFileContent  = resultsFileContent.substring(resultsFileContent.indexOf('\n') + 1)
         def testExecutions  = new XmlSlurper().parseText(resultsFileContent)
-
+        /* For now - only pass VT sonar results to sonar */
         testExecutions.file.each {
-
-            resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
-
+            
+            if(resultsFileName.contains('.vt.')){
+                resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
+            }
         }
     }
 
