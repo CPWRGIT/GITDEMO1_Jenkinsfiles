@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurper
 
 String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
-
+String hostName
 String jenkinsfile              = "./Jenkinsfile.jenkinsfile"
 String ispwConfigFile           = "./InsuranceCore/ispwconfig.yml"
 String projectSettingsFile      = "./InsuranceCore/.settings/InsuranceCore.prefs"
@@ -11,6 +11,7 @@ String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
 
 String sonarProjectName
+String gitHubRepo
 
 node{
 
@@ -20,7 +21,21 @@ node{
     DefaultUtLevel      = DefaultUtLevel.toUpperCase()
     DefaultFtLevel      = DefaultFtLevel.toUpperCase()
 
-    sonarProjectName    = "GITDEMO1_${IspwApp}"
+    if (TargetEnvironment == 'CWCC'){
+
+        hostName            = 'cwcc.compuware.com'
+        sonarProjectName    = "GITDEMO1_${IspwApp}"
+        gitHubRepo          = HostUserId
+
+    }
+    else
+    {
+
+        hostName            = 'cwc2.nasa.cpwr.corp'
+        sonarProjectName    = "GITDEMO1_CWC2_${IspwApp}"
+        gitHubRepo          = HostUserId + '_CWC2'
+
+    }
 
     dir("./"){
         deleteDir()
@@ -39,7 +54,7 @@ node{
                 submoduleCfg: [], 
                 userRemoteConfigs: [[
                         credentialsId: 'GitCredentialsId', 
-                        url: "https://github.com/CPWRGIT/${HostUserId}.git"
+                        url: "https://github.com/CPWRGIT/${gitHubRepo}.git"
                 ]]
             ]
         )
@@ -58,7 +73,10 @@ node{
                 ],
             ],
             [ispwConfigFile,
-                [['${ispw_app}', IspwApp]]
+                [
+                    ['${ispw_app}', IspwApp],
+                    ['${host}', hostName]
+                ]
             ],
             [projectSettingsFile,
                 [
@@ -124,13 +142,13 @@ node{
         dir("./")
         {
             bat(returnStdout: true, script: 'git commit -a -m ' + message)
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} HEAD:main -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
             
             bat(returnStdout: true, script: 'git branch development')
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/development:refs/heads/development -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
 
             bat(returnStdout: true, script: 'git branch feature/FT1/demo_feature')
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/feature/FT1/demo_feature:refs/heads/feature/FT1/demo_feature -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/FT1/demo_feature:refs/heads/feature/FT1/demo_feature -f")
             
         }
     }
