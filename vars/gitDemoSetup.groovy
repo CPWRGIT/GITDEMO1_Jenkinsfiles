@@ -1,7 +1,8 @@
 import groovy.json.JsonSlurper
 
-String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
 String hostName
+String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
+
 String jenkinsfile              = "./Jenkinsfile.jenkinsfile"
 String ispwConfigFile           = "./InsuranceCore/ispwconfig.yml"
 String projectSettingsFile      = "./InsuranceCore/.settings/InsuranceCore.prefs"
