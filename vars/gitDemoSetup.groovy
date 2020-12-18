@@ -14,8 +14,6 @@ String sonarProjectName
 
 node{
 
-    WindowsProfile      = WindowsProfile.replace('\\','/')
-
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
     CodeCoverageRepo    = CodeCoverageRepo.toUpperCase()
