@@ -64,8 +64,7 @@ node{
             ],
             [projectSettingsFile,
                 [
-                    ['${mf_userid}', HostUserId],
-                    ['${windows_profile}', WindowsProfile]
+                    ['${mf_userid}', HostUserId]
                 ]
             ]
         ]
