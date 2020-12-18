@@ -54,7 +54,7 @@ node{
                 extensions: [], 
                 submoduleCfg: [], 
                 userRemoteConfigs: [[
-                        credentialsId: 'GitCredentialsId', 
+                        credentialsId: GitCredentialsId, 
                         url: "https://github.com/CPWRGIT/${gitHubRepo}.git"
                 ]]
             ]
@@ -71,11 +71,11 @@ node{
                     ['${mf_userid}', HostUserId],
                     ['${gitCredentialsId}', GitCredentialsId],
                     ['${codeCoverageRepo}', CodeCoverageRepo]
-                ],
+                ]
             ],
             [ispwConfigFile,
                 [
-                    ['${ispw_app}', IspwApp],
+                    ['${ispw_app}', IspwApp], 
                     ['${host}', hostName]
                 ]
             ],
