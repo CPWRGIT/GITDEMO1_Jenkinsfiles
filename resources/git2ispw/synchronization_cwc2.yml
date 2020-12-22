@@ -1,0 +1,50 @@
+branchInfo:
+  feature/FT1:
+    ispwLevel:            FT1
+    mapRule:              per-branch
+  feature/FT2:
+    ispwLevel:            FT2
+    mapRule:              per-branch
+  feature/FT3:
+    ispwLevel:            FT3
+    mapRule:              per-branch
+  feature/FT4:
+    ispwLevel:            FT4
+    mapRule:              per-branch
+  bugfix:
+    ispwLevel:            HFIX
+    mapRule:              per-branch
+  development:
+    ispwLevel:            DEVL
+    mapRule:              per-branch
+  main:
+    ispwLevel:            MAIN
+    mapRule:              per-branch
+cesUrl:                   http://cwc2.nasa.cpwr.corp:2020
+hciConnectionId:          38e854b0-f7d3-4a8f-bf31-2d8bfac3dbd4
+mfProjectRootFolder:      './InsuranceCore'
+mfProjectSourcesFolder:   '/Sources'
+tttVtEnvironmentId:       5cee98c2d3142c1f90a4976d
+tttRootFolder:            '/Tests'
+tttVtFolder:              '/Unit'
+tttNvtFolder:             '/Integration'
+tttNvtBatchEnvironmentId: 'CWC2 - Batch'
+tttNvtCicsEnvironmentId:  'CWC2 - CICS'
+tttConfigFolder:          'git2ispw/TttConfigurations'
+loadLibraryPattern:       'SALESSUP.<ispwApplication>.<ispwLevel>.LOAD'
+ccDdioOverrides:
+  - SALESSUP.<ispwApplication>.HFIX.LOAD,
+  - SALESSUP.<ispwApplication>.UT1.LOAD,
+  - SALESSUP.<ispwApplication>.UT2.LOAD,
+  - SALESSUP.<ispwApplication>.UT3.LOAD,
+  - SALESSUP.<ispwApplication>.UT4.LOAD,
+  - SALESSUP.<ispwApplication>.FT1.LOAD,
+  - SALESSUP.<ispwApplication>.FT2.LOAD,
+  - SALESSUP.<ispwApplication>.FT3.LOAD,
+  - SALESSUP.<ispwApplication>.FT4.LOAD,  
+  - SALESSUP.<ispwApplication>.DEVL.LOAD,
+  - SALESSUP.<ispwApplication>.MAIN.LOAD,
+  - SALESSUP.<ispwApplication>.PROD.LOAD  
+ccThreshold:        '70'
+sonarScanner:       scanner
+sonarServer:        localhost
