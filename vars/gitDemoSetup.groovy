@@ -10,9 +10,10 @@ String projectSettingsFile      = "./InsuranceCore/.settings/InsuranceCore.prefs
 String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
 String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
-
 String sonarProjectName
+
 String gitHubRepo
+String gitHubToken              = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
 
 node{
 
@@ -40,6 +41,74 @@ node{
 
     dir("./"){
         deleteDir()
+    }
+
+    stage("Check Git Repository"){
+
+        try{
+
+            def response = httpRequest(
+
+                consoleLogResponseBody: true, 
+                customHeaders:          [
+                    [maskValue: false,  name: 'content-type',   value: 'application/json'], 
+                    [maskValue: true,   name: 'authorization',  value: gitHubToken], 
+                    [maskValue: false,  name: 'accept',         value: 'application/vnd.github.v3+json'], 
+                    [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
+                ], 
+                ignoreSslErrors:        true, 
+                url:                    'https://api.github.com/repos/CPWRGIT/' + gitHubRepo, 
+                validResponseCodes:     '200,404', 
+                wrapAsMultipart:        false
+
+            )
+
+            if(response.status == 200){
+
+                error "[Error] - The repository ${gitHubRepo} already exists. Cannot create again.\n"
+
+            }
+
+        }
+        catch(exception){
+
+            error "[Error] - " + exception.toString() + ". See previous log messages to determine cause.\n"
+
+        }
+    }
+
+    stage("Create Git Repository"){
+
+        try{
+
+            def requestBody = '''{
+                    "owner":    "CPWRGIT",
+                    "name":     "''' + gitHubRepo + '''",
+                    "private":  false
+                }'''
+
+            httpRequest(
+                consoleLogResponseBody:     true, 
+                customHeaders:              [
+                    [maskValue: false,  name: 'content-type',   value: 'application/json'], 
+                    [maskValue: true,   name: 'authorization',  value: 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'], 
+                    [maskValue: false,  name: 'accept',         value: 'application/vnd.github.baptiste-preview+json'], 
+                    [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
+                ], 
+                httpMode:                   'POST', 
+                ignoreSslErrors:            true, 
+                requestBody:                requestBody, 
+                url:                        'https://api.github.com/repos/CPWRGIT/' + repoTemplate + '/generate', 
+                validResponseCodes:         '201', 
+                wrapAsMultipart:            false
+            )
+
+        }
+        catch(exception){
+
+            error "[Error] - Unexpected http response code. " + exception.toString() + ". See previous log messages to determine cause.\n"
+        
+        }
     }
 
     stage("Clone Git repository"){
