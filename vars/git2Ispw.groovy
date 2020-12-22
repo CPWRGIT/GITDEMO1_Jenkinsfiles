@@ -62,7 +62,7 @@ def call(Map execParms){
     node {
 
         stage ('Checkout and initialize') {
-            // Clear workspace
+
             dir('./') {
                 deleteDir()
             }
@@ -242,7 +242,7 @@ def initialize(execParms){
     /*synchConfig.ccDdioOverrides.each {
         ccDdioOverrides = ccDdioOverrides + it.toString().replace('<ispwApplication>', ispwConfig.ispwApplication.application)
     }*/
-    ccDdioOverrides = tttVtExecutionLoad
+    ccDdioOverrides             = tttVtExecutionLoad
 
     ispwImpactScanJcl           = buildImpactScanJcl(ispwImpactScanFile, ispwConfig.ispwApplication.runtimeConfig, ispwConfig.ispwApplication.application, ispwTargetLevel)
 
