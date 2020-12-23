@@ -124,8 +124,7 @@ node{
                 extensions: [], 
                 submoduleCfg: [], 
                 userRemoteConfigs: [[
-                        credentialsId: GitCredentialsId, 
-                        url: "https://github.com/CPWRGIT/${gitHubRepo}.git"
+                    url: "https://github.com/CPWRGIT/${gitHubRepo}.git"
                 ]]
             ]
         )
