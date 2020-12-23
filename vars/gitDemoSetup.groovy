@@ -112,6 +112,8 @@ node{
         }
     }
 
+    sleep 30
+
     stage("Clone Git repository"){
         
         checkout(
