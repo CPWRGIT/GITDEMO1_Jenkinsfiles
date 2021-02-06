@@ -268,7 +268,7 @@ def initialize(execParms){
     // Build paths to subfolders of the project root
     //*********************************************************************************
 
-    ispwConfigFile              = synchConfig.mfProjectRootFolder + '/ispwconfig.yml'
+    ispwConfigFile              = synchConfig.mfProjectRootFolder + 'ispwconfig.yml'
     tttRootFolder               = synchConfig.mfProjectRootFolder + synchConfig.tttRootFolder
     tttVtFolder                 = tttRootFolder + synchConfig.tttVtFolder
     tttNvtFolder                = tttRootFolder + synchConfig.tttNvtFolder
@@ -425,7 +425,7 @@ def runMainframeLoad() {
             stream:             ispwConfig.ispwApplication.stream,
             app:                ispwConfig.ispwApplication.application, 
             branchMapping:      branchMappingString,
-            //ispwConfigPath:     ispwConfigFile, 
+            ispwConfigPath:     ispwConfigFile, 
             gitCredentialsId:   pipelineParms.gitCredentialsId, 
             gitRepoUrl:         pipelineParms.gitRepoUrl
         )
