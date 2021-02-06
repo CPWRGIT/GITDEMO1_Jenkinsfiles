@@ -425,7 +425,7 @@ def runMainframeLoad() {
             stream:             ispwConfig.ispwApplication.stream,
             app:                ispwConfig.ispwApplication.application, 
             branchMapping:      branchMappingString,
-            ispwConfigPath:     ispwConfigFile, 
+            //ispwConfigPath:     ispwConfigFile, 
             gitCredentialsId:   pipelineParms.gitCredentialsId, 
             gitRepoUrl:         pipelineParms.gitRepoUrl
         )
@@ -514,7 +514,6 @@ def runUnitTests() {
             collectCCSystem:                    ccSystemId,
             collectCCTestID:                    ccTestId,
             clearCodeCoverage:                  false,
-        //    ccThreshold:                        synchConfig.ccThreshold,     
             logLevel:                           'INFO'
         )
 
