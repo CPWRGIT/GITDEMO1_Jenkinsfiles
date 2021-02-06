@@ -268,7 +268,7 @@ def initialize(execParms){
     // Build paths to subfolders of the project root
     //*********************************************************************************
 
-    ispwConfigFile              = synchConfig.mfProjectRootFolder + 'ispwconfig.yml'
+    ispwConfigFile              = './ispwconfig.yml'
     tttRootFolder               = synchConfig.mfProjectRootFolder + synchConfig.tttRootFolder
     tttVtFolder                 = tttRootFolder + synchConfig.tttVtFolder
     tttNvtFolder                = tttRootFolder + synchConfig.tttNvtFolder
