@@ -268,7 +268,8 @@ def initialize(execParms){
     // Build paths to subfolders of the project root
     //*********************************************************************************
 
-    ispwConfigFile              = synchConfig.mfProjectRootFolder + '/ispwconfig.yml'
+    ispwConfigFilePath          = './'
+    ispwConfigFile              = ispwConfigFilePath + 'ispwconfig.yml'
     tttRootFolder               = synchConfig.mfProjectRootFolder + synchConfig.tttRootFolder
     tttVtFolder                 = tttRootFolder + synchConfig.tttVtFolder
     tttNvtFolder                = tttRootFolder + synchConfig.tttNvtFolder
@@ -514,7 +515,6 @@ def runUnitTests() {
             collectCCSystem:                    ccSystemId,
             collectCCTestID:                    ccTestId,
             clearCodeCoverage:                  false,
-        //    ccThreshold:                        synchConfig.ccThreshold,     
             logLevel:                           'INFO'
         )
 
