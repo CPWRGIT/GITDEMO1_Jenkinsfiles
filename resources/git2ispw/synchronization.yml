@@ -21,8 +21,7 @@ branchInfo:
     ispwLevel:            MAIN
     mapRule:              per-branch
 cesUrl:                   http://cwcc.compuware.com:2020
-#hciConnectionId:          196de681-04d7-4170-824f-09a5457c5cda
-hciConnectionId:          CWCC
+hciConnectionId:          196de681-04d7-4170-824f-09a5457c5cda
 mfProjectRootFolder:      './InsuranceCore'
 mfProjectSourcesFolder:   '/Sources'
 tttVtEnvironmentId:       5cee98c2d3142c1f90a4976d
@@ -48,5 +47,4 @@ ccDdioOverrides:
   - SALESSUP.<ispwApplication>.PROD.LOAD  
 ccThreshold:        '70'
 sonarScanner:       scanner
-sonarServer:        CWCC
-#sonarServer:        localhost
+sonarServer:        localhost
