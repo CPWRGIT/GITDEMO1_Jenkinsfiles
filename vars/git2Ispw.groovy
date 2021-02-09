@@ -500,6 +500,7 @@ def runUnitTests() {
 
         totaltest(
             serverUrl:                          synchConfig.cesUrl, 
+            serverCredentialsId:                pipelineParms.hostCredentialsId, 
             credentialsId:                      pipelineParms.hostCredentialsId, 
             environmentId:                      synchConfig.tttVtEnvironmentId,
             //localConfig:                        true, 
