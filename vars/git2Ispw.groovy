@@ -511,6 +511,7 @@ def runUnitTests() {
             jsonFile:                           changedProgramsFile,
             haltPipelineOnFailure:              false,                 
             stopIfTestFailsOrThresholdReached:  false,
+             contextVariables:                  "ispw_app=${ispwConfig.ispwApplication.application},ispw_level=${ispwTargetLevel}",
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
             collectCCSystem:                    ccSystemId,
