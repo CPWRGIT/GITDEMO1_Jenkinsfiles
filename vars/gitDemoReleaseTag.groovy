@@ -56,6 +56,13 @@ node{
 
             stdOut = bat(
                 returnStdout: true, 
+                script: "git remote set-url origin https://${GitHubUser}:${GitHubPassword}@github.com/CPWRGIT/${GitRepo}.git"
+            )
+
+            echo stdOut
+
+            stdOut = bat(
+                returnStdout: true, 
                 script: "git push origin ${tagName}"
             )
     
