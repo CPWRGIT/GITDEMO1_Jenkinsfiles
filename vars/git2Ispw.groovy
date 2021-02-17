@@ -377,6 +377,11 @@ def processBranchInfo(branchInfo, ispwApplication){
 //*********************************************************************************
 def buildImpactScanJcl(ispwImpactScanFile, runtimeConfig, application, ispwTargetLevel){
 
+echo "File: " + ispwImpactScanFile.toString()
+echo "Config: " + runtimeConfig.toString()
+echo "App: " + application.toString()
+echo "Level: " + ispwTargetLevel.toString()
+
     ispwImpactScanJcl   = libraryResource ispwImpactScanFile
 
     ispwImpactScanJcl   = ispwImpactScanJcl.replace('<runtimeConfig>', runtimeConfig)
