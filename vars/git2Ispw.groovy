@@ -554,7 +554,7 @@ def runIntegrationTests(){
 
         /* Execute batch scenarios */
         totaltest(
-            connectionId:                       synchConfig.hciConnectionId
+            connectionId:                       synchConfig.hciConnectionId,
             credentialsId:                      pipelineParms.hostCredentialsId,             
             serverUrl:                          synchConfig.cesUrl, 
             serverCredentialsId:                pipelineParms.hostCredentialsId, 
@@ -579,7 +579,7 @@ def runIntegrationTests(){
 
         /* Execute CICS scenarios */
         totaltest(
-            connectionId:                       synchConfig.hciConnectionId
+            connectionId:                       synchConfig.hciConnectionId,
             credentialsId:                      pipelineParms.hostCredentialsId,             
             serverUrl:                          synchConfig.cesUrl, 
             serverCredentialsId:                pipelineParms.hostCredentialsId, 
