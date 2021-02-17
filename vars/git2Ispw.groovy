@@ -239,6 +239,7 @@ def initialize(execParms){
     sharedLibName               = 'GITDEMO_Shared_Lib'
     synchConfigFile             = './git2ispw/synchronization.yml'
     ispwImpactScanFile          = './git2ispw/impact_scan.jcl'
+    ispwConfigFileName          = 'ispwconfig.yml'
     automaticBuildFile          = './automaticBuildParams.txt'
     changedProgramsFile         = './changedPrograms.json'
     branchMappingString         = ''
@@ -268,7 +269,7 @@ def initialize(execParms){
     // Build paths to subfolders of the project root
     //*********************************************************************************
 
-    ispwConfigFile              = synchConfig.mfProjectRootFolder + '/ispwconfig.yml'
+    ispwConfigFile              = synchConfig.mfProjectRootFolder + '/' + ispwConfigFileName
     tttRootFolder               = synchConfig.mfProjectRootFolder + synchConfig.tttRootFolder
     tttVtFolder                 = tttRootFolder + synchConfig.tttVtFolder
     tttNvtFolder                = tttRootFolder + synchConfig.tttNvtFolder
@@ -657,7 +658,7 @@ def runSonarScan() {
         //sonarTestResults        = getSonarResults(sonarResultsFileList)
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
         //sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarTestResults + '"'
-        sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarResultsFolder + sonarResultsFileVt + '"'
+        sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarResultsFolder + '/' + sonarResultsFileVt + '"'
         sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
 
     }
