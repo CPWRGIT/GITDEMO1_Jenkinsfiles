@@ -149,71 +149,7 @@ def call(Map execParms){
 
         if(BRANCH_NAME == 'main') {
 
-            def cesToken 
-            def ownerId
-
-            withCredentials(
-                [
-                    string(
-                        credentialsId:  pipelineParms.cesCredentialsId, 
-                        variable:       'cesTokenTemp'
-                    )
-                ]
-            ) 
-            {
-
-                cesToken = cesTokenTemp
-
-            }
-
-            withCredentials(
-                [
-                    string(
-                        credentialsId:  pipelineParms.hostCredentialsId, 
-                        variable:       'ownerIdTemp'
-                    )
-                ]
-            ) 
-            {
-
-                ownerId = ownerIdTemp
-
-            }
-
-            def assignmentId = getMainAssignmentId()
-
-            xlrCreateRelease(
-                releaseTitle:       "GITDEMO - Release for ${ispwConfig.ispwApplication.application}", 
-                serverCredentials:  'admin', 
-                startRelease:       true, 
-                template:           'GITDEMO_CWCC', 
-                variables: [
-                    [
-                        propertyName:   'ISPW_Application', 
-                        propertyValue:  ispwConfig.ispwApplication.application
-                    ], 
-                    [
-                        propertyName:   'ISPW_Assignment', 
-                        propertyValue:  assignmentId
-                    ], 
-                    [
-                        propertyName:   'Owner_Id', 
-                        propertyValue:  ownerId
-                    ],
-                    [
-                        propertyName:   'CES_Token', 
-                        propertyValue:  cesToken
-                    ], 
-                    [
-                        propertyName: 'Jenkins_CES_Credentials', 
-                        propertyValue: pipelineParms.cesCredentialsId
-                    ],
-                    [
-                        propertyName: 'Jenkins_Git_Credentials', 
-                        propertyValue: pipelineParms.gitCredentialsId
-                    ] 
-                ]
-            )
+            triggerXlRelease()
 
         }
     }
@@ -714,4 +650,77 @@ def getMainAssignmentId(){
 
     return automaticBuildFileContent.containerId
     
+}
+
+def triggerXlRelease(){
+
+    def cesToken 
+    def ownerId
+
+    withCredentials(
+        [
+            string(
+                credentialsId:  pipelineParms.cesCredentialsId, 
+                variable:       'cesTokenTemp'
+            )
+        ]
+    ) 
+    {
+
+        cesToken = cesTokenTemp
+
+    }
+
+    withCredentials(
+        [
+            usernamePassword(
+                credentialsId:      pipelineParms.hostCredentialsId, 
+                passwordVariable:   'pw', 
+                usernameVariable:   'ownerIdTemp'
+            )
+        ]
+    ) 
+    {
+
+        ownerId = ownerIdTemp
+
+    }
+
+    def assignmentId = getMainAssignmentId()
+
+    xlrCreateRelease(
+        releaseTitle:       "GITDEMO - Release for ${ispwConfig.ispwApplication.application}", 
+        serverCredentials:  'admin', 
+        startRelease:       true, 
+        template:           'GITDEMO_CWCC', 
+        variables: [
+            [
+                propertyName:   'ISPW_Application', 
+                propertyValue:  ispwConfig.ispwApplication.application
+            ], 
+            [
+                propertyName:   'ISPW_Assignment', 
+                propertyValue:  assignmentId
+            ], 
+            [
+                propertyName:   'Owner_Id', 
+                propertyValue:  ownerId
+            ],
+            [
+                propertyName:   'CES_Token', 
+                propertyValue:  cesToken
+            ], 
+            [
+                propertyName: 'Jenkins_CES_Credentials', 
+                propertyValue: pipelineParms.cesCredentialsId
+            ],
+            [
+                propertyName: 'Jenkins_Git_Credentials', 
+                propertyValue: pipelineParms.gitCredentialsId
+            ] 
+        ]
+    )
+
+
+
 }
