@@ -57,7 +57,7 @@ def RESULTS_FILE_NVT_CICS
 def call(Map execParms){
 
     //**********************************************************************
-    // Start of Script
+    // Start of Script 
     //**********************************************************************
     node {
 
@@ -528,7 +528,7 @@ def runUnitTests() {
             jsonFile:                           changedProgramsFile,
             haltPipelineOnFailure:              false,                 
             stopIfTestFailsOrThresholdReached:  false,
-             contextVariables:                  "ispw_app=${ispwConfig.ispwApplication.application},ispw_level=${ispwTargetLevel}",
+            //contextVariables:                  "ispw_app=${ispwConfig.ispwApplication.application},ispw_level=${ispwTargetLevel}",
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
             collectCCSystem:                    ccSystemId,
