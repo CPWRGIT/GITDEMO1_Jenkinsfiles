@@ -554,11 +554,12 @@ def runIntegrationTests(){
 
         /* Execute batch scenarios */
         totaltest(
+            connectionId:                       synchConfig.hciConnectionId
+            credentialsId:                      pipelineParms.hostCredentialsId,             
             serverUrl:                          synchConfig.cesUrl, 
-            credentialsId:                      pipelineParms.hostCredentialsId, 
+            serverCredentialsId:                pipelineParms.hostCredentialsId, 
             environmentId:                      synchConfig.tttNvtBatchEnvironmentId, 
             localConfig:                        false,
-            localConfigLocation:                tttConfigFolder, 
             folderPath:                         tttNvtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
@@ -578,11 +579,12 @@ def runIntegrationTests(){
 
         /* Execute CICS scenarios */
         totaltest(
+            connectionId:                       synchConfig.hciConnectionId
+            credentialsId:                      pipelineParms.hostCredentialsId,             
             serverUrl:                          synchConfig.cesUrl, 
-            credentialsId:                      pipelineParms.hostCredentialsId, 
+            serverCredentialsId:                pipelineParms.hostCredentialsId, 
             environmentId:                      synchConfig.tttNvtCicsEnvironmentId, 
             localConfig:                        false,
-            localConfigLocation:                tttConfigFolder, 
             folderPath:                         tttNvtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
