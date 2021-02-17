@@ -143,8 +143,7 @@ def call(Map execParms){
             
         stage("SonarQube Scan") {
 
-            echo "Sonar Scan mocked for now"
-//            runSonarScan()
+            runSonarScan()
 
         }   
 
@@ -655,9 +654,10 @@ def runSonarScan() {
 
     if(executionType == EXECUTION_TYPE_VT_ONLY | executionType == EXECUTION_TYPE_BOTH){
 
-        sonarTestResults        = getSonarResults(sonarResultsFileList)
+        //sonarTestResults        = getSonarResults(sonarResultsFileList)
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
-        sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarTestResults + '"'
+        //sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarTestResults + '"'
+        sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarResultsFolder + sonarResultsFileVt + '"'
         sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
 
     }
