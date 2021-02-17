@@ -62,7 +62,7 @@ def call(Map execParms){
     node {
 
         stage ('Checkout and initialize') {
-            // Clear workspace
+
             dir('./') {
                 deleteDir()
             }
@@ -71,7 +71,7 @@ def call(Map execParms){
 
             initialize(execParms)
 
-            setVtLoadlibrary()  /* Will be replaced by 20.05.01 features */
+            setVtLoadlibrary()  /* Will be replaced by using conext variables, once they are handled by the CLI correctly */
 
         }
 
@@ -143,7 +143,8 @@ def call(Map execParms){
             
         stage("SonarQube Scan") {
 
-            runSonarScan()
+            echo "Sonar Scan mocked for now"
+//            runSonarScan()
 
         }   
 
@@ -307,7 +308,7 @@ def initialize(execParms){
     /*synchConfig.ccDdioOverrides.each {
         ccDdioOverrides = ccDdioOverrides + it.toString().replace('<ispwApplication>', ispwConfig.ispwApplication.application)
     }*/
-    ccDdioOverrides = tttVtExecutionLoad
+    ccDdioOverrides             = tttVtExecutionLoad
 
     ispwImpactScanJcl           = buildImpactScanJcl(ispwImpactScanFile, ispwConfig.ispwApplication.runtimeConfig, ispwConfig.ispwApplication.application, ispwTargetLevel)
 
@@ -331,7 +332,7 @@ def determinePipelineBehavior(branchName, buildNumber){
     if (buildNumber == "1") {
         executionType   = EXECUTION_TYPE_NO_MF_CODE
         skipTests       = true
-        skipReason      = "[Info] - First build for branch '${branchName}'."
+        skipReason      = "[Info] - First build for branch '${branchName}'. Onyl sources will be scanned by SonarQube"
     }    
     else if (executionBranch.contains("feature")) {
         executionType   = EXECUTION_TYPE_VT_ONLY
@@ -417,32 +418,44 @@ def setVtLoadlibrary(){
 
 def runMainframeLoad() {
 
-    try {
+    gitToIspwIntegration( 
+        connectionId:       synchConfig.hciConnectionId,                    
+        credentialsId:      pipelineParms.hostCredentialsId,                     
+        runtimeConfig:      ispwConfig.ispwApplication.runtimeConfig,
+        stream:             ispwConfig.ispwApplication.stream,
+        app:                ispwConfig.ispwApplication.application, 
+        branchMapping:      branchMappingString,
+        ispwConfigPath:     ispwConfigFile, 
+        gitCredentialsId:   pipelineParms.gitCredentialsId, 
+        gitRepoUrl:         pipelineParms.gitRepoUrl
+    )
 
-        gitToIspwIntegration( 
-            connectionId:       synchConfig.hciConnectionId,                    
-            credentialsId:      pipelineParms.hostCredentialsId,                     
-            runtimeConfig:      ispwConfig.ispwApplication.runtimeConfig,
-            stream:             ispwConfig.ispwApplication.stream,
-            app:                ispwConfig.ispwApplication.application, 
-            branchMapping:      branchMappingString,
-            ispwConfigPath:     ispwConfigFile, 
-            gitCredentialsId:   pipelineParms.gitCredentialsId, 
-            gitRepoUrl:         pipelineParms.gitRepoUrl
-        )
+    // try {
 
-    }
-    catch(Exception e) {
+    //     gitToIspwIntegration( 
+    //         connectionId:       synchConfig.hciConnectionId,                    
+    //         credentialsId:      pipelineParms.hostCredentialsId,                     
+    //         runtimeConfig:      ispwConfig.ispwApplication.runtimeConfig,
+    //         stream:             ispwConfig.ispwApplication.stream,
+    //         app:                ispwConfig.ispwApplication.application, 
+    //         branchMapping:      branchMappingString,
+    //         ispwConfigPath:     ispwConfigFile, 
+    //         gitCredentialsId:   pipelineParms.gitCredentialsId, 
+    //         gitRepoUrl:         pipelineParms.gitRepoUrl
+    //     )
 
-        echo "[Error] - Error during synchronisation to the mainframe.\n" +
-             "[Error] - " + e.toString()
+    // }
+    // catch(Exception e) {
 
-        currentBuild.result = 'FAILURE'
+    //     echo "[Error] - Error during synchronisation to the mainframe.\n" +
+    //          "[Error] - " + e.toString()
 
-        skipReason = "[Info] - Due to error during synchronization."
-        return
+    //     currentBuild.result = 'FAILURE'
 
-    }
+    //     skipReason = "[Info] - Due to error during synchronization."
+    //     return
+
+    // }
 }
 
 // If the automaticBuildParams.txt has not been created, it means no programs
