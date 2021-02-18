@@ -71,7 +71,7 @@ def call(Map execParms){
 
             initialize(execParms)
 
-            setVtLoadlibrary()  /* Will be replaced by using conext variables, once they are handled by the CLI correctly */
+            //setVtLoadlibrary()  /* Will be replaced by using conext variables, once they are handled by the CLI correctly */
 
         }
 
