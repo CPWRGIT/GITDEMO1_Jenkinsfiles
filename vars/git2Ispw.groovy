@@ -468,7 +468,7 @@ def runUnitTests() {
             createReport:                       true, 
             createResult:                       true, 
             createSonarReport:                  true,
-            //contextVariables:                  "ispw_app=${ispwConfig.ispwApplication.application},ispw_level=${ispwTargetLevel}",
+            contextVariables:                   '"ispw_app=' + ispwConfig.ispwApplication.application + ',ispw_level=' + ispwTargetLevel + '"',
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
             collectCCSystem:                    ccSystemId,
