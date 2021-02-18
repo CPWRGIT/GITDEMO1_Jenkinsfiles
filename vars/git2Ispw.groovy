@@ -455,7 +455,7 @@ def runUnitTests() {
             serverUrl:                          synchConfig.cesUrl, 
             serverCredentialsId:                pipelineParms.hostCredentialsId, 
             credentialsId:                      pipelineParms.hostCredentialsId, 
-            //environmentId:                      synchConfig.tttVtEnvironmentId,
+            environmentId:                      synchConfig.tttVtEnvironmentId,
             localConfig:                        false, 
             localConfigLocation:                tttConfigFolder, 
             folderPath:                         tttVtFolder, 
