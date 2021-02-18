@@ -17,7 +17,7 @@ String ispwTargetLevel
 String ispwImpactScanJcl
 String tttConfigFolder         
 String tttVtExecutionLoad    
-String tttUtJclSkeletonFile  
+//String tttUtJclSkeletonFile  
 String ccDdioOverrides     
 String sonarCobolFolder        
 String sonarCopybookFolder     
@@ -71,7 +71,7 @@ def call(Map execParms){
 
             initialize(execParms)
 
-            //setVtLoadlibrary()  /* Will be replaced by using conext variables, once they are handled by the CLI correctly */
+            //setVtLoadlibrary()  /* Replaced by using context variables */
 
         }
 
@@ -239,21 +239,31 @@ def initialize(execParms){
 
     //*********************************************************************************
     // Build DDIO override parameter to use the VT load library (making use of ESS)
+    //
+    // +++++++++++++++++++
+    // Can be replaced once CoCo PTF has been applied to CWCC making use of overrides obsolete
+    // +++++++++++++++++++    
     //*********************************************************************************
-    /*synchConfig.ccDdioOverrides.each {
-        ccDdioOverrides = ccDdioOverrides + it.toString().replace('<ispwApplication>', ispwConfig.ispwApplication.application)
-    }*/
     ccDdioOverrides             = tttVtExecutionLoad
 
+    //*********************************************************************************
+    // Build JCL to cross reference components once they have been loaded to ISPW
+    //
+    // +++++++++++++++++++
+    // Can be replaced once this feature has been implemented in ISPW itself
+    // +++++++++++++++++++    
+    //*********************************************************************************
     ispwImpactScanJcl           = buildImpactScanJcl(ispwImpactScanFile, ispwConfig.ispwApplication.runtimeConfig, ispwConfig.ispwApplication.application, ispwTargetLevel)
 
     //*********************************************************************************
     // The .tttcfg file and JCL skeleton are located in the pipeline shared library, resources folder
     // Determine path relative to current workspace
+    //
+    // Replaced by using context vars and server configuration
     //*********************************************************************************
-    def tmpWorkspace            = workspace.replace('\\', '/')
-    tttConfigFolder             = '..' + tmpWorkspace.substring(tmpWorkspace.lastIndexOf('/')) + '@libs/' + sharedLibName + '/resources' + '/' + synchConfig.tttConfigFolder
-    tttUtJclSkeletonFile        = tttConfigFolder + '/JCLSkeletons/TTTRUNNER.jcl' 
+    //def tmpWorkspace            = workspace.replace('\\', '/')
+    //tttConfigFolder             = '..' + tmpWorkspace.substring(tmpWorkspace.lastIndexOf('/')) + '@libs/' + sharedLibName + '/resources' + '/' + synchConfig.tttConfigFolder
+    //tttUtJclSkeletonFile        = tttConfigFolder + '/JCLSkeletons/TTTRUNNER.jcl' 
 
     buildCocoParms(BRANCH_NAME)
 
@@ -302,14 +312,22 @@ def processBranchInfo(branchInfo, ispwApplication){
         if(executionBranch.contains(it.key)) {
 
             ispwTargetLevel     = it.value.ispwLevel
+            
+            // May be removed once CoCo PTF has been applied
+            // +++++++++++++++++++++++++++++++++++++++++++++
             tttVtExecutionLoad  = synchConfig.loadLibraryPattern.replace('<ispwApplication>', ispwApplication).replace('<ispwLevel>', ispwTargetLevel)
-
+            // +++++++++++++++++++++++++++++++++++++++++++++
         }
     }
 }
 
 //*********************************************************************************
 // Build JCL to scan for impacts once code has been loaded to the ISPW target level
+//*********************************************************************************
+//
+// +++++++++++++++++++
+// Can be replaced once this feature has been implemented in ISPW itself
+// +++++++++++++++++++    
 //*********************************************************************************
 def buildImpactScanJcl(ispwImpactScanFile, runtimeConfig, application, ispwTargetLevel){
 
@@ -344,17 +362,17 @@ def buildCocoParms(executionBranch){
 }
 
 /* Modify JCL Skeleton to use correct load library for VTs */
-/* Will be replaced by 20.05.01 feature                    */
-def setVtLoadlibrary(){
+/* Replaced by 20.05.01 context variables                  */
+// def setVtLoadlibrary(){
 
-    def jclSkeleton = readFile(tttUtJclSkeletonFile).toString().replace('${loadlibraries}', tttVtExecutionLoad)
+//     def jclSkeleton = readFile(tttUtJclSkeletonFile).toString().replace('${loadlibraries}', tttVtExecutionLoad)
 
-    writeFile(
-        file:   tttUtJclSkeletonFile,
-        text:   jclSkeleton
-    )    
+//     writeFile(
+//         file:   tttUtJclSkeletonFile,
+//         text:   jclSkeleton
+//     )    
 
-}
+// }
 
 def runMainframeLoad() {
 
@@ -370,32 +388,6 @@ def runMainframeLoad() {
         gitRepoUrl:         pipelineParms.gitRepoUrl
     )
 
-    // try {
-
-    //     gitToIspwIntegration( 
-    //         connectionId:       synchConfig.hciConnectionId,                    
-    //         credentialsId:      pipelineParms.hostCredentialsId,                     
-    //         runtimeConfig:      ispwConfig.ispwApplication.runtimeConfig,
-    //         stream:             ispwConfig.ispwApplication.stream,
-    //         app:                ispwConfig.ispwApplication.application, 
-    //         branchMapping:      branchMappingString,
-    //         ispwConfigPath:     ispwConfigFile, 
-    //         gitCredentialsId:   pipelineParms.gitCredentialsId, 
-    //         gitRepoUrl:         pipelineParms.gitRepoUrl
-    //     )
-
-    // }
-    // catch(Exception e) {
-
-    //     echo "[Error] - Error during synchronisation to the mainframe.\n" +
-    //          "[Error] - " + e.toString()
-
-    //     currentBuild.result = 'FAILURE'
-
-    //     skipReason = "[Info] - Due to error during synchronization."
-    //     return
-
-    // }
 }
 
 // If the automaticBuildParams.txt has not been created, it means no programs
@@ -457,7 +449,7 @@ def runUnitTests() {
             credentialsId:                      pipelineParms.hostCredentialsId, 
             environmentId:                      synchConfig.tttVtEnvironmentId,
             localConfig:                        false, 
-            localConfigLocation:                tttConfigFolder, 
+            //localConfigLocation:                tttConfigFolder, 
             folderPath:                         tttVtFolder, 
             recursive:                          true, 
             selectProgramsOption:               true, 
@@ -734,7 +726,4 @@ def triggerXlRelease(){
             ] 
         ]
     )
-
-
-
 }
