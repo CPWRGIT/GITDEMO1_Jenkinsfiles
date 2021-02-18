@@ -464,6 +464,10 @@ def runUnitTests() {
             jsonFile:                           changedProgramsFile,
             haltPipelineOnFailure:              false,                 
             stopIfTestFailsOrThresholdReached:  false,
+            createJUnitReport:                  true, 
+            createReport:                       true, 
+            createResult:                       true, 
+            createSonarReport:                  true,
             //contextVariables:                  "ispw_app=${ispwConfig.ispwApplication.application},ispw_level=${ispwTargetLevel}",
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
@@ -474,6 +478,8 @@ def runUnitTests() {
         )
 
         secureResultsFile(sonarResultsFileVt, RESULTS_FILE_VT)
+
+        junit allowEmptyResults: true, keepLongStdio: true, testResults: './TTTUnit/*.xml'
     }
 }
 
@@ -502,6 +508,10 @@ def runIntegrationTests(){
             jsonFile:                           changedProgramsFile,
             haltPipelineOnFailure:              false,                 
             stopIfTestFailsOrThresholdReached:  false,
+            createJUnitReport:                  true, 
+            createReport:                       true, 
+            createResult:                       true, 
+            createSonarReport:                  true,
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
             collectCCSystem:                    ccSystemId,
@@ -527,6 +537,10 @@ def runIntegrationTests(){
             jsonFile:                           changedProgramsFile,
             haltPipelineOnFailure:              false,                 
             stopIfTestFailsOrThresholdReached:  false,
+            createJUnitReport:                  true, 
+            createReport:                       true, 
+            createResult:                       true, 
+            createSonarReport:                  true,
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
             collectCCSystem:                    ccSystemId,
