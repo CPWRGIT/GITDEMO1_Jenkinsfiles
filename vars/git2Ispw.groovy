@@ -21,6 +21,8 @@ String jUnitResultsFile
 String executionType
 String skipReason
 
+String tttVtExecutionLoad
+
 Boolean skipTests
 
 def pipelineParms
@@ -215,9 +217,9 @@ def initialize(execParms){
     processBranchInfo(synchConfig.branchInfo, ispwConfig.ispwApplication.application)
 
     //*********************************************************************************
-    // If load library name is empty the branch name could not be mapped
+    // If target level is empty the branch name could not be mapped
     //*********************************************************************************
-    if(tttVtExecutionLoad == ''){
+    if(ispwTargetLevel == ''){
         error "No branch mapping for branch ${BRANCH_NAME} was found. Execution will be aborted.\n" +
             "Correct the branch name to reflect naming conventions."
     }
