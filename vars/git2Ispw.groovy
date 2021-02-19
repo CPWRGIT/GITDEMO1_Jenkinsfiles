@@ -189,7 +189,7 @@ def initialize(execParms){
 
     sonarResultsFolder          = synchConfig.ttt.results.sonar.folder
     sonarResultsFile            = synchConfig.ttt.results.sonar.origFile
-    sonarResultsFileVt          = synchConfig.ttt.results.sonar.targetFile.virtualized
+    sonarResultsFileVt          = synchConfig.ttt.results.sonar.targetFiles.virtualized
     sonarResultsFileNvtBatch    = synchConfig.ttt.results.sonar.targetFiles.nonVirtualized.batch
     sonarResultsFileNvtCics     = synchConfig.ttt.results.sonar.targetFiles.nonVirtualized.cics
     sonarResultsFileList        = []        
