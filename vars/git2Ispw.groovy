@@ -358,7 +358,7 @@ def buildCocoParms(executionBranch){
 def runMainframeLoad() {
 
     gitToIspwIntegration( 
-        connectionId:       synchConfig.hci.connectionId,                    
+        connectionId:       synchConfig.environment.hci.connectionId,                    
         credentialsId:      pipelineParms.hostCredentialsId,                     
         runtimeConfig:      ispwConfig.ispwApplication.runtimeConfig,
         stream:             ispwConfig.ispwApplication.stream,
@@ -395,7 +395,7 @@ def checkForBuildParams(automaticBuildFile){
 def runImpactScan(){
 
     topazSubmitFreeFormJcl(
-        connectionId:       synchConfig.hci.connectionId, 
+        connectionId:       synchConfig.environment.hci.connectionId, 
         credentialsId:      pipelineParms.hostCredentialsId, 
         jcl:                ispwImpactScanJcl, 
         maxConditionCode:   '4'
@@ -406,7 +406,7 @@ def runImpactScan(){
 def runMainframeBuild(){
 
     ispwOperation(
-        connectionId:           synchConfig.hci.connectionId, 
+        connectionId:           synchConfig.environment.hci.connectionId, 
         credentialsId:          pipelineParms.cesCredentialsId,       
         consoleLogResponseBody: true, 
         ispwAction:             'BuildTask', 
@@ -425,7 +425,7 @@ def runUnitTests() {
         echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
 
         totaltest(
-            serverUrl:                          synchConfig.ces.url, 
+            serverUrl:                          synchConfig.environment.ces.url, 
             serverCredentialsId:                pipelineParms.hostCredentialsId, 
             credentialsId:                      pipelineParms.hostCredentialsId, 
             environmentId:                      synchConfig.ttt.environmentIds.virtualized,
@@ -474,9 +474,9 @@ def runIntegrationTests(){
             def targetFile  = synchConfig.ttt.results.sonar.targetFiles.nonVirtualized[envType]
 
             totaltest(
-                connectionId:                       synchConfig.hci.connectionId,
+                connectionId:                       synchConfig.environment.hci.connectionId,
                 credentialsId:                      pipelineParms.hostCredentialsId,             
-                serverUrl:                          synchConfig.ces.url, 
+                serverUrl:                          synchConfig.environment.ces.url, 
                 serverCredentialsId:                pipelineParms.hostCredentialsId, 
                 environmentId:                      envId, 
                 localConfig:                        false,
@@ -535,7 +535,7 @@ def getCocoResults() {
 
     step([
         $class:             'CodeCoverageBuilder', 
-        connectionId:       synchConfig.hci.connectionId, 
+        connectionId:       synchConfig.environment.hci.connectionId, 
         credentialsId:      pipelineParms.hostCredentialsId,
         analysisProperties: """
             cc.sources=${ccSources}
@@ -657,7 +657,7 @@ def triggerXlRelease(){
         releaseTitle:       "GITDEMO - Release for ${ispwConfig.ispwApplication.application}", 
         serverCredentials:  'admin', 
         startRelease:       true, 
-        template:           'GITDEMO_CWCC', 
+        template:           synchConfig.environment.xlr.template, 
         variables: [
             [
                 propertyName:   'ISPW_Application', 
