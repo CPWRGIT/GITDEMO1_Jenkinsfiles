@@ -214,7 +214,7 @@ def initialize(execParms){
 
     determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
 
-    processBranchInfo(synchConfig.branchInfo, ispwConfig.ispwApplication.application)
+    processBranchInfo(synchConfig.ispw.branchInfo, ispwConfig.ispwApplication.application)
 
     //*********************************************************************************
     // If target level is empty the branch name could not be mapped
