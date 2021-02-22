@@ -8,14 +8,14 @@ def call(){
 
     node {
 
-        stage('Build Java') {
+        stage('Build') {
 
             echo "[Info] - Building Java Code."
 
             sleep Math.random() * 20
         }
 
-        stage('Unit Tests') {
+        stage('Tests') {
 
             echo "[Info] - Run JUnit Tests."
 
@@ -23,9 +23,9 @@ def call(){
 
         }
 
-        stage('Sonar') {           
+        stage('Deploy') {
 
-            echo "[Info] - Scan Java code."
+            echo "[Info] - Run JUnit Tests."
 
             sleep Math.random() * 20
 
