@@ -4,6 +4,8 @@ import hudson.EnvVars
 import java.net.URL
 import groovy.xml.*
 
+def BRANCH_NAME
+
 String synchConfigFile         
 String branchMappingString     
 String ispwTargetLevel
@@ -44,7 +46,7 @@ def call(Map execParms){
     //**********************************************************************
     node {
 
-        def BRANCH_NAME = "feature/FT1/demo_feature"
+        BRANCH_NAME = "feature/FT1/demo_feature"
 
         stage ('Checkout and initialize') {
 
