@@ -44,8 +44,6 @@ def call(Map execParms){
     //**********************************************************************
     node {
 
-        BRANCH_NAME = "feature/FT1/demo_feature"
-
         stage ('Checkout and initialize') {
 
             dir('./') {
@@ -54,6 +52,7 @@ def call(Map execParms){
 
             //checkout scm
             checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/feature/FT1/demo_feature']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/CPWRGIT/HDDRXM0.git']]]
+            stash name: 'workspace', includes: './'
         }
 
         parallel(
