@@ -5,7 +5,7 @@ String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
 
 String jenkinsfile              = "./GenAppCore/Jenkinsfile.jenkinsfile"
 String ispwConfigFile           = "./GenAppCore/ispwconfig.yml"
-String projectSettingsFile      = "./GenAppCore/.settings/InsuranceCore.prefs"
+String projectSettingsFile      = "./GenAppCore/.settings/GenAppCore.prefs"
 
 String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
 String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
