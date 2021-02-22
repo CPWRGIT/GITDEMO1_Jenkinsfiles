@@ -52,7 +52,7 @@ def call(Map execParms){
                 deleteDir()
             }
 
-            checkout scm
+            //checkout scm
 
             initialize(execParms)
 
