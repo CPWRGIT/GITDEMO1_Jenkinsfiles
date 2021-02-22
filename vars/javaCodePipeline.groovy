@@ -12,16 +12,14 @@ def call(){
 
             echo "[Info] - Building Java Code."
 
-            sleep 20
+            sleep Math.random() * 20
         }
-
-        checkForBuildParams(synchConfig.ispw.automaticBuildFile)
 
         stage('Unit Tests') {
 
             echo "[Info] - Run JUnit Tests."
 
-            sleep 20
+            sleep Math.random() * 20
 
         }
 
@@ -29,7 +27,7 @@ def call(){
 
             echo "[Info] - Scan Java code."
 
-            sleep 20
+            sleep Math.random() * 20
 
         }
     }
