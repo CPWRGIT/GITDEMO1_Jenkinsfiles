@@ -37,10 +37,6 @@ def EXECUTION_TYPE_VT_ONLY
 def EXECUTION_TYPE_NVT_ONLY
 def EXECUTION_TYPE_BOTH
 
-def RESULTS_FILE_VT
-def RESULTS_FILE_NVT_BATCH
-def RESULTS_FILE_NVT_CICS
-
 def call(Map execParms){
 
     //**********************************************************************
@@ -158,10 +154,6 @@ def initialize(execParms){
     EXECUTION_TYPE_VT_ONLY      = "Vt"
     EXECUTION_TYPE_NVT_ONLY     = "Nvt"
     EXECUTION_TYPE_BOTH         = "Both"
-
-    RESULTS_FILE_VT             = 'Virtualized'
-    RESULTS_FILE_NVT_BATCH      = 'Non Virtualized Batch'
-    RESULTS_FILE_NVT_CICS       = 'Non Virtualized CICS'
 
     branchMappingString         = ''
     ispwTargetLevel             = ''    
