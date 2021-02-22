@@ -44,6 +44,8 @@ def call(Map execParms){
     //**********************************************************************
     node {
 
+        BRANCH_NAME = "feature/FT1/demo_feature"
+
         stage ('Checkout and initialize') {
 
             dir('./') {
