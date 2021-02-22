@@ -4,8 +4,6 @@ import hudson.EnvVars
 import java.net.URL
 import groovy.xml.*
 
-def BRANCH_NAME
-
 String synchConfigFile         
 String branchMappingString     
 String ispwTargetLevel
@@ -46,8 +44,6 @@ def call(Map execParms){
     //**********************************************************************
     node {
 
-        BRANCH_NAME = "feature/FT1/demo_feature"
-
         stage ('Checkout and initialize') {
 
             dir('./') {
@@ -55,9 +51,7 @@ def call(Map execParms){
             }
 
             unstash 'workspace'
-
-            //checkout scm
-
+            
             initialize(execParms)
 
             //setVtLoadlibrary()  /* Replaced by using context variables */
