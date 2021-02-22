@@ -10,20 +10,26 @@ def call(){
 
         stage('Build Java') {
 
-            echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
+            echo "[Info] - Building Java Code."
+
+            sleep 20
         }
 
         checkForBuildParams(synchConfig.ispw.automaticBuildFile)
 
         stage('Unit Tests') {
 
-            echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
+            echo "[Info] - Run JUnit Tests."
+
+            sleep 20
 
         }
 
         stage('Sonar') {           
 
-            echo "Unit Tests"
+            echo "[Info] - Scan Java code."
+
+            sleep 20
 
         }
     }
