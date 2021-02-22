@@ -50,8 +50,8 @@ def call(Map execParms){
                 deleteDir()
             }
 
-            checkout scm
-
+            //checkout scm
+            checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/feature/FT1/demo_feature']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/CPWRGIT/HDDRXM0.git']]]
             initialize(execParms)
 
         }
