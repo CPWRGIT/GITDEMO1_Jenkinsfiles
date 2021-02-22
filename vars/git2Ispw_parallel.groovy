@@ -16,10 +16,6 @@ def call(Map execParms){
             dir('./') {
                 deleteDir()
             }
-
-            checkout scm
-
-            stash name: 'workspace', includes: '**, *.git/'
         }
 
         parallel(
