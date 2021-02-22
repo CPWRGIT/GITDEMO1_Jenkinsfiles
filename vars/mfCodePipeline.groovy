@@ -4,27 +4,141 @@ import hudson.EnvVars
 import java.net.URL
 import groovy.xml.*
 
-def call(){
+String synchConfigFile         
+String branchMappingString     
+String ispwTargetLevel
+String ispwImpactScanJcl
+String ccDdioOverrides     
+String sonarCobolFolder        
+String sonarCopybookFolder     
+String sonarResultsFile   
+String sonarResultsFileVt
+String sonarResultsFileNvtBatch
+String sonarResultsFileNvtCics
+String sonarResultsFileList     
+String sonarCodeCoverageFile   
+String jUnitResultsFile
+String executionType
+String skipReason
 
+String tttVtExecutionLoad
+
+Boolean skipTests
+
+def pipelineParms
+def ispwConfig
+def synchConfig
+
+def CC_TEST_ID_MAX_LEN
+def CC_SYSTEM_ID_MAX_LEN
+
+def EXECUTION_TYPE_NO_MF_CODE
+def EXECUTION_TYPE_VT_ONLY
+def EXECUTION_TYPE_NVT_ONLY
+def EXECUTION_TYPE_BOTH
+
+def call(Map execParms){
+
+    //**********************************************************************
+    // Start of Script 
+    //**********************************************************************
     node {
+
+        def BRANCH_NAME = "feature/FT1/demo_feature"
+
+        stage ('Checkout and initialize') {
+
+            dir('./') {
+                deleteDir()
+            }
+
+            checkout scm
+
+            initialize(execParms)
+
+            //setVtLoadlibrary()  /* Replaced by using context variables */
+
+        }
 
         stage('Load code to mainframe') {
 
-            echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
+            if(executionType == EXECUTION_TYPE_NO_MF_CODE) {
+
+                echo skipReason + "\n[Info] - No code will be loaded to the mainframe."
+
+            }
+            else {
+
+                echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
+
+                runMainframeLoad()
+
+            }
         }
 
         checkForBuildParams(synchConfig.ispw.automaticBuildFile)
 
         stage('Build mainframe code') {
 
-            echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
+            if(executionType == EXECUTION_TYPE_NO_MF_CODE){
 
+                echo skipReason + "\n[Info] - Skipping Mainframe Build."
+
+            }
+            else{
+
+                echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
+
+                runImpactScan()
+
+                runMainframeBuild()
+
+            }
         }
 
-        stage('Execute Unit Tests') {           
+        if(
+            executionType == EXECUTION_TYPE_VT_ONLY ||
+            executionType == EXECUTION_TYPE_BOTH
+        ){
 
-            echo "Unit Tests"
+            stage('Execute Unit Tests') {           
 
+                runUnitTests()
+
+            }
+        }
+
+        if(
+            executionType == EXECUTION_TYPE_NVT_ONLY ||
+            executionType == EXECUTION_TYPE_BOTH
+        ){
+
+            stage('Execute Module Integration Tests') {
+
+                runIntegrationTests()
+
+            }
+        }
+
+        if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
+
+            getCocoResults()
+
+        }
+            
+        stage("SonarQube Scan") {
+
+            runSonarScan()
+
+        }   
+
+        if(BRANCH_NAME == 'main') {
+
+            stage("Trigger Release") {
+
+                triggerXlRelease()
+            
+            }
         }
     }
 }
