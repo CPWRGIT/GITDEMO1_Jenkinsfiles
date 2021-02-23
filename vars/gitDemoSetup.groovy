@@ -34,7 +34,7 @@ node{
 
         gitHubAdminUserCheck = gitHubAdminUserTmp
         gitHubAdminPwCheck = gitHubAdminPwTmp
-        
+
         if(
             !(GitHubAdminUser       == gitHubAdminUserCheck) ||
             !(GitHubAdminPassword   == gitHubAdminPwCheck)
@@ -44,8 +44,10 @@ node{
         }
     }
 
-    echo gitHubAdminUserCheck
-    echo gitHubAdminPwCheck
+    echo "'" + gitHubAdminUserCheck + "'"
+    echo "'" + GitHubAdminUser + "'"
+    echo "'" + gitHubAdminPwCheck + "'"
+    echo "'" + GitHubAdminPassword + "'"
 
     error "STOP"
 

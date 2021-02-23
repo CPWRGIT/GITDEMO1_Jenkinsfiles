@@ -134,7 +134,7 @@ def call(Map execParms){
     }   
 
     if(
-        BRANCH_NAME     == 'main'                       &
+        BRANCH_NAME     == 'main'                       &&
         !(executionType == EXECUTION_TYPE_NO_MF_CODE)
     ){
 
