@@ -36,10 +36,14 @@ node{
             !(GitHubAdminPassword   == gitHubAdminPwCheck)
         )
         {
-            error '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
+            echo '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
         }
     }
 
+    echo gitHubAdminUserCheck
+    echo gitHubAdminPwCheck
+
+    error "STOP"
 
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
