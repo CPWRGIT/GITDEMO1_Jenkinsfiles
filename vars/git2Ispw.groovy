@@ -33,10 +33,14 @@ def call(Map execParms){
             parallel(
 
                 mfCode: {
-                    mfCodePipeline(execParms)
+                    node {
+                        mfCodePipeline(execParms)
+                    }
                 },
                 javaCode: {
-                    javaCodePipeline()
+                    node {
+                        javaCodePipeline()
+                    }
                 },
                 failFast: true
 

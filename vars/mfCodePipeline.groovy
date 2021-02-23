@@ -42,108 +42,106 @@ def call(Map execParms){
     //**********************************************************************
     // Start of Script 
     //**********************************************************************
-    node {
 
-        stage ('Checkout and initialize') {
+    stage ('Checkout and initialize') {
 
-            dir('./') {
-                deleteDir()
-            }
-
-            if(!(BUILD_NUMBER == "1")) {
-
-                unstash name: 'workspace'
-
-            }
-            
-            initialize(execParms)
-
-            //setVtLoadlibrary()  /* Replaced by using context variables */
-
+        dir('./') {
+            deleteDir()
         }
 
-        stage('Load code to mainframe') {
+        if(!(BUILD_NUMBER == "1")) {
 
-            if(executionType == EXECUTION_TYPE_NO_MF_CODE) {
-
-                echo skipReason + "\n[Info] - No code will be loaded to the mainframe."
-
-            }
-            else {
-
-                echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
-
-                runMainframeLoad()
-
-            }
-        }
-
-        checkForBuildParams(synchConfig.ispw.automaticBuildFile)
-
-        stage('Build mainframe code') {
-
-            if(executionType == EXECUTION_TYPE_NO_MF_CODE){
-
-                echo skipReason + "\n[Info] - Skipping Mainframe Build."
-
-            }
-            else{
-
-                echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
-
-                runImpactScan()
-
-                runMainframeBuild()
-
-            }
-        }
-
-        if(
-            executionType == EXECUTION_TYPE_VT_ONLY ||
-            executionType == EXECUTION_TYPE_BOTH
-        ){
-
-            stage('Execute Unit Tests') {           
-
-                runUnitTests()
-
-            }
-        }
-
-        if(
-            executionType == EXECUTION_TYPE_NVT_ONLY ||
-            executionType == EXECUTION_TYPE_BOTH
-        ){
-
-            stage('Execute Module Integration Tests') {
-
-                runIntegrationTests()
-
-            }
-        }
-
-        if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
-
-            getCocoResults()
+            unstash name: 'workspace'
 
         }
-            
-        stage("SonarQube Scan") {
+        
+        initialize(execParms)
 
-            runSonarScan()
+        //setVtLoadlibrary()  /* Replaced by using context variables */
 
-        }   
+    }
 
-        if(
-            BRANCH_NAME     == 'main'                       &
-            !(executionType == EXECUTION_TYPE_NO_MF_CODE)
-        ){
+    stage('Load code to mainframe') {
 
-            stage("Trigger Release") {
+        if(executionType == EXECUTION_TYPE_NO_MF_CODE) {
 
-                triggerXlRelease()
-            
-            }
+            echo skipReason + "\n[Info] - No code will be loaded to the mainframe."
+
+        }
+        else {
+
+            echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
+
+            runMainframeLoad()
+
+        }
+    }
+
+    checkForBuildParams(synchConfig.ispw.automaticBuildFile)
+
+    stage('Build mainframe code') {
+
+        if(executionType == EXECUTION_TYPE_NO_MF_CODE){
+
+            echo skipReason + "\n[Info] - Skipping Mainframe Build."
+
+        }
+        else{
+
+            echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
+
+            runImpactScan()
+
+            runMainframeBuild()
+
+        }
+    }
+
+    if(
+        executionType == EXECUTION_TYPE_VT_ONLY ||
+        executionType == EXECUTION_TYPE_BOTH
+    ){
+
+        stage('Execute Unit Tests') {           
+
+            runUnitTests()
+
+        }
+    }
+
+    if(
+        executionType == EXECUTION_TYPE_NVT_ONLY ||
+        executionType == EXECUTION_TYPE_BOTH
+    ){
+
+        stage('Execute Module Integration Tests') {
+
+            runIntegrationTests()
+
+        }
+    }
+
+    if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
+
+        getCocoResults()
+
+    }
+        
+    stage("SonarQube Scan") {
+
+        runSonarScan()
+
+    }   
+
+    if(
+        BRANCH_NAME     == 'main'                       &
+        !(executionType == EXECUTION_TYPE_NO_MF_CODE)
+    ){
+
+        stage("Trigger Release") {
+
+            triggerXlRelease()
+        
         }
     }
 }

@@ -6,29 +6,26 @@ import groovy.xml.*
 
 def call(){
 
-    node {
+    stage('Build') {
 
-        stage('Build') {
+        echo "[Info] - Building Java Code."
 
-            echo "[Info] - Building Java Code."
+        sleep Math.random() * 20
+    }
 
-            sleep Math.random() * 20
-        }
+    stage('Tests') {
 
-        stage('Tests') {
+        echo "[Info] - Run JUnit Tests."
 
-            echo "[Info] - Run JUnit Tests."
+        sleep Math.random() * 20
 
-            sleep Math.random() * 20
+    }
 
-        }
+    stage('Deploy') {
 
-        stage('Deploy') {
+        echo "[Info] - Run JUnit Tests."
 
-            echo "[Info] - Run JUnit Tests."
+        sleep Math.random() * 20
 
-            sleep Math.random() * 20
-
-        }
     }
 }
