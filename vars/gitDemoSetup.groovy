@@ -242,18 +242,18 @@ node{
         
         dir("./")
         {
-            bat(returnStdout: true, script: 'git config --global credential.helper wincred')
+            //bat(returnStdout: true, script: 'git config --global credential.helper wincred')
             bat(returnStdout: true, script: 'git commit -a -m ' + message)
-            //bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
-            bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
+            //bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
             
             bat(returnStdout: true, script: 'git branch development')
-            //bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
-            bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
+            //bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
 
             bat(returnStdout: true, script: 'git branch feature/FT1/demo_feature')
-            //bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
-            bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
+            //bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
             
         }
     }
