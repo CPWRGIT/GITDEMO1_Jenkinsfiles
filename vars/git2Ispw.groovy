@@ -11,7 +11,7 @@ def call(Map execParms){
     //**********************************************************************
     node {
 
-        stage ('Checkout and initialize') {
+        stage ('Checkout') {
 
             dir('./') {
                 deleteDir()

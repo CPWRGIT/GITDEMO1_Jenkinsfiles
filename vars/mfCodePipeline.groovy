@@ -43,13 +43,13 @@ def call(Map execParms){
     // Start of Script 
     //**********************************************************************
 
-    stage ('Checkout and initialize') {
-
-        dir('./') {
-            deleteDir()
-        }
+    stage ('Initialize') {
 
         if(!(BUILD_NUMBER == "1")) {
+
+            dir('./') {
+                deleteDir()
+            }
 
             unstash name: 'workspace'
 
