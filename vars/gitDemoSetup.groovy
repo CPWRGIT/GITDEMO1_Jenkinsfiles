@@ -3,16 +3,18 @@ import groovy.json.JsonSlurper
 String hostName
 String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
 
-String jenkinsfile              = "./Jenkinsfile.jenkinsfile"
-String ispwConfigFile           = "./InsuranceCore/ispwconfig.yml"
-String projectSettingsFile      = "./InsuranceCore/.settings/InsuranceCore.prefs"
+String jenkinsfile              = "./GenAppCore/Jenkinsfile.jenkinsfile"
+String ispwConfigFile           = "./GenAppCore/ispwconfig.yml"
+String projectSettingsFile      = "./GenAppCore/.settings/GenAppCore.prefs"
 
 String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
 String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
-
 String sonarProjectName
+
 String gitHubRepo
+String repoTemplate             = 'GITDEMO1_Template_2005'
+String gitHubToken              = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
 
 node{
 
@@ -42,6 +44,76 @@ node{
         deleteDir()
     }
 
+    stage("Check Git Repository"){
+
+        try{
+
+            def response = httpRequest(
+
+                consoleLogResponseBody: true, 
+                customHeaders:          [
+                    [maskValue: false,  name: 'content-type',   value: 'application/json'], 
+                    [maskValue: true,   name: 'authorization',  value: gitHubToken], 
+                    [maskValue: false,  name: 'accept',         value: 'application/vnd.github.v3+json'], 
+                    [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
+                ], 
+                ignoreSslErrors:        true, 
+                url:                    'https://api.github.com/repos/CPWRGIT/' + gitHubRepo, 
+                validResponseCodes:     '200,404', 
+                wrapAsMultipart:        false
+
+            )
+
+            if(response.status == 200){
+
+                error "[Error] - The repository ${gitHubRepo} already exists. Cannot create again.\n"
+
+            }
+
+        }
+        catch(exception){
+
+            error "[Error] - " + exception.toString() + ". See previous log messages to determine cause.\n"
+
+        }
+    }
+
+    stage("Create Git Repository"){
+
+        try{
+
+            def requestBody = '''{
+                    "owner":    "CPWRGIT",
+                    "name":     "''' + gitHubRepo + '''",
+                    "private":  false
+                }'''
+
+            httpRequest(
+                consoleLogResponseBody:     true, 
+                customHeaders:              [
+                    [maskValue: false,  name: 'content-type',   value: 'application/json'], 
+                    [maskValue: true,   name: 'authorization',  value: 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'], 
+                    [maskValue: false,  name: 'accept',         value: 'application/vnd.github.baptiste-preview+json'], 
+                    [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
+                ], 
+                httpMode:                   'POST', 
+                ignoreSslErrors:            true, 
+                requestBody:                requestBody, 
+                url:                        'https://api.github.com/repos/CPWRGIT/' + repoTemplate + '/generate', 
+                validResponseCodes:         '201', 
+                wrapAsMultipart:            false
+            )
+
+        }
+        catch(exception){
+
+            error "[Error] - Unexpected http response code. " + exception.toString() + ". See previous log messages to determine cause.\n"
+        
+        }
+    }
+
+    sleep 30
+
     stage("Clone Git repository"){
         
         checkout(
@@ -54,8 +126,7 @@ node{
                 extensions: [], 
                 submoduleCfg: [], 
                 userRemoteConfigs: [[
-                        credentialsId: GitCredentialsId, 
-                        url: "https://github.com/CPWRGIT/${gitHubRepo}.git"
+                    url: "https://github.com/CPWRGIT/${gitHubRepo}.git"
                 ]]
             ]
         )
@@ -81,7 +152,7 @@ node{
             ],
             [projectSettingsFile,
                 [
-                    ['${mf_userid}', HostUserId]
+                    ['${ispw_mapping_level}', DefaultUtLevel]
                 ]
             ]
         ]
@@ -103,8 +174,8 @@ node{
         def contextFiles = findFiles(glob: '**/*.context')
 
         def stringsList = [
-                ['${ispw_app}', IspwApp],
-                ['${level}', DefaultUtLevel],
+                ['${ispw_app_value}', IspwApp],
+                ['${ispw_level_value}', DefaultUtLevel],
                 ['${ut_level}', DefaultUtLevel],
                 ['${ft_level}', DefaultFtLevel]
             ]
@@ -149,7 +220,7 @@ node{
             bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
 
             bat(returnStdout: true, script: 'git branch feature/FT1/demo_feature')
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/FT1/demo_feature:refs/heads/feature/FT1/demo_feature -f")
+            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
             
         }
     }
