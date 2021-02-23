@@ -312,7 +312,7 @@ def processBranchInfo(branchInfo, ispwApplication){
 // Can be replaced once this feature has been implemented in ISPW itself
 // +++++++++++++++++++    
 //*********************************************************************************
-def buildImpactScanJcl(impactScanFile, runtimeConfig, application, ispwTargetLevel){
+def     (impactScanFile, runtimeConfig, application, ispwTargetLevel){
 
     jcl   = libraryResource impactScanFile
     jcl   = ispwImpactScanJcl.replace('<runtimeConfig>', runtimeConfig)
@@ -390,6 +390,9 @@ def checkForBuildParams(automaticBuildFile){
 
 /* After loading code to ISPW execute job to initiate impacts scan */
 def runImpactScan(){
+
+    echo "[Info] - Submitting JCL to scan for Impacts."
+    echo ispwImpactScanJcl
 
     topazSubmitFreeFormJcl(
         connectionId:       synchConfig.environment.hci.connectionId, 
