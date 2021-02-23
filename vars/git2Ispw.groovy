@@ -19,15 +19,18 @@ def call(Map execParms){
 
             checkout scm
 
-            stash name: 'workspace', includes: '**', useDefaultExcludes: false
         }
 
         if(BUILD_NUMBER == "1") {
+
             mfCodePipeline(execParms)
+        
         }
         else{
 
             parallel(
+
+                stash name: 'workspace', includes: '**', useDefaultExcludes: false
 
                 mfCode: {
                     mfCodePipeline(execParms)
