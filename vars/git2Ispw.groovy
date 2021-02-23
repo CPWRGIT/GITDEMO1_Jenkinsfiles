@@ -22,7 +22,7 @@ def call(Map execParms){
             stash name: 'workspace', includes: '**', useDefaultExcludes: false
         }
 
-        if(buildNumber == "1") {
+        if(BUILD_NUMBER == "1") {
             mfCodePipeline(execParms)
         }
         else{
