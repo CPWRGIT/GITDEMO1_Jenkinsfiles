@@ -13,7 +13,7 @@ String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ
 String sonarProjectName
 
 String gitHubRepo
-String repoTemplate             = 'GITDEMO1_Template_2005'
+String repoTemplate             = 'GITDEMO1_Template'
 String gitHubToken              = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
 
 node{
