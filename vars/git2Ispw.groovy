@@ -28,9 +28,9 @@ def call(Map execParms){
         }
         else{
 
-            parallel(
+            stash name: 'workspace', includes: '**', useDefaultExcludes: false
 
-                stash name: 'workspace', includes: '**', useDefaultExcludes: false
+            parallel(
 
                 mfCode: {
                     mfCodePipeline(execParms)
