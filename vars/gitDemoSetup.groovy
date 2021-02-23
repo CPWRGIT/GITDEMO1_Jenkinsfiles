@@ -2,8 +2,11 @@ import groovy.json.JsonSlurper
 
 String hostName
 String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
+String gitHubAdminCredentials   = 'CPWRGIT'
+String gitHubAdminUserCheck     = ''
+String gitHubAdminPwCheck       = ''
 
-String jenkinsfile              = "./GenAppCore/Jenkinsfile.jenkinsfile"
+String jenkinsfile              = "./Jenkinsfile.jenkinsfile"
 String ispwConfigFile           = "./GenAppCore/ispwconfig.yml"
 String projectSettingsFile      = "./GenAppCore/.settings/GenAppCore.prefs"
 
@@ -17,6 +20,26 @@ String repoTemplate             = 'GITDEMO1_Template'
 String gitHubToken              = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
 
 node{
+
+    withCredentials(
+        [
+            usernamePassword(
+                credentialsId:      gitHubAdminCredentials, 
+                passwordVariable:   'gitHubAdminPwCheck', 
+                usernameVariable:   'gitHubAdminUserCheck'
+            )
+        ]
+    )
+    {
+        if(
+            !(GitHubAdminUser       == gitHubAdminUserCheck) ||
+            !(GitHubAdminPassword   == gitHubAdminPwCheck)
+        )
+        {
+            error '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
+        }
+    }
+
 
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
@@ -126,6 +149,7 @@ node{
                 extensions: [], 
                 submoduleCfg: [], 
                 userRemoteConfigs: [[
+                    [credentialsId: gitHubAdminCredentials
                     url: "https://github.com/CPWRGIT/${gitHubRepo}.git"
                 ]]
             ]
@@ -213,14 +237,18 @@ node{
         
         dir("./")
         {
+            bat(returnStdout: true, script: 'git config --global credential.helper wincred')
             bat(returnStdout: true, script: 'git commit -a -m ' + message)
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
+            //bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
+            bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
             
             bat(returnStdout: true, script: 'git branch development')
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
+            //bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
+            bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
 
             bat(returnStdout: true, script: 'git branch feature/FT1/demo_feature')
-            bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
+            //bat(returnStdout: true, script: "git push  https://${GitHubAdminUser}:${GitHubAdminPassword}@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
+            bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
             
         }
     }
