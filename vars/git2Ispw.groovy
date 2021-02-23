@@ -22,16 +22,22 @@ def call(Map execParms){
             stash name: 'workspace', includes: '**', useDefaultExcludes: false
         }
 
-        parallel(
+        if(buildNumber == "1") {
+            mfCodePipeline(execParms)
+        }
+        else{
 
-            mfCode: {
-                mfCodePipeline(execParms)
-            },
-            javaCode: {
-                javaCodePipeline()
-            },
-            failFast: true
+            parallel(
 
-        )
+                mfCode: {
+                    mfCodePipeline(execParms)
+                },
+                javaCode: {
+                    javaCodePipeline()
+                },
+                failFast: true
+
+            )
+        }
     }
 }

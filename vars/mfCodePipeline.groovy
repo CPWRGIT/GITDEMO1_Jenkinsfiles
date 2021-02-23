@@ -130,7 +130,10 @@ def call(Map execParms){
 
         }   
 
-        if(BRANCH_NAME == 'main') {
+        if(
+            BRANCH_NAME     == 'main'                       &
+            !(executionType == EXECUTION_TYPE_NO_MF_CODE)
+        ){
 
             stage("Trigger Release") {
 
