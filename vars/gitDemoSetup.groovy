@@ -21,6 +21,8 @@ String gitHubToken              = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU
 
 node{
 
+    GitHubAdminUser = GitHubAdminUser.toUpperCase()
+
     withCredentials(
         [
             usernamePassword(
@@ -40,16 +42,9 @@ node{
             !(GitHubAdminPassword   == gitHubAdminPwCheck)
         )
         {
-            echo '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
+            error '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
         }
     }
-
-    echo "'" + gitHubAdminUserCheck + "'"
-    echo "'" + GitHubAdminUser + "'"
-    echo "'" + gitHubAdminPwCheck + "'"
-    echo "'" + GitHubAdminPassword + "'"
-
-    error "STOP"
 
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
