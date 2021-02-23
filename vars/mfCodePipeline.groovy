@@ -50,7 +50,7 @@ def call(Map execParms){
                 deleteDir()
             }
 
-            unstash name 'workspace'
+            unstash name: 'workspace'
             
             initialize(execParms)
 

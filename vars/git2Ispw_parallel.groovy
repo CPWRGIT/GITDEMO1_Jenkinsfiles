@@ -19,7 +19,7 @@ def call(Map execParms){
 
             checkout scm
 
-            stash name 'workspace', includes: '**', useDefaultExcludes: false
+            stash name: 'workspace', includes: '**', useDefaultExcludes: false
         }
 
         parallel(
