@@ -16,6 +16,10 @@ def call(Map execParms){
             dir('./') {
                 deleteDir()
             }
+
+            checkout scm
+
+            stash name 'workspace', includes: '**', useDefaultExcludes: false
         }
 
         parallel(

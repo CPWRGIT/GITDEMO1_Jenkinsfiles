@@ -50,7 +50,7 @@ def call(Map execParms){
                 deleteDir()
             }
 
-            checkout scm
+            unstash name 'workspace'
             
             initialize(execParms)
 
