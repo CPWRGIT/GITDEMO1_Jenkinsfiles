@@ -25,12 +25,16 @@ node{
         [
             usernamePassword(
                 credentialsId:      gitHubAdminCredentials, 
-                passwordVariable:   'gitHubAdminPwCheck', 
-                usernameVariable:   'gitHubAdminUserCheck'
+                passwordVariable:   'gitHubAdminPwTmp', 
+                usernameVariable:   'gitHubAdminUserTmp'
             )
         ]
     )
     {
+
+        gitHubAdminUserCheck = gitHubAdminUserTmp
+        gitHubAdminPwCheck = gitHubAdminPwTmp
+        
         if(
             !(GitHubAdminUser       == gitHubAdminUserCheck) ||
             !(GitHubAdminPassword   == gitHubAdminPwCheck)
