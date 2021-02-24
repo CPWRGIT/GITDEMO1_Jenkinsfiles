@@ -314,10 +314,20 @@ def processBranchInfo(branchInfo, ispwApplication){
 //*********************************************************************************
 def buildImpactScanJcl (impactScanFile, runtimeConfig, application, ispwTargetLevel){
 
+    echo "Reading JCL Skel"
+    echo impactScanFile
+
     jcl   = libraryResource impactScanFile
+
+    echo "Read JCL Skel"
+    echo jcl
+
     jcl   = ispwImpactScanJcl.replace('<runtimeConfig>', runtimeConfig)
     jcl   = ispwImpactScanJcl.replace('<ispwApplication>', application)
     jcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', ispwTargetLevel)
+
+    echo "Modified JCL Skel"
+    echo jcl
 
     return jcl
 }
