@@ -322,9 +322,9 @@ def buildImpactScanJcl (impactScanFile, runtimeConfig, application, ispwTargetLe
     echo "Read JCL Skel"
     echo jcl
 
-    jcl   = ispwImpactScanJcl.replace('<runtimeConfig>', runtimeConfig)
-    jcl   = ispwImpactScanJcl.replace('<ispwApplication>', application)
-    jcl   = ispwImpactScanJcl.replace('<ispwTargetLevel>', ispwTargetLevel)
+    jcl   = jcl.replace('<runtimeConfig>', runtimeConfig)
+    jcl   = jcl.replace('<ispwApplication>', application)
+    jcl   = jcl.replace('<ispwTargetLevel>', ispwTargetLevel)
 
     echo "Modified JCL Skel"
     echo jcl
