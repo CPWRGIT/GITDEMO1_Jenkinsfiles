@@ -312,7 +312,7 @@ def processBranchInfo(branchInfo, ispwApplication){
 // Can be replaced once this feature has been implemented in ISPW itself
 // +++++++++++++++++++    
 //*********************************************************************************
-def     (impactScanFile, runtimeConfig, application, ispwTargetLevel){
+def buildImpactScanJcl (impactScanFile, runtimeConfig, application, ispwTargetLevel){
 
     jcl   = libraryResource impactScanFile
     jcl   = ispwImpactScanJcl.replace('<runtimeConfig>', runtimeConfig)
