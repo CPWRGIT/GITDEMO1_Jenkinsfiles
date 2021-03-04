@@ -4,9 +4,9 @@ import hudson.EnvVars
 import java.net.URL
 import groovy.xml.*
 
-String javaRootFolder = './InsuranceSpringServer'
-
 def call(){
+
+    def javaRootFolder = './InsuranceSpringServer'
 
     stage('Test') {
 
