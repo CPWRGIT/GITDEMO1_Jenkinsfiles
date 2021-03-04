@@ -4,28 +4,39 @@ import hudson.EnvVars
 import java.net.URL
 import groovy.xml.*
 
+String javaRootFolder = './InsuranceSpringServer'
+
 def call(){
 
-    stage('Build') {
+    stage('Test') {
 
         echo "[Info] - Building Java Code."
 
-        sleep Math.random() * 20
+        dir(javaRootFolder) {
+
+            def stdOut = bat(
+                script:         'gradlew test',
+                returnStdout:   true
+            )
+
+            echo stdOut
+
+        }
     }
 
     stage('Tests') {
 
         echo "[Info] - Run JUnit Tests."
 
-        sleep Math.random() * 20
+        dir(javaRootFolder) {
 
-    }
+            def stdOut = bat(
+                script:         'gradlew build',
+                returnStdout:   true
+            )
 
-    stage('Deploy') {
+            echo stdOut
 
-        echo "[Info] - Run JUnit Tests."
-
-        sleep Math.random() * 20
-
+        }
     }
 }
