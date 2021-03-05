@@ -10,33 +10,37 @@ def call(){
 
     stage('Test') {
 
-        echo "[Info] - Building Java Code."
+        echo "[Info] - Running Unit Tests."
 
-        dir(javaRootFolder) {
+        sleep 10
 
-            def stdOut = bat(
-                script:         'gradlew test',
-                returnStdout:   true
-            )
+        // dir(javaRootFolder) {
 
-            echo stdOut
+        //     def stdOut = bat(
+        //         script:         'gradlew test',
+        //         returnStdout:   true
+        //     )
 
-        }
+        //     echo stdOut
+
+        // }
     }
 
     stage('Tests') {
 
-        echo "[Info] - Run JUnit Tests."
+        echo "[Info] - Building Java Code."
 
-        dir(javaRootFolder) {
+        sleep 15
 
-            def stdOut = bat(
-                script:         'gradlew build',
-                returnStdout:   true
-            )
+        // dir(javaRootFolder) {
 
-            echo stdOut
+        //     def stdOut = bat(
+        //         script:         'gradlew build',
+        //         returnStdout:   true
+        //     )
 
-        }
+        //     echo stdOut
+
+        // }
     }
 }
