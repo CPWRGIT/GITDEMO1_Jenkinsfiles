@@ -8,7 +8,7 @@ def call(){
 
     def javaRootFolder = './InsuranceSpringServer'
 
-    stage('Test') {
+    stage('Unit Tests') {
 
         echo "[Info] - Running Unit Tests."
 
@@ -26,7 +26,7 @@ def call(){
         // }
     }
 
-    stage('Tests') {
+    stage('Build') {
 
         echo "[Info] - Building Java Code."
 
