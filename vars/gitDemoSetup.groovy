@@ -214,7 +214,7 @@ node{
     
     stage("Modify TTT assets"){
 
-        def vtContextFiles = findFiles(glob: '**/Tests/Unit/*.context')
+        def vtContextFiles = findFiles(glob: '**/Tests/Unit/**/*.context')
 
         def stringsList = [
                 ['${ispw_app_value}', IspwApp],
@@ -233,7 +233,7 @@ node{
 
         }
 
-        def nvtContextFiles = findFiles(glob: '**/Tests/Integration/*.context')
+        def nvtContextFiles = findFiles(glob: '**/Tests/Integration/**/*.context')
 
         stringsList = [
                 ['${ispw_app_value}', IspwApp],
@@ -256,7 +256,7 @@ node{
 
         }
 
-        def nvtScenarioFiles = findFiles(glob: '**/Tests/Integration/*.scenario')
+        def nvtScenarioFiles = findFiles(glob: '**/Tests/Integration/**/*.scenario')
 
         stringsList = [
             ['${lpar_name}', environmentSettings[TargetEnvironment].lparName],
