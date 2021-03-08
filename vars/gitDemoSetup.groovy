@@ -235,7 +235,7 @@ node{
 
         def nvtContextFiles = findFiles(glob: '**/Tests/Integration/*.context')
 
-        def stringsList = [
+        stringsList = [
                 ['${ispw_app_value}', IspwApp],
                 ['${ut_level}', DefaultUtLevel],
                 ['${ft_level}', DefaultFtLevel],
