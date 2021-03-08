@@ -49,9 +49,9 @@ ttt:
     virtualizedTests:       '/Unit'
     nonVirtualizedTests:    '/Integration'
   environmentIds:
-    virtualized:            5b508b8a787be73b59238d38
+    virtualized:            5c519facfba8720a90ccc645
     nonVirtualized:
-      batch:                5b508b8a787be73b59238d38
+      batch:                5c519facfba8720a90ccc645
       cics:                 5b5f2a71787be73b59238d7b
   results:
     sonar:
