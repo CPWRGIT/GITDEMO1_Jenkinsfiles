@@ -265,6 +265,16 @@ node{
             ['${ispw_level_value}', DefaultFtLevel],
             ['${xg_ssid}', environmentSettings[TargetEnvironment].xgSsid]
         ]
+
+        nvtScenarioFiles.each{
+
+            println "Modfying file: " + it.path.toString()
+
+            def content = readFile(file: it.path)
+            
+            replaceFileContent(it.path, stringsList)            
+
+        }
     }
 
     stage("Modify JOB source files"){
