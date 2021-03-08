@@ -222,7 +222,7 @@ node{
 
     stage("Modify JOB source files"){
 
-        def jobFiles    = findFiles(glob: '**Sources/**/Jobs/*.jcl')
+        def jobFiles    = findFiles(glob: '**/Sources/**/Jobs/*.jcl')
         def ispwPathNum = DefaultUtLevel.substring(DefaultUtLevel.length() - 1, DefaultUtLevel.length())
 
         def stringsList = [
