@@ -13,11 +13,37 @@ String projectSettingsFile      = "./GenAppCore/.settings/GenAppCore.prefs"
 String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
 String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
-String sonarProjectName
 
-String gitHubRepo
 String repoTemplate             = 'GITDEMO1_Template'
 String gitHubToken              = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
+
+def environmentSettings         = [
+                                    'CWCC': [
+                                        'lparName':                 'CWCC',
+                                        'hostName':                 'cwcc.compuware.com',
+                                        'xgSsid':                   'MXG1',
+                                        'sonarProjectName':         "GITDEMO1_${IspwApp}",
+                                        'gitHubRepo':               HostUserId, 
+                                        'tttExecutionEnvironment':  '5b508b8a787be73b59238d38',
+                                        
+                                        'componentIds':             [
+                                            'CWXTCOB':              '5d5fea81180742000cf98888'
+                                        ]
+                                    ],
+                                    'CWC2': [
+                                        'lparName':                 'CWC2',                                    
+                                        'hostName':                 'cwc2.nasa.cpwr.corp',
+                                        'xgSsid':                   'MXG2',                                        
+                                        'sonarProjectName':         "GITDEMO1_CWC2_${IspwApp}",
+                                        'gitHubRepo':               HostUserId + '_CWC2', 
+                                        'tttExecutionEnvironment':  '5c519facfba8720a90ccc645',
+                                        'componentIds':             [
+                                            'CWXTCOB':              '6046063418074200e864cb5e'
+                                        ]                                    
+                                    ]
+                                ]
+
+def components = ['CWXTCOB']
 
 node{
 
@@ -46,27 +72,15 @@ node{
         }
     }
 
+    TargetEnvironment   = TargetEnvironment.toUpperCase()
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
     CodeCoverageRepo    = CodeCoverageRepo.toUpperCase()
     DefaultUtLevel      = DefaultUtLevel.toUpperCase()
     DefaultFtLevel      = DefaultFtLevel.toUpperCase()
 
-    if (TargetEnvironment == 'CWCC'){
-
-        hostName            = 'cwcc.compuware.com'
-        sonarProjectName    = "GITDEMO1_${IspwApp}"
-        gitHubRepo          = HostUserId
-
-    }
-    else
-    {
-
-        hostName            = 'cwc2.nasa.cpwr.corp'
-        sonarProjectName    = "GITDEMO1_CWC2_${IspwApp}"
-        gitHubRepo          = HostUserId + '_CWC2'
-
-    }
+    def sonarProjectName    = environmentSettings[TargetEnvironment].sonarProjectName
+    def gitHubRepo          = environmentSettings[TargetEnvironment].gitHubRepo
 
     dir("./"){
         deleteDir()
@@ -176,7 +190,7 @@ node{
             [ispwConfigFile,
                 [
                     ['${ispw_app}', IspwApp], 
-                    ['${host}', hostName]
+                    ['${host}', environmentSettings[TargetEnvironment].hostName]
                 ]
             ],
             [projectSettingsFile,
@@ -198,9 +212,9 @@ node{
         }
     }
     
-    stage("Modify load libraries in TTT context files"){
-        
-        def contextFiles = findFiles(glob: '**/*.context')
+    stage("Modify TTT assets"){
+
+        def vtContextFiles = findFiles(glob: '**/Tests/Unit/*.context')
 
         def stringsList = [
                 ['${ispw_app_value}', IspwApp],
@@ -209,7 +223,7 @@ node{
                 ['${ft_level}', DefaultFtLevel]
             ]
 
-        contextFiles.each{
+        vtContextFiles.each{
 
             println "Modfying file: " + it.path.toString()
 
@@ -218,6 +232,39 @@ node{
             replaceFileContent(it.path, stringsList)            
 
         }
+
+        def nvtContextFiles = findFiles(glob: '**/Tests/Integration/*.context')
+
+        def stringsList = [
+                ['${ispw_app_value}', IspwApp],
+                ['${ut_level}', DefaultUtLevel],
+                ['${ft_level}', DefaultFtLevel],
+                [environmentSettings['CWCC'].tttExecutionEnvironment, environmentSettings[TargetEnvironment].tttExecutionEnvironment],
+            ]
+
+        components.each{
+            stringList.add([environmentSettings['CWCC'].componentIds[it], environmentSettings[TargetEnvironment].componentIds[it]])
+        }
+
+        nvtContextFiles.each{
+
+            println "Modfying file: " + it.path.toString()
+
+            def content = readFile(file: it.path)
+            
+            replaceFileContent(it.path, stringsList)            
+
+        }
+
+        def nvtScenarioFiles = findFiles(glob: '**/Tests/Integration/*.scenario')
+
+        stringList = [
+            ['${lpar_name}', environmentSettings[TargetEnvironment].lparName],
+            ['${mf_userid}', HostUserId],
+            ['${ispw_app_value}', IspwApp],
+            ['${ispw_level_value}', DefaultFtLevel],
+            ['${xg_ssid}', environmentSettings[TargetEnvironment].xgSsid]
+        ]
     }
 
     stage("Modify JOB source files"){
