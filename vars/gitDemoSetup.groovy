@@ -220,6 +220,29 @@ node{
         }
     }
 
+    stage("Modify JOB source files"){
+
+        def jobFiles    = findFiles(glob: '**Sources/**/Jobs/*.jcl')
+        def ispwPathNum = DefaultUtLevel.substring(DefaultUtLevel.length() - 1, DefaultUtLevel.length())
+
+        def stringsList = [
+                ['${user_id}', HostUserId],
+                ['${ispw_app_value}', IspwApp],
+                ['${ispw_path_num}', ispwPathNum]
+            ]
+
+        jobFiles.each{
+
+            println "Modfying file: " + it.path.toString()
+
+            def content = readFile(file: it.path)
+            
+            replaceFileContent(it.path, stringsList)            
+
+        }
+
+    }
+
     stage("Create Sonar and configure"){
 
         if(checkForProject(sonarProjectName, sonarServerUrl, sonarQubeToken) == "NOT FOUND") {
@@ -389,7 +412,7 @@ def buildJcl(ispwApp){
     jobRecords.add(/\/\/DELETE   EXEC PGM=IDCAMS/)
     jobRecords.add(/\/\/SYSPRINT DD  SYSOUT=*/)
     jobRecords.add(/\/\/SYSIN    DD  */)
-    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWKTDB2/)
+    jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWKTDB2X.IN/)
     jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTDATA/)
     jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTRPT/)
     jobRecords.add(/  DELETE SALESSUP.${ispwApp}.TEST.CWXTRPT.EOM/)
@@ -400,11 +423,11 @@ def buildJcl(ispwApp){
     jobRecords.add(/  SET MAXCC = 0/)
     jobRecords.add(/\/\/*/)
     jobRecords.add(/\/\/ALLOCSEQ EXEC PGM=IEFBR14/)
-    jobRecords.add(/\/\/CWKTDB2  DD DISP=(,CATLG,DELETE),/)
+    jobRecords.add(/\/\/CWKTDB2X DD DISP=(,CATLG,DELETE),/)
     jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
     jobRecords.add(/\/\/            DCB=(LRECL=80,RECFM=F,BLKSIZE=0),/)
     jobRecords.add(/\/\/            UNIT=SYSDA,/)
-    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWKTDB2/)
+    jobRecords.add(/\/\/            DSN=SALESSUP.${ispwApp}.TEST.CWKTDB2X.IN/)
     jobRecords.add(/\/\/*/)
     jobRecords.add(/\/\/CWXTDATA DD DISP=(,CATLG,DELETE),/)
     jobRecords.add(/\/\/            SPACE=(TRK,(5,1)),/)
@@ -482,7 +505,7 @@ def buildJcl(ispwApp){
     jobRecords.add(/\/\/SYSPRINT DD  SYSOUT=*/)
     jobRecords.add(/\/\/SYSLIST  DD  SYSOUT=*/)
     jobRecords.add(/\/\/DD01     DD  DISP=SHR,/)
-    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWKTDB2/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWKTDB2X.IN/)
     jobRecords.add(/\/\/DD02     DD  DISP=SHR,/)
     jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWXTDATA/)
     jobRecords.add(/\/\/DD03     DD  DISP=SHR,/)
@@ -498,7 +521,7 @@ def buildJcl(ispwApp){
     jobRecords.add(/\/\/DD08     DD  DISP=SHR,/)
     jobRecords.add(/\/\/             DSN=SALESSUP.GITDEMO1.TEST.MSTR.CWKTKS.CPY/)
     jobRecords.add(/\/\/DD01O    DD  DISP=SHR,/)
-    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWKTDB2/)
+    jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWKTDB2X.IN/)
     jobRecords.add(/\/\/DD02O    DD  DISP=SHR,/)
     jobRecords.add(/\/\/             DSN=SALESSUP.${ispwApp}.TEST.CWXTDATA/)
     jobRecords.add(/\/\/DD03O    DD  DISP=SHR,/)
