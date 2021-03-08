@@ -243,7 +243,7 @@ node{
             ]
 
         components.each{
-            stringList.add([environmentSettings['CWCC'].componentIds[it], environmentSettings[TargetEnvironment].componentIds[it]])
+            stringsList.add([environmentSettings['CWCC'].componentIds[it], environmentSettings[TargetEnvironment].componentIds[it]])
         }
 
         nvtContextFiles.each{
@@ -258,7 +258,7 @@ node{
 
         def nvtScenarioFiles = findFiles(glob: '**/Tests/Integration/*.scenario')
 
-        stringList = [
+        stringsList = [
             ['${lpar_name}', environmentSettings[TargetEnvironment].lparName],
             ['${mf_userid}', HostUserId],
             ['${ispw_app_value}', IspwApp],
