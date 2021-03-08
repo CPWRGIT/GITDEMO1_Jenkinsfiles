@@ -220,7 +220,8 @@ node{
                 ['${ispw_app_value}', IspwApp],
                 ['${ispw_level_value}', DefaultUtLevel],
                 ['${ut_level}', DefaultUtLevel],
-                ['${ft_level}', DefaultFtLevel]
+                ['${ft_level}', DefaultFtLevel],
+                [environmentSettings['CWCC'].tttExecutionEnvironment, environmentSettings[TargetEnvironment].tttExecutionEnvironment]
             ]
 
         vtContextFiles.each{
@@ -239,7 +240,7 @@ node{
                 ['${ispw_app_value}', IspwApp],
                 ['${ut_level}', DefaultUtLevel],
                 ['${ft_level}', DefaultFtLevel],
-                [environmentSettings['CWCC'].tttExecutionEnvironment, environmentSettings[TargetEnvironment].tttExecutionEnvironment],
+                [environmentSettings['CWCC'].tttExecutionEnvironment, environmentSettings[TargetEnvironment].tttExecutionEnvironment]
             ]
 
         components.each{
