@@ -28,6 +28,10 @@ def call(Map pipelineParms)
 
         echo "Submitting: \n" + ispwImpactScanJcl
 
+        echo "Using:"
+        echo "Connection ID " + synchConfig.hciConnectionId
+        echo "Credentials ID " + hostCredentialsId
+
         stage("Scan for Impacts"){
 
             topazSubmitFreeFormJcl(
