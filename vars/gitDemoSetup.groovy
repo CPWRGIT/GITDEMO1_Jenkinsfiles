@@ -86,7 +86,7 @@ node{
         deleteDir()
     }
 
-    currentBuild.displayName = "Setup for repo CPWRGIT/${HostUserId}"
+    currentBuild.displayName = "Setup for repo CPWRGIT/${gitHubRepo}"
 
     stage("Check Git Repository"){
 
