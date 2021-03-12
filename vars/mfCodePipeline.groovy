@@ -577,7 +577,7 @@ def runSonarScan() {
     def sonarCodeCoverageParm   = ''
     def scannerHome             = tool synchConfig.environment.sonar.scanner            
 
-    if(EXECUTION_TYPE_VT_ONLY | EXECUTION_TYPE_BOTH){
+    if(executionFlags.executeVt){
 
         //sonarTestResults        = getSonarResults(sonarResultsFileList)
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
