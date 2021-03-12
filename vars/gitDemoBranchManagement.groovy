@@ -144,8 +144,23 @@ node {
                     echo "[Info] - Modifying file: " + it.path
                     
                     def contextFileContent  = readFile(file: it.path)
-                    contextFileContent      = contextFileContent.replace(".FT1.", ispwFtLevelRepl).replace(".UT1.", ispwUtLevelRepl).replace(".FT2.", ispwFtLevelRepl).replace(".UT2.", ispwUtLevelRepl).replace(".FT3.", ispwFtLevelRepl).replace(".UT3.", ispwUtLevelRepl).replace(".FT4.", ispwFtLevelRepl).replace(".UT4.", ispwUtLevelRepl)
-                    
+                    contextFileContent      = contextFileContent.replace(".FT1.", ispwFtLevelRepl)
+                    contextFileContent      = contextFileContent.replace(".UT1.", ispwUtLevelRepl)
+                    contextFileContent      = contextFileContent.replace(".FT2.", ispwFtLevelRepl)
+                    contextFileContent      = contextFileContent.replace(".UT2.", ispwUtLevelRepl)
+                    contextFileContent      = contextFileContent.replace(".FT3.", ispwFtLevelRepl)
+                    contextFileContent      = contextFileContent.replace(".UT3.", ispwUtLevelRepl)
+                    contextFileContent      = contextFileContent.replace(".FT4.", ispwFtLevelRepl)
+                    contextFileContent      = contextFileContent.replace(".UT4.", ispwUtLevelRepl)
+                    contextFileContent      = contextFileContent.replace("<Value>UT1</Value>", "<Value>${ispwUtLevelRepl}</Value>")
+                    contextFileContent      = contextFileContent.replace("<Value>UT2</Value>", "<Value>${ispwUtLevelRepl}</Value>")
+                    contextFileContent      = contextFileContent.replace("<Value>UT3</Value>", "<Value>${ispwUtLevelRepl}</Value>")
+                    contextFileContent      = contextFileContent.replace("<Value>UT4</Value>", "<Value>${ispwUtLevelRepl}</Value>")
+                    contextFileContent      = contextFileContent.replace("<Value>FT1</Value>", "<Value>${ispwFtLevelRepl}</Value>")
+                    contextFileContent      = contextFileContent.replace("<Value>FT2</Value>", "<Value>${ispwFtLevelRepl}</Value>")
+                    contextFileContent      = contextFileContent.replace("<Value>FT3</Value>", "<Value>${ispwFtLevelRepl}</Value>")
+                    contextFileContent      = contextFileContent.replace("<Value>FT4</Value>", "<Value>${ispwFtLevelRepl}</Value>")
+
                     writeFile(file: it.path, text: contextFileContent)
                 }                
             }
@@ -170,7 +185,7 @@ node {
                 echo consoleMessage
                 consoleMessage  = bat(returnStdout: true, script: 'git commit -a -m ' + message)
                 echo consoleMessage
-                consoleMessage  = bat(returnStdout: true, script: "git push https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} refs/heads/${localBranchName}:refs/heads/${localBranchName} -f")
+                consoleMessage  = bat(returnStdout: true, script: 'git push https://' + GitHubUserName + ':' + GitHubPassword + '@github.com/CPWRGIT/${HostUserId} refs/heads/${localBranchName}:refs/heads/${localBranchName} -f')
                 echo consoleMessage
             }
         }
@@ -181,7 +196,7 @@ node {
                 echo "[INFO] - Deleting branch " + localBranchName + " from remote repository."
 
                 def message     = '"Delete Branch ' + localBranchName + '"'
-                consoleMessage  = bat(returnStdout: true, script: "git push https://${GitHubUserName}:${GitHubPassword}@github.com/CPWRGIT/${HostUserId} --delete refs/heads/${localBranchName} -f")
+                consoleMessage  = bat(returnStdout: true, script: 'git push https://' + GitHubUserName + ':' + GitHubPassword + '@github.com/CPWRGIT/${HostUserId} --delete refs/heads/${localBranchName} -f')
                 echo consoleMessage
             }
 
