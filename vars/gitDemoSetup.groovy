@@ -86,6 +86,8 @@ node{
         deleteDir()
     }
 
+    currentBuild.displayName = "Setup for repo CPWRGIT/${HostUserId}"
+
     stage("Check Git Repository"){
 
         try{
