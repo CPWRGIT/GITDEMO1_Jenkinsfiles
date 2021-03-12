@@ -18,12 +18,9 @@ String sonarResultsFileNvtCics
 String sonarResultsFileList     
 String sonarCodeCoverageFile   
 String jUnitResultsFile
-String executionType
 String skipReason
 
 String tttVtExecutionLoad
-
-Boolean skipTests
 
 def pipelineParms
 def ispwConfig
@@ -32,10 +29,7 @@ def synchConfig
 def CC_TEST_ID_MAX_LEN
 def CC_SYSTEM_ID_MAX_LEN
 
-def EXECUTION_TYPE_NO_MF_CODE
-def EXECUTION_TYPE_VT_ONLY
-def EXECUTION_TYPE_NVT_ONLY
-def EXECUTION_TYPE_BOTH
+def executionFlags
 
 def call(Map execParms){
 
@@ -63,16 +57,16 @@ def call(Map execParms){
 
     stage('Load code to mainframe') {
 
-        if(executionType == EXECUTION_TYPE_NO_MF_CODE) {
-
-            echo skipReason + "\n[Info] - No code will be loaded to the mainframe."
-
-        }
-        else {
+        if(executionFlags.mainframeChanges) {
 
             echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
 
             runMainframeLoad()
+
+        }
+        else {
+
+            echo skipReason + "\n[Info] - No code will be loaded to the mainframe."
 
         }
     }
@@ -81,12 +75,7 @@ def call(Map execParms){
 
     stage('Build mainframe code') {
 
-        if(executionType == EXECUTION_TYPE_NO_MF_CODE){
-
-            echo skipReason + "\n[Info] - Skipping Mainframe Build."
-
-        }
-        else{
+        if(executionFlags.mainframeChanges){
 
             echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
 
@@ -95,12 +84,14 @@ def call(Map execParms){
             runMainframeBuild()
 
         }
+        else{
+
+            echo skipReason + "\n[Info] - Skipping Mainframe Build."
+
+        }
     }
 
-    if(
-        executionType == EXECUTION_TYPE_VT_ONLY ||
-        executionType == EXECUTION_TYPE_BOTH
-    ){
+    if(executionFlags.executeVt){
 
         stage('Execute Unit Tests') {           
 
@@ -109,10 +100,7 @@ def call(Map execParms){
         }
     }
 
-    if(
-        executionType == EXECUTION_TYPE_NVT_ONLY ||
-        executionType == EXECUTION_TYPE_BOTH
-    ){
+    if(executionFlags.executeNvt){
 
         stage('Execute Module Integration Tests') {
 
@@ -121,7 +109,7 @@ def call(Map execParms){
         }
     }
 
-    if(!(executionType == EXECUTION_TYPE_NO_MF_CODE)){
+    if(executionFlags.mainframeChanges){
 
         getCocoResults()
 
@@ -134,8 +122,8 @@ def call(Map execParms){
     }   
 
     if(
-        BRANCH_NAME     == 'main'                       &&
-        !(executionType == EXECUTION_TYPE_NO_MF_CODE)
+        BRANCH_NAME     == 'main'       &&
+        executionFlags.mainframeChanges
     ){
 
         stage("Trigger Release") {
@@ -155,18 +143,17 @@ def initialize(execParms){
     CC_TEST_ID_MAX_LEN          = 15
     CC_SYSTEM_ID_MAX_LEN        = 15
 
-    EXECUTION_TYPE_NO_MF_CODE   = "NoTests"
-    EXECUTION_TYPE_VT_ONLY      = "Vt"
-    EXECUTION_TYPE_NVT_ONLY     = "Nvt"
-    EXECUTION_TYPE_BOTH         = "Both"
+    executionFlags              = [
+            mainframeChanges: true,
+            executeVt:        true,
+            executeNvt:       true
+        ]
 
     branchMappingString         = ''
     ispwTargetLevel             = ''    
     ispwImpactScanJcl           = ''
     tttVtExecutionLoad          = ''
     ccDdioOverrides             = ''
-
-    skipTests                   = false
 
     //*********************************************************************************
     // Read synchconfig.yml from Shared Library resources folder
@@ -271,25 +258,44 @@ def initialize(execParms){
 def determinePipelineBehavior(branchName, buildNumber){
 
     if (buildNumber == "1") {
-        executionType   = EXECUTION_TYPE_NO_MF_CODE
-        skipTests       = true
-        skipReason      = "[Info] - First build for branch '${branchName}'. Onyl sources will be scanned by SonarQube"
+
+        executionFlags.mainframeChanges = false
+        executionFlags.executeVt        = false
+        executionFlags.executeNvt       = false
+
+        skipReason                      = "[Info] - First build for branch '${branchName}'. Only sources will be scanned by SonarQube"
     }    
     else if (BRANCH_NAME.contains("feature")) {
-        executionType   = EXECUTION_TYPE_VT_ONLY
-        skipReason      = "[Info] - '${branchName}' is a feature branch."
+
+        executionFlags.mainframeChanges = true
+        executionFlags.executeVt        = true
+        executionFlags.executeNvt       = false
+
+        skipReason                      = "[Info] - '${branchName}' is a feature branch."
     }
     else if (BRANCH_NAME.contains("bugfix")) {
-        executionType = EXECUTION_TYPE_VT_ONLY
-        skipReason      = "[Info] - Branch '${branchName}'."
+
+        executionFlags.mainframeChanges = true
+        executionFlags.executeVt        = true
+        executionFlags.executeNvt       = false
+
+        skipReason                      = "[Info] - Branch '${branchName}'."
     }
     else if (BRANCH_NAME.contains("development")) {
-        executionType   = EXECUTION_TYPE_BOTH
-        skipReason      = "[Info] - Branch '${branchName}'."
+
+        executionFlags.mainframeChanges = true
+        executionFlags.executeVt        = true
+        executionFlags.executeNvt       = true
+
+        skipReason                      = "[Info] - Branch '${branchName}'."
     }
     else if (BRANCH_NAME.contains("main")) {
-        executionType   = EXECUTION_TYPE_NVT_ONLY
-        skipReason      = "[Info] - Branch '${branchName}'."
+
+        executionFlags.mainframeChanges = true
+        executionFlags.executeVt        = false
+        executionFlags.executeNvt       = true
+
+        skipReason                      = "[Info] - Branch '${branchName}'."
     }
 }
 
@@ -394,9 +400,11 @@ def checkForBuildParams(automaticBuildFile){
         echo "[Info] - No Automatic Build Params file was found.  Meaning, no mainframe sources have been changed.\n" +
         "[Info] - Mainframe Build and Test steps will be skipped. Sonar scan will be executed against code only."
 
-        executionType   = EXECUTION_TYPE_NO_MF_CODE
-        skipTests       = true
-        skipReason      = skipReason + "\n[Info] - No changes to mainframe code."
+        executionFlags.mainframeChanges = false
+        executionFlags.executeVt        = false
+        executionFlags.executeNvt       = false
+
+        skipReason                      = skipReason + "\n[Info] - No changes to mainframe code."
 
     }
 }
@@ -428,12 +436,8 @@ def runMainframeBuild(){
 
 def runUnitTests() {
 
-    if(skipTests){
+    if(executionFlags.executeVt){
 
-        echo skipReason + "\n[Info] - Skipping Unit Tests."
-
-    }
-    else{
         echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
 
         totaltest(
@@ -466,16 +470,16 @@ def runUnitTests() {
 
         junit allowEmptyResults: true, keepLongStdio: true, testResults: synchConfig.ttt.results.jUnit.folder + '/*.xml'
     }
+    else{
+
+        echo skipReason + "\n[Info] - Skipping Unit Tests."
+
+    }
 }
 
 def runIntegrationTests(){
 
-    if(skipTests){
-
-        echo skipReason + "\n[Info] - Skipping Integration Tests."
-
-    }
-    else{
+    if(executionFlags.executeNvt){
 
         echo "[Info] - Execute Module Integration Tests at mainframe level " + ispwTargetLevel + "."
 
@@ -514,6 +518,11 @@ def runIntegrationTests(){
             secureResultsFile(targetFile, "Non Virtualized " + envType.toUpperCase())
 
         }
+    }
+    else{
+
+        echo skipReason + "\n[Info] - Skipping Integration Tests."
+
     }
 }
 
@@ -568,7 +577,7 @@ def runSonarScan() {
     def sonarCodeCoverageParm   = ''
     def scannerHome             = tool synchConfig.environment.sonar.scanner            
 
-    if(executionType == EXECUTION_TYPE_VT_ONLY | executionType == EXECUTION_TYPE_BOTH){
+    if(EXECUTION_TYPE_VT_ONLY | EXECUTION_TYPE_BOTH){
 
         //sonarTestResults        = getSonarResults(sonarResultsFileList)
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
