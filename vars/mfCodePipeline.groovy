@@ -174,6 +174,7 @@ def initialize(execParms){
     def fileText                = libraryResource synchConfigFile
     tmpConfig                   = readYaml(text: fileText)
 
+    // Determine which execution environment/configuration to use. If none is specified, "CWCC" is the default
     if(execParms.executionEnvironment == null){
 
         execParms.executionEnvironment = 'cwcc'
@@ -184,8 +185,6 @@ def initialize(execParms){
     }
 
     synchConfig                 = tmpConfig.executionEnvironments[execParms.executionEnvironment]
-
-    echo synchConfig.toString()
 
     //*********************************************************************************
     // Build paths to subfolders of the project root
