@@ -56,7 +56,7 @@ node{
 
             stdOut = bat(
                 returnStdout: true, 
-                script: 'git remote set-url origin https://' + GitHubUser + ':' + GitHubPassword + '@github.com/CPWRGIT/${GitRepo}.git'
+                script: 'git remote set-url origin https://' + GitHubUser + ':' + GitHubPassword + "@github.com/CPWRGIT/${GitRepo}.git"
             )
 
             echo stdOut

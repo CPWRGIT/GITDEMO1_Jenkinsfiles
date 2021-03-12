@@ -86,6 +86,8 @@ node{
         deleteDir()
     }
 
+    currentBuild.displayName = "Setup for repo CPWRGIT/${gitHubRepo}"
+
     stage("Check Git Repository"){
 
         try{
@@ -180,6 +182,7 @@ node{
         def filesStringsList = [
             [jenkinsfile, 
                 [
+                    ['GITDEMO_Shared_Lib@Git2IspwFts', 'GITDEMO_Shared_Lib@Git2IspwCWCC'],
                     ['${hostCredentialsId}', HostCredentialsId], 
                     ['${cesCredentialsId}', CesCredentialsId],
                     ['${mf_userid}', HostUserId],
@@ -214,13 +217,14 @@ node{
     
     stage("Modify TTT assets"){
 
-        def vtContextFiles = findFiles(glob: '**/Tests/Unit/*.context')
+        def vtContextFiles = findFiles(glob: '**/Tests/Unit/**/*.context')
 
         def stringsList = [
                 ['${ispw_app_value}', IspwApp],
                 ['${ispw_level_value}', DefaultUtLevel],
                 ['${ut_level}', DefaultUtLevel],
-                ['${ft_level}', DefaultFtLevel]
+                ['${ft_level}', DefaultFtLevel],
+                [environmentSettings['CWCC'].tttExecutionEnvironment, environmentSettings[TargetEnvironment].tttExecutionEnvironment]
             ]
 
         vtContextFiles.each{
@@ -233,17 +237,17 @@ node{
 
         }
 
-        def nvtContextFiles = findFiles(glob: '**/Tests/Integration/*.context')
+        def nvtContextFiles = findFiles(glob: '**/Tests/Integration/**/*.context')
 
-        def stringsList = [
+        stringsList = [
                 ['${ispw_app_value}', IspwApp],
                 ['${ut_level}', DefaultUtLevel],
                 ['${ft_level}', DefaultFtLevel],
-                [environmentSettings['CWCC'].tttExecutionEnvironment, environmentSettings[TargetEnvironment].tttExecutionEnvironment],
+                [environmentSettings['CWCC'].tttExecutionEnvironment, environmentSettings[TargetEnvironment].tttExecutionEnvironment]
             ]
 
         components.each{
-            stringList.add([environmentSettings['CWCC'].componentIds[it], environmentSettings[TargetEnvironment].componentIds[it]])
+            stringsList.add([environmentSettings['CWCC'].componentIds[it], environmentSettings[TargetEnvironment].componentIds[it]])
         }
 
         nvtContextFiles.each{
@@ -256,15 +260,25 @@ node{
 
         }
 
-        def nvtScenarioFiles = findFiles(glob: '**/Tests/Integration/*.scenario')
+        def nvtScenarioFiles = findFiles(glob: '**/Tests/Integration/**/*.scenario')
 
-        stringList = [
+        stringsList = [
             ['${lpar_name}', environmentSettings[TargetEnvironment].lparName],
             ['${mf_userid}', HostUserId],
             ['${ispw_app_value}', IspwApp],
             ['${ispw_level_value}', DefaultFtLevel],
             ['${xg_ssid}', environmentSettings[TargetEnvironment].xgSsid]
         ]
+
+        nvtScenarioFiles.each{
+
+            println "Modfying file: " + it.path.toString()
+
+            def content = readFile(file: it.path)
+            
+            replaceFileContent(it.path, stringsList)            
+
+        }
     }
 
     stage("Modify JOB source files"){
