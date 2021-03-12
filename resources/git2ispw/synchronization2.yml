@@ -1,0 +1,145 @@
+executionEnvironments: 
+  cwcc:
+    environment:
+      hci:
+        connectionId:           196de681-04d7-4170-824f-09a5457c5cda
+      ces:
+        url:                    http://cwcc.compuware.com:2020
+      sonar:
+        scanner:                scanner
+        server:                 localhost
+      xlr:
+        template:               'GITDEMO_CWCC'
+    ispw:
+      mfProject:
+        rootFolder:             './GenAppCore'
+        sourcesFolder:          '/Sources'
+      configFile:
+        folder:                 './GenAppCore'
+        name:                   'ispwconfig.yml'
+      impactScanFile:           './git2ispw/impact_scan.jcl'
+      automaticBuildFile:       './automaticBuildParams.txt'
+      changedProgramsFile:      './changedPrograms.json'
+      branchInfo:
+        feature/FT1:
+          ispwLevel:            FT1
+          mapRule:              per-branch
+        feature/FT2:
+          ispwLevel:            FT2
+          mapRule:              per-branch
+        feature/FT3:
+          ispwLevel:            FT3
+          mapRule:              per-branch
+        feature/FT4:
+          ispwLevel:            FT4
+          mapRule:              per-branch
+        bugfix:
+          ispwLevel:            HFIX
+          mapRule:              per-branch
+        development:
+          ispwLevel:            DEVL
+          mapRule:              per-branch
+        main:
+          ispwLevel:            MAIN
+          mapRule:              per-branch
+    ttt:
+      loadLibraryPattern:       'SALESSUP.<ispwApplication>.<ispwLevel>.LOAD'
+      folders:               
+        root:                   '/Tests'
+        virtualizedTests:       '/Unit'
+        nonVirtualizedTests:    '/Integration'
+      environmentIds:
+        virtualized:            5b508b8a787be73b59238d38
+        nonVirtualized:
+          batch:                5b508b8a787be73b59238d38
+          cics:                 5b5f2a71787be73b59238d7b
+      results:
+        sonar:
+          folder:               './TTTSonar'    
+          origFile:             'generated.cli.suite.sonar.xml'
+          targetFiles:
+            virtualized:        'generated.cli.vt.suite.sonar.xml'
+            nonVirtualized:
+              batch:            'generated.cli.nvt.batch.suite.sonar.xml'
+              cics:             'generated.cli.nvt.cics.suite.sonar.xml'
+        jUnit:
+          folder:               './TTTUnit'
+          file:                 'generated.cli.suite.junit.xml'
+    coco:  
+      ccThreshold:              '70'
+      results:
+        sonar:
+          folder:               './Coverage'
+          file:                 'CodeCoverage.xml'    
+  cwc2:
+    environment:
+      hci:
+        connectionId:           38e854b0-f7d3-4a8f-bf31-2d8bfac3dbd4
+      ces:
+        url:                    http://cwc2.nasa.cpwr.corp:2020
+      sonar:
+        scanner:                Scanner
+        server:                 ftssonar
+      xlr:
+        template:               'GITDEMO_CWC2'
+    ispw:
+      mfProject:
+        rootFolder:             './GenAppCore'
+        sourcesFolder:          '/Sources'
+      configFile:
+        folder:                 './GenAppCore'
+        name:                   'ispwconfig.yml'
+      impactScanFile:           './git2ispw/impact_scan.jcl'
+      automaticBuildFile:       './automaticBuildParams.txt'
+      changedProgramsFile:      './changedPrograms.json'
+      branchInfo:
+        feature/FT1:
+          ispwLevel:            FT1
+          mapRule:              per-branch
+        feature/FT2:
+          ispwLevel:            FT2
+          mapRule:              per-branch
+        feature/FT3:
+          ispwLevel:            FT3
+          mapRule:              per-branch
+        feature/FT4:
+          ispwLevel:            FT4
+          mapRule:              per-branch
+        bugfix:
+          ispwLevel:            HFIX
+          mapRule:              per-branch
+        development:
+          ispwLevel:            DEVL
+          mapRule:              per-branch
+        main:
+          ispwLevel:            MAIN
+          mapRule:              per-branch
+    ttt:
+      loadLibraryPattern:       'SALESSUP.<ispwApplication>.<ispwLevel>.LOAD'
+      folders:               
+        root:                   '/Tests'
+        virtualizedTests:       '/Unit'
+        nonVirtualizedTests:    '/Integration'
+      environmentIds:
+        virtualized:            5c519facfba8720a90ccc645
+        nonVirtualized:
+          batch:                5c519facfba8720a90ccc645
+          cics:                 5b5f2a71787be73b59238d7b
+      results:
+        sonar:
+          folder:               './TTTSonar'    
+          origFile:             'generated.cli.suite.sonar.xml'
+          targetFiles:
+            virtualized:        'generated.cli.vt.suite.sonar.xml'
+            nonVirtualized:
+              batch:            'generated.cli.nvt.batch.suite.sonar.xml'
+              cics:             'generated.cli.nvt.cics.suite.sonar.xml'
+        jUnit:
+          folder:               './TTTUnit'
+          file:                 'generated.cli.suite.junit.xml'
+    coco:  
+      ccThreshold:              '70'
+      results:
+        sonar:
+          folder:               './Coverage'
+          file:                 'CodeCoverage.xml'    

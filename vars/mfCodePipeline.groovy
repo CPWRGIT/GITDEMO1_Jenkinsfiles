@@ -172,7 +172,20 @@ def initialize(execParms){
     // Read synchconfig.yml from Shared Library resources folder
     //*********************************************************************************
     def fileText                = libraryResource synchConfigFile
-    synchConfig                 = readYaml(text: fileText)
+    tmpConfig                   = readYaml(text: fileText)
+
+    if(execParms.executionEnvironment == null){
+
+        execParms.executionEnvironment = 'cwcc'
+
+    }
+    else{
+        execParms.executionEnvironment = execParms.executionEnvironment.toLowerCase()
+    }
+
+    synchConfig                 = tmpConfig.executionEnvironments[parms.executionEnvironment]
+
+    echo synchConfig.toString()
 
     //*********************************************************************************
     // Build paths to subfolders of the project root
