@@ -168,7 +168,8 @@ def initialize(execParms){
     else{
         execParms.executionEnvironment = execParms.executionEnvironment.toLowerCase()
     }
-
+echo execParms.executionEnvironment.toString()
+echo synchConfig.toString()
     synchConfig                 = tmpConfig.executionEnvironments[execParms.executionEnvironment]
 
     //*********************************************************************************
