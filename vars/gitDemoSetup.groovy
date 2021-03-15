@@ -182,7 +182,6 @@ node{
         def filesStringsList = [
             [jenkinsfile, 
                 [
-                    ['GITDEMO_Shared_Lib@Git2IspwFts', 'GITDEMO_Shared_Lib@Git2IspwCWCC'],
                     ['${hostCredentialsId}', HostCredentialsId], 
                     ['${cesCredentialsId}', CesCredentialsId],
                     ['${mf_userid}', HostUserId],
