@@ -121,10 +121,7 @@ def call(Map execParms){
 
     }   
 
-    if(
-        BRANCH_NAME     == 'main'       &&
-        executionFlags.mainframeChanges
-    ){
+    if(executionFlags.executeXlr){
 
         stage("Trigger Release") {
 
@@ -146,7 +143,8 @@ def initialize(execParms){
     executionFlags              = [
             mainframeChanges: true,
             executeVt:        true,
-            executeNvt:       true
+            executeNvt:       true,
+            executeXlr:       true
         ]
 
     branchMappingString         = ''
@@ -262,6 +260,7 @@ def determinePipelineBehavior(branchName, buildNumber){
         executionFlags.mainframeChanges = false
         executionFlags.executeVt        = false
         executionFlags.executeNvt       = false
+        executionFlags.executeXlr       = false
 
         skipReason                      = "[Info] - First build for branch '${branchName}'. Only sources will be scanned by SonarQube"
     }    
@@ -270,6 +269,7 @@ def determinePipelineBehavior(branchName, buildNumber){
         executionFlags.mainframeChanges = true
         executionFlags.executeVt        = true
         executionFlags.executeNvt       = false
+        executionFlags.executeXlr       = false
 
         skipReason                      = "[Info] - '${branchName}' is a feature branch."
     }
@@ -278,6 +278,7 @@ def determinePipelineBehavior(branchName, buildNumber){
         executionFlags.mainframeChanges = true
         executionFlags.executeVt        = true
         executionFlags.executeNvt       = false
+        executionFlags.executeXlr       = false
 
         skipReason                      = "[Info] - Branch '${branchName}'."
     }
@@ -286,6 +287,7 @@ def determinePipelineBehavior(branchName, buildNumber){
         executionFlags.mainframeChanges = true
         executionFlags.executeVt        = true
         executionFlags.executeNvt       = true
+        executionFlags.executeXlr       = false
 
         skipReason                      = "[Info] - Branch '${branchName}'."
     }
@@ -294,6 +296,7 @@ def determinePipelineBehavior(branchName, buildNumber){
         executionFlags.mainframeChanges = true
         executionFlags.executeVt        = false
         executionFlags.executeNvt       = true
+        executionFlags.executeXlr       = true
 
         skipReason                      = "[Info] - Branch '${branchName}'."
     }
@@ -403,6 +406,7 @@ def checkForBuildParams(automaticBuildFile){
         executionFlags.mainframeChanges = false
         executionFlags.executeVt        = false
         executionFlags.executeNvt       = false
+        executionFlags.executeXlr       = false        
 
         skipReason                      = skipReason + "\n[Info] - No changes to mainframe code."
 
@@ -544,8 +548,9 @@ def secureResultsFile(resultsFileNameNew, resultsFileType) {
     }
     catch(Exception e) {
 
-        echo "[Info] - No ${resultsFileType} Tests needed to be executed.\n" +
-        "[Info] - Therefore, no ${resultsFileType} results file needs to be processed."
+        echo "[Warn] - No ${resultsFileType} Tests Results File could be found.\n" +
+        "[Warn] - This may be because no matching test scenarios (environment or target program) were found.\n"
+        "[Warn] - Refer to the Topaz for Total Test log output to determine if this is due to an issue or was to be expected.\n"
             
     }
 
@@ -607,28 +612,29 @@ def runSonarScan() {
     }
 }
 
-def getSonarResults(resultsFileList){
+// May be removed after testing fix for TTT CLI
+// def getSonarResults(resultsFileList){
 
-    def resultsList         = ''
+//     def resultsList         = ''
 
-    resultsFileList.each{
+//     resultsFileList.each{
 
-        def resultsFileContent
-        def resultsFileName = it
-        resultsFileContent  = readFile(file: sonarResultsFolder + '/' + it)
-        resultsFileContent  = resultsFileContent.substring(resultsFileContent.indexOf('\n') + 1)
-        def testExecutions  = new XmlSlurper().parseText(resultsFileContent)
-        /* For now - only pass VT sonar results to sonar */
-        testExecutions.file.each {
+//         def resultsFileContent
+//         def resultsFileName = it
+//         resultsFileContent  = readFile(file: sonarResultsFolder + '/' + it)
+//         resultsFileContent  = resultsFileContent.substring(resultsFileContent.indexOf('\n') + 1)
+//         def testExecutions  = new XmlSlurper().parseText(resultsFileContent)
+//         /* For now - only pass VT sonar results to sonar */
+//         testExecutions.file.each {
             
-            if(resultsFileName.contains('.vt.')){
-                resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
-            }
-        }
-    }
+//             if(resultsFileName.contains('.vt.')){
+//                 resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
+//             }
+//         }
+//     }
 
-    return resultsList
-}
+//     return resultsList
+// }
 
 def getMainAssignmentId(automaticBuildFile){
 
