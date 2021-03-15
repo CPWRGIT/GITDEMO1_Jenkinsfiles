@@ -169,8 +169,10 @@ def initialize(execParms){
         execParms.executionEnvironment = execParms.executionEnvironment.toLowerCase()
     }
 echo execParms.executionEnvironment.toString()
-echo synchConfig.toString()
+
     synchConfig                 = tmpConfig.executionEnvironments[execParms.executionEnvironment]
+
+echo synchConfig.toString()
 
     //*********************************************************************************
     // Build paths to subfolders of the project root
