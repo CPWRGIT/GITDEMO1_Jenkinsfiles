@@ -82,7 +82,7 @@ node {
 
         gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
 
-        currentBuild.displayName = "Branch Action ${BranchAction} for Branch ${localBranchName} in CPWRGIT/${HostUserId}"
+        currentBuild.displayName = "${BranchAction} Branch ${localBranchName} in CPWRGIT/${HostUserId}"
 
         dir("./"){
             deleteDir()

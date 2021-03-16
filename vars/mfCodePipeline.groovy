@@ -39,6 +39,7 @@ def call(Map execParms){
 
     stage ('Initialize') {
 
+        // If other than 1st build, the code will run in a parallel node and will have to unstash the workspace
         if(!(BUILD_NUMBER == "1")) {
 
             dir('./') {
@@ -50,9 +51,6 @@ def call(Map execParms){
         }
         
         initialize(execParms)
-
-        //setVtLoadlibrary()  /* Replaced by using context variables */
-
     }
 
     stage('Load code to mainframe') {
@@ -159,7 +157,7 @@ def initialize(execParms){
     def fileText                = libraryResource synchConfigFile
     tmpConfig                   = readYaml(text: fileText)
 
-    // Determine which execution environment/configuration to use. If none is specified, "CWCC" is the default
+    // Determine which execution environment/configuration to use. If none is specified, "cwcc" is the default
     if(execParms.executionEnvironment == null){
 
         execParms.executionEnvironment = 'cwcc'
@@ -200,7 +198,7 @@ def initialize(execParms){
     //*********************************************************************************
     def tmpText                 = readFile(file: ispwConfigFile)
 
-    // remove the first line (i.e. the substring following the first carriage return '\n')
+    // remove the first line (i.e. use the the substring following the first carriage return '\n')
     tmpText                     = tmpText.substring(tmpText.indexOf('\n') + 1)
 
     // convert the text to yaml
@@ -214,6 +212,7 @@ def initialize(execParms){
     // If target level is empty the branch name could not be mapped
     //*********************************************************************************
     if(ispwTargetLevel == ''){
+
         error "No branch mapping for branch ${BRANCH_NAME} was found. Execution will be aborted.\n" +
             "Correct the branch name to reflect naming conventions."
     }
@@ -222,7 +221,7 @@ def initialize(execParms){
     // Build DDIO override parameter to use the VT load library (making use of ESS)
     //
     // +++++++++++++++++++
-    // Can be replaced once CoCo PTF has been applied to CWCC making use of overrides obsolete
+    // Can be replaced once CoCo PTF has been applied to CWCC (April Release 2021) making use of overrides obsolete
     // +++++++++++++++++++    
     //*********************************************************************************
     ccDdioOverrides             = tttVtExecutionLoad
@@ -231,28 +230,18 @@ def initialize(execParms){
     // Build JCL to cross reference components once they have been loaded to ISPW
     //
     // +++++++++++++++++++
-    // Can be replaced once this feature has been implemented in ISPW itself
+    // Can be replaced once this feature has been implemented in ISPW itself (April Release 2021)
     // +++++++++++++++++++    
     //*********************************************************************************
     ispwImpactScanJcl           = buildImpactScanJcl(synchConfig.ispw.impactScanFile, ispwConfig.ispwApplication.runtimeConfig, ispwConfig.ispwApplication.application, ispwTargetLevel)
 
-    //*********************************************************************************
-    // The .tttcfg file and JCL skeleton are located in the pipeline shared library, resources folder
-    // Determine path relative to current workspace
-    //
-    // Replaced by using context vars and server configuration
-    //*********************************************************************************
-    //def tmpWorkspace            = workspace.replace('\\', '/')
-    //tttConfigFolder             = '..' + tmpWorkspace.substring(tmpWorkspace.lastIndexOf('/')) + '@libs/' + sharedLibName + '/resources' + '/' + synchConfig.tttConfigFolder
-    //tttUtJclSkeletonFile        = tttConfigFolder + '/JCLSkeletons/TTTRUNNER.jcl' 
-
     buildCocoParms(BRANCH_NAME)
-
 }
 
 /* Determine execution type of the pipeline */
 /* If it executes for the first time, i.e. the branch has just been created, only scan sources and don't execute any tests      */
 /* Else, depending on the branch type or branch name (feature, development, fix or main) determine the type of tests to execute */
+/* If main branch and mainfgrame changes have been applied, trigger XLR */
 def determinePipelineBehavior(branchName, buildNumber){
 
     if (buildNumber == "1") {
@@ -360,19 +349,6 @@ def buildCocoParms(executionBranch){
     ccTestId    = BUILD_NUMBER
 
 }
-
-/* Modify JCL Skeleton to use correct load library for VTs */
-/* Replaced by 20.05.01 context variables                  */
-// def setVtLoadlibrary(){
-
-//     def jclSkeleton = readFile(tttUtJclSkeletonFile).toString().replace('${loadlibraries}', tttVtExecutionLoad)
-
-//     writeFile(
-//         file:   tttUtJclSkeletonFile,
-//         text:   jclSkeleton
-//     )    
-
-// }
 
 def runMainframeLoad() {
 
@@ -530,6 +506,9 @@ def runIntegrationTests(){
     }
 }
 
+// Each execution of totaltest will create a Sonar Results file with the same name (generated.cli.suite.sonar.xml)
+// Therefore, if totaltest is being executed several time within one build, the corresponding result files need to be
+// renamed to prevent overwriting
 def secureResultsFile(resultsFileNameNew, resultsFileType) {
 
     try {
