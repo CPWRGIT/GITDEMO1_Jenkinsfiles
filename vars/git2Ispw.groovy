@@ -19,32 +19,34 @@ def call(Map execParms){
 
             checkout scm
 
+            javaCodePipeline()
+
         }
 
-        if(BUILD_NUMBER == "1") {
+    //     if(BUILD_NUMBER == "1") {
 
-            mfCodePipeline(execParms)
+    //         mfCodePipeline(execParms)
         
-        }
-        else{
+    //     }
+    //     else{
 
-            stash name: 'workspace', includes: '**', useDefaultExcludes: false
+    //         stash name: 'workspace', includes: '**', useDefaultExcludes: false
 
-            parallel(
+    //         parallel(
 
-                mfCode: {
-                    node {
-                        mfCodePipeline(execParms)
-                    }
-                },
-                javaCode: {
-                    node {
-                        javaCodePipeline()
-                    }
-                },
-                failFast: true
+    //             mfCode: {
+    //                 node {
+    //                     mfCodePipeline(execParms)
+    //                 }
+    //             },
+    //             javaCode: {
+    //                 node {
+    //                     javaCodePipeline()
+    //                 }
+    //             },
+    //             failFast: true
 
-            )
-        }
-    }
+    //         )
+    //     }
+    // }
 }
