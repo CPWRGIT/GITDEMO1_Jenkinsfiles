@@ -12,7 +12,7 @@ def call(){
 
         echo "[Info] - Running Unit Tests."
 
-        dir(javaRootFolder) {
+/*         dir(javaRootFolder) {
 
             def stdOut = bat(
                 script:         'gradlew test',
@@ -22,13 +22,13 @@ def call(){
             echo stdOut
 
         }
-    }
+ */    }
 
     stage('Build') {
 
         echo "[Info] - Building Java Code."
 
-        dir(javaRootFolder) {
+/*         dir(javaRootFolder) {
 
             def stdOut = bat(
                 script:         'gradlew build',
@@ -38,5 +38,5 @@ def call(){
             echo stdOut
 
         }
-    }
+ */    }
 }

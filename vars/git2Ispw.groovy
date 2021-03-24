@@ -19,8 +19,6 @@ def call(Map execParms){
 
             checkout scm
 
-            javaCodePipeline()
-
         }
 
         if(BUILD_NUMBER == "1") {
