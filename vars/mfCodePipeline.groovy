@@ -421,7 +421,13 @@ def runUnitTests() {
 
     if(executionFlags.executeVt){
 
+        def applicationQualifier = ispwConfig.ispwApplication.application
+
         echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
+
+        if(execParms.executionEnvironment == 'cwc2'){
+            applicationQualifier = 'CWC2.' + applicationQualifier
+        }
 
         totaltest(
             serverUrl:                          synchConfig.environment.ces.url, 
@@ -440,7 +446,7 @@ def runUnitTests() {
             createReport:                       true, 
             createResult:                       true, 
             createSonarReport:                  true,
-            contextVariables:                   '"ispw_app=' + ispwConfig.ispwApplication.application + ',ispw_level=' + ispwTargetLevel + '"',
+            contextVariables:                   '"ispw_app=' + applicationQualifier + ',ispw_level=' + ispwTargetLevel + '"',
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
             collectCCSystem:                    ccSystemId,
@@ -564,6 +570,19 @@ def runSonarScan() {
     def sonarCodeCoverageParm   = ''
     def scannerHome             = tool synchConfig.environment.sonar.scanner            
 
+    def sonarProjectName
+
+    if(execParms.executionEnvironment == 'cwc2'){
+
+        sonarProjectName = ispwConfig.ispwApplication.stream + '_CWC2_' + ispwConfig.ispwApplication.application
+
+    }
+    else{
+
+        sonarProjectName = ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application
+    
+    }
+
     if(executionFlags.executeVt){
 
         //sonarTestResults        = getSonarResults(sonarResultsFileList)
@@ -578,8 +597,8 @@ def runSonarScan() {
 
         bat '"' + scannerHome + '/bin/sonar-scanner"' + 
             ' -Dsonar.branch.name=' + BRANCH_NAME +
-            ' -Dsonar.projectKey=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application + 
-            ' -Dsonar.projectName=' + ispwConfig.ispwApplication.stream + '_' + ispwConfig.ispwApplication.application +
+            ' -Dsonar.projectKey=' + sonarProjectName + 
+            ' -Dsonar.projectName=' + sonarProjectName +
             ' -Dsonar.projectVersion=1.0' +
             ' -Dsonar.sources=' + sonarCobolFolder + 
             ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
