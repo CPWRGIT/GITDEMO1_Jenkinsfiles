@@ -4,6 +4,7 @@ import hudson.EnvVars
 import java.net.URL
 import groovy.xml.*
 
+String executionEnvironment
 String synchConfigFile         
 String branchMappingString     
 String ispwTargetLevel
@@ -158,19 +159,16 @@ def initialize(execParms){
     tmpConfig                   = readYaml(text: fileText)
 
     // Determine which execution environment/configuration to use. If none is specified, "cwcc" is the default
-    if(execParms.executionEnvironment == null){
+    if(pipelineParms.executionEnvironment == null){
 
-        execParms.executionEnvironment = 'cwcc'
+        pipelineParms.executionEnvironment = 'cwcc'
 
     }
     else{
-        execParms.executionEnvironment = execParms.executionEnvironment.toLowerCase()
+        pipelineParms.executionEnvironment = execParms.executionEnvironment.toLowerCase()
     }
 
-    synchConfig                 = tmpConfig.executionEnvironments[execParms.executionEnvironment]
-
-echo "Config"
-echo synchConfig.toString()
+    synchConfig                 = tmpConfig.executionEnvironments[pipelineParms.executionEnvironment]
 
     //*********************************************************************************
     // Build paths to subfolders of the project root
@@ -425,7 +423,7 @@ def runUnitTests() {
 
         echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
 
-        if(execParms.executionEnvironment == 'cwc2'){
+        if(pipelineParms.executionEnvironment == 'cwc2'){
             applicationQualifier = 'CWC2.' + applicationQualifier
         }
 
@@ -572,7 +570,7 @@ def runSonarScan() {
 
     def sonarProjectName
 
-    if(execParms.executionEnvironment == 'cwc2'){
+    if(pipelineParms.executionEnvironment == 'cwc2'){
 
         sonarProjectName = ispwConfig.ispwApplication.stream + '_CWC2_' + ispwConfig.ispwApplication.application
 
