@@ -62,7 +62,11 @@ node{
 
         gitHubAdminUserCheck = gitHubAdminUserTmp
         gitHubAdminPwCheck = gitHubAdminPwTmp
+echo gitHubAdminUserCheck
+echo gitHubAdminPwCheck
 
+echo GitHubAdminUser
+echo GitHubAdminPassword
         if(
             !(GitHubAdminUser       == gitHubAdminUserCheck) ||
             !(GitHubAdminPassword   == gitHubAdminPwCheck)
