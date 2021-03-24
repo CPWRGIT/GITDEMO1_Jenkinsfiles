@@ -329,6 +329,8 @@ echo GitHubAdminPassword
         
         dir("./")
         {
+            bat(returnStdout: true, script: 'git config user.email "cpwrgit@compuware.com"')
+            bat(returnStdout: true, script: 'git config user.name "CPWRGIT"')
             //bat(returnStdout: true, script: 'git config --global credential.helper wincred')
             bat(returnStdout: true, script: 'git commit -a -m ' + message)
             bat(returnStdout: true, script: "git push  https://" + GitHubAdminUser + ":" + GitHubAdminPassword + "@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
