@@ -22,6 +22,8 @@ def environmentSettings         = [
                                         'lparName':                 'CWCC',
                                         'hostName':                 'cwcc.compuware.com',
                                         'xgSsid':                   'MXG1',
+                                        'sonarScannerName':         'scanner',
+                                        'sonarServerName':          'localhost',
                                         'sonarProjectName':         "GITDEMO1_${IspwApp}",
                                         'gitHubRepo':               HostUserId, 
                                         'tttExecutionEnvironment':  '5b508b8a787be73b59238d38',
@@ -33,7 +35,9 @@ def environmentSettings         = [
                                     'CWC2': [
                                         'lparName':                 'CWC2',                                    
                                         'hostName':                 'cwc2.nasa.cpwr.corp',
-                                        'xgSsid':                   'MXG2',                                        
+                                        'xgSsid':                   'MXG2',   
+                                        'sonarScannerName':         'Scanner',  
+                                        'sonarServerName':          'ftssonar',                                                                                                                   
                                         'sonarProjectName':         "GITDEMO1_CWC2_${IspwApp}",
                                         'gitHubRepo':               HostUserId + '_CWC2', 
                                         'tttExecutionEnvironment':  '5c519facfba8720a90ccc645',
@@ -322,7 +326,26 @@ echo GitHubAdminPassword
             echo "Sonar project ${sonarProjectName} already exists."
         }
     }
-    
+
+    stage("Run initial scan on MAIN"){
+
+        def scannerHome             = tool environmentSettings[TargetEnvironment].sonarScannerName
+
+        withSonarQubeEnv(environmentSettings[TargetEnvironment].sonarServerName) {
+            bat '"' + scannerHome + '/bin/sonar-scanner"' + 
+//                ' -Dsonar.branch.name=' + BRANCH_NAME +
+                ' -Dsonar.projectKey=' + sonarProjectName + 
+                ' -Dsonar.projectName=' + sonarProjectName +
+                ' -Dsonar.projectVersion=1.0' +
+                ' -Dsonar.sources=./GenAppCore/Sources' + 
+                ' -Dsonar.cobol.copy.directories=./GenAppCore/Sources' +
+                ' -Dsonar.cobol.file.suffixes=cbl' + 
+                ' -Dsonar.cobol.copy.suffixes=cpy' +
+                ' -Dsonar.ws.timeout=480' +
+                ' -Dsonar.sourceEncoding=UTF-8'
+        }
+    }
+
     stage("Push to GitHub and create new branches"){
         
         def message     = '"Inital Setup"'
