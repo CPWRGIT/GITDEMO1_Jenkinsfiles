@@ -561,7 +561,6 @@ def getCocoResults() {
 
 def runSonarScan() {
 
-    def sonarBranchParm         = ''
     def sonarTestResults        = ''
     def sonarTestsParm          = ''
     def sonarTestReportsParm    = ''
