@@ -79,7 +79,7 @@ executionEnvironments:
         url:                    http://cwc2.nasa.cpwr.corp:2020
       sonar:
         scanner:                Scanner
-        server:                 ftssonar
+        server:                 Sonar
       xlr:
         template:               'GITDEMO_CWC2'
     ispw:

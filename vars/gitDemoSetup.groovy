@@ -37,7 +37,7 @@ def environmentSettings         = [
                                         'hostName':                 'cwc2.nasa.cpwr.corp',
                                         'xgSsid':                   'MXG2',   
                                         'sonarScannerName':         'Scanner',  
-                                        'sonarServerName':          'ftssonar',                                                                                                                   
+                                        'sonarServerName':          'Sonar',                                                                                                                   
                                         'sonarProjectName':         "GITDEMO1_CWC2_${IspwApp}",
                                         'gitHubRepo':               HostUserId + '_CWC2', 
                                         'tttExecutionEnvironment':  '5c519facfba8720a90ccc645',
