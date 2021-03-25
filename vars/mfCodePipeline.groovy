@@ -493,12 +493,12 @@ def runIntegrationTests(){
                 createReport:                       true, 
                 createResult:                       true, 
                 createSonarReport:                  true,
+                contextVariables:                   '"ll_ispw_app=' + applicationQualifier + ',ll_ispw_low_level=' + ispwTargetLevel + ',ll_ispw_high_level=' + ispwTargetLevel + '"',                
                 collectCodeCoverage:                true,
                 collectCCRepository:                pipelineParms.ccRepo,
                 collectCCSystem:                    ccSystemId,
                 collectCCTestID:                    ccTestId,
                 clearCodeCoverage:                  false,
-            //    ccThreshold:                        pipelineParms.ccThreshold,     
                 logLevel:                           'INFO'
             )
 
