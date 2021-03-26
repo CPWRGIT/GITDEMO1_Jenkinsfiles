@@ -63,7 +63,7 @@ executionEnvironments:
               batch:            'generated.cli.nvt.batch.suite.sonar.xml'
               cics:             'generated.cli.nvt.cics.suite.sonar.xml'
         jUnit:
-          folder:               './TTTUnit'
+          folder:               '**/TTTUnit'
           file:                 'generated.cli.suite.junit.xml'
     coco:  
       ccThreshold:              '70'
