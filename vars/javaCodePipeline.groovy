@@ -6,6 +6,8 @@ import groovy.xml.*
 
 def call(){
 
+    unstash name: 'workspace'
+
     def javaRootFolder = './InsuranceSpringServer'
 
     stage('Unit Tests') {
