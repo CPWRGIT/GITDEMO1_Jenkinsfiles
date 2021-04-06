@@ -21,6 +21,7 @@ String sonarCodeCoverageFile
 String jUnitResultsFile
 String skipReason
 
+String applicationQualifier
 String tttVtExecutionLoad
 
 def pipelineParms
@@ -216,6 +217,14 @@ def initialize(execParms){
 
         error "No branch mapping for branch ${BRANCH_NAME} was found. Execution will be aborted.\n" +
             "Correct the branch name to reflect naming conventions."
+    }
+
+    applicationQualifier = ispwConfig.ispwApplication.application
+
+    echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
+
+    if(pipelineParms.executionEnvironment == 'cwc2'){
+        applicationQualifier = 'CWC2.' + applicationQualifier
     }
 
     //*********************************************************************************
@@ -419,13 +428,7 @@ def runUnitTests() {
 
     if(executionFlags.executeVt){
 
-        def applicationQualifier = ispwConfig.ispwApplication.application
-
         echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
-
-        if(pipelineParms.executionEnvironment == 'cwc2'){
-            applicationQualifier = 'CWC2.' + applicationQualifier
-        }
 
         totaltest(
             serverUrl:                          synchConfig.environment.ces.url, 
