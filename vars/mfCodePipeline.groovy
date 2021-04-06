@@ -676,7 +676,7 @@ def triggerXlRelease(){
     {
 
         ownerId = ownerIdTemp
-echo "Received ownerId " + ownerId
+
     }
 
     def assignmentId = getMainAssignmentId(synchConfig.ispw.automaticBuildFile)
@@ -697,7 +697,7 @@ echo "Received ownerId " + ownerId
             ], 
             [
                 propertyName:   'Owner_Id', 
-                propertyValue:  ownerId
+                propertyValue:  'hddrxm0'
             ],
             [
                 propertyName:   'CES_Token', 
