@@ -676,7 +676,7 @@ def triggerXlRelease(){
     {
 
         ownerId = ownerIdTemp
-
+echo "Received ownerId " + ownerId
     }
 
     def assignmentId = getMainAssignmentId(synchConfig.ispw.automaticBuildFile)
