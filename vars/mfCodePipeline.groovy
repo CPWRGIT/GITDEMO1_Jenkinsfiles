@@ -654,63 +654,51 @@ def triggerXlRelease(){
         [
             string(
                 credentialsId:  pipelineParms.cesCredentialsId, 
-                variable:       'cesTokenTemp'
-            )
-        ]
-    ) 
-    {
-
-        cesToken = cesTokenTemp
-
-    }
-
-    withCredentials(
-        [
+                variable:       'cesToken'
+            ),
             usernamePassword(
                 credentialsId:      pipelineParms.hostCredentialsId, 
                 passwordVariable:   'pw', 
-                usernameVariable:   'ownerIdTemp'
+                usernameVariable:   'ownerId'
             )
         ]
     ) 
     {
 
-        ownerId = ownerIdTemp
+        def assignmentId = getMainAssignmentId(synchConfig.ispw.automaticBuildFile)
+
+        xlrCreateRelease(
+            releaseTitle:       "GITDEMO - Release for ${ispwConfig.ispwApplication.application}", 
+            serverCredentials:  'admin', 
+            startRelease:       true, 
+            template:           synchConfig.environment.xlr.template, 
+            variables: [
+                [
+                    propertyName:   'ISPW_Application', 
+                    propertyValue:  ispwConfig.ispwApplication.application
+                ], 
+                [
+                    propertyName:   'ISPW_Assignment', 
+                    propertyValue:  assignmentId
+                ], 
+                [
+                    propertyName:   'Owner_Id', 
+                    propertyValue:  ownerId
+                ],
+                [
+                    propertyName:   'CES_Token', 
+                    propertyValue:  cesToken
+                ], 
+                [
+                    propertyName: 'Jenkins_CES_Credentials', 
+                    propertyValue: pipelineParms.cesCredentialsId
+                ],
+                [
+                    propertyName: 'Jenkins_Git_Credentials', 
+                    propertyValue: pipelineParms.gitCredentialsId
+                ] 
+            ]
+        )
 
     }
-
-    def assignmentId = getMainAssignmentId(synchConfig.ispw.automaticBuildFile)
-
-    xlrCreateRelease(
-        releaseTitle:       "GITDEMO - Release for ${ispwConfig.ispwApplication.application}", 
-        serverCredentials:  'admin', 
-        startRelease:       true, 
-        template:           synchConfig.environment.xlr.template, 
-        variables: [
-            [
-                propertyName:   'ISPW_Application', 
-                propertyValue:  ispwConfig.ispwApplication.application
-            ], 
-            [
-                propertyName:   'ISPW_Assignment', 
-                propertyValue:  assignmentId
-            ], 
-            [
-                propertyName:   'Owner_Id', 
-                propertyValue:  'hddrxm0'
-            ],
-            [
-                propertyName:   'CES_Token', 
-                propertyValue:  cesToken
-            ], 
-            [
-                propertyName: 'Jenkins_CES_Credentials', 
-                propertyValue: pipelineParms.cesCredentialsId
-            ],
-            [
-                propertyName: 'Jenkins_Git_Credentials', 
-                propertyValue: pipelineParms.gitCredentialsId
-            ] 
-        ]
-    )
 }
