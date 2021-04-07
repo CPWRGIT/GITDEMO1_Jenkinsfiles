@@ -647,9 +647,6 @@ def getMainAssignmentId(automaticBuildFile){
 
 def triggerXlRelease(){
 
-    def cesToken 
-    def ownerId
-
     withCredentials(
         [
             string(
