@@ -680,7 +680,7 @@ def triggerXlRelease(){
                 ], 
                 [
                     propertyName:   'Owner_Id', 
-                    propertyValue:  ownerId
+                    propertyValue:  'hddrxm0'
                 ],
                 [
                     propertyName:   'CES_Token', 
