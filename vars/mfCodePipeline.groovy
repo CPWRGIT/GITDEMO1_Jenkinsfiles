@@ -674,19 +674,18 @@ def triggerXlRelease(){
                     propertyName:   'ISPW_Application', 
                     propertyValue:  ispwConfig.ispwApplication.application
                 ], 
-/*                [
+                [
                     propertyName:   'ISPW_Assignment', 
                     propertyValue:  assignmentId
                 ], 
                 [
                     propertyName:   'Owner_Id', 
-                    propertyValue:  'hddrxm0'
+                    propertyValue:  ownerId
                 ],
                 [
                     propertyName:   'CES_Token', 
                     propertyValue:  cesToken
                 ], 
-*/                
                 [
                     propertyName: 'Jenkins_CES_Credentials', 
                     propertyValue: pipelineParms.cesCredentialsId
