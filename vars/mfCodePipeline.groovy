@@ -22,7 +22,7 @@ String jUnitResultsFile
 String skipReason
 
 String applicationQualifier
-String tttVtExecutionLoad
+//String tttVtExecutionLoad
 
 def pipelineParms
 def ispwConfig
@@ -150,7 +150,7 @@ def initialize(execParms){
     branchMappingString         = ''
     ispwTargetLevel             = ''    
     ispwImpactScanJcl           = ''
-    tttVtExecutionLoad          = ''
+    //tttVtExecutionLoad          = ''
     ccDdioOverrides             = ''
 
     //*********************************************************************************
@@ -221,8 +221,6 @@ def initialize(execParms){
 
     applicationQualifier = ispwConfig.ispwApplication.application
 
-    echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
-
     if(pipelineParms.executionEnvironment == 'cwc2'){
         applicationQualifier = 'CWC2.' + applicationQualifier
     }
@@ -234,16 +232,7 @@ def initialize(execParms){
     // Can be replaced once CoCo PTF has been applied to CWCC (April Release 2021) making use of overrides obsolete
     // +++++++++++++++++++    
     //*********************************************************************************
-    ccDdioOverrides             = tttVtExecutionLoad
-
-    //*********************************************************************************
-    // Build JCL to cross reference components once they have been loaded to ISPW
-    //
-    // +++++++++++++++++++
-    // Can be replaced once this feature has been implemented in ISPW itself (April Release 2021)
-    // +++++++++++++++++++    
-    //*********************************************************************************
-    ispwImpactScanJcl           = buildImpactScanJcl(synchConfig.ispw.impactScanFile, ispwConfig.ispwApplication.runtimeConfig, ispwConfig.ispwApplication.application, ispwTargetLevel)
+    //ccDdioOverrides             = tttVtExecutionLoad
 
     buildCocoParms(BRANCH_NAME)
 }
@@ -318,29 +307,10 @@ def processBranchInfo(branchInfo, ispwApplication){
             
             // May be removed once CoCo PTF has been applied
             // +++++++++++++++++++++++++++++++++++++++++++++
-            tttVtExecutionLoad  = synchConfig.ttt.loadLibraryPattern.replace('<ispwApplication>', ispwApplication).replace('<ispwLevel>', ispwTargetLevel)
+            //tttVtExecutionLoad  = synchConfig.ttt.loadLibraryPattern.replace('<ispwApplication>', ispwApplication).replace('<ispwLevel>', ispwTargetLevel)
             // +++++++++++++++++++++++++++++++++++++++++++++
         }
     }
-}
-
-//*********************************************************************************
-// Build JCL to scan for impacts once code has been loaded to the ISPW target level
-//*********************************************************************************
-//
-// +++++++++++++++++++
-// Can be replaced once this feature has been implemented in ISPW itself
-// +++++++++++++++++++    
-//*********************************************************************************
-def buildImpactScanJcl (impactScanFile, runtimeConfig, application, ispwTargetLevel){
-
-    jcl   = libraryResource impactScanFile
-
-    jcl   = jcl.replace('<runtimeConfig>', runtimeConfig)
-    jcl   = jcl.replace('<ispwApplication>', application)
-    jcl   = jcl.replace('<ispwTargetLevel>', ispwTargetLevel)
-
-    return jcl
 }
 
 //*********************************************************************************
