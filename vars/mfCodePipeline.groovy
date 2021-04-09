@@ -22,7 +22,6 @@ String jUnitResultsFile
 String skipReason
 
 String applicationQualifier
-//String tttVtExecutionLoad
 
 def pipelineParms
 def ispwConfig
@@ -150,7 +149,6 @@ def initialize(execParms){
     branchMappingString         = ''
     ispwTargetLevel             = ''    
     ispwImpactScanJcl           = ''
-    //tttVtExecutionLoad          = ''
     ccDdioOverrides             = ''
 
     //*********************************************************************************
@@ -225,15 +223,6 @@ def initialize(execParms){
         applicationQualifier = 'CWC2.' + applicationQualifier
     }
 
-    //*********************************************************************************
-    // Build DDIO override parameter to use the VT load library (making use of ESS)
-    //
-    // +++++++++++++++++++
-    // Can be replaced once CoCo PTF has been applied to CWCC (April Release 2021) making use of overrides obsolete
-    // +++++++++++++++++++    
-    //*********************************************************************************
-    //ccDdioOverrides             = tttVtExecutionLoad
-
     buildCocoParms(BRANCH_NAME)
 }
 
@@ -305,10 +294,6 @@ def processBranchInfo(branchInfo, ispwApplication){
 
             ispwTargetLevel     = it.value.ispwLevel
             
-            // May be removed once CoCo PTF has been applied
-            // +++++++++++++++++++++++++++++++++++++++++++++
-            //tttVtExecutionLoad  = synchConfig.ttt.loadLibraryPattern.replace('<ispwApplication>', ispwApplication).replace('<ispwLevel>', ispwTargetLevel)
-            // +++++++++++++++++++++++++++++++++++++++++++++
         }
     }
 }
