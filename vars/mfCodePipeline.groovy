@@ -8,7 +8,6 @@ String executionEnvironment
 String synchConfigFile         
 String branchMappingString     
 String ispwTargetLevel
-String ispwImpactScanJcl
 String ccDdioOverrides     
 String sonarCobolFolder        
 String sonarCopybookFolder     
@@ -148,7 +147,6 @@ def initialize(execParms){
 
     branchMappingString         = ''
     ispwTargetLevel             = ''    
-    ispwImpactScanJcl           = ''
     ccDdioOverrides             = ''
 
     //*********************************************************************************
@@ -348,19 +346,6 @@ def checkForBuildParams(automaticBuildFile){
         skipReason                      = skipReason + "\n[Info] - No changes to mainframe code."
 
     }
-}
-
-/* After loading code to ISPW execute job to initiate impacts scan */
-def runImpactScan(){
-
-    echo "[Info] - Submitting JCL to scan for Impacts."
-
-    topazSubmitFreeFormJcl(
-        connectionId:       synchConfig.environment.hci.connectionId, 
-        credentialsId:      pipelineParms.hostCredentialsId, 
-        jcl:                ispwImpactScanJcl, 
-        maxConditionCode:   '4'
-    )
 }
 
 /* Build mainframe code */
