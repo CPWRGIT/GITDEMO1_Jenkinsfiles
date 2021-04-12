@@ -77,8 +77,6 @@ def call(Map execParms){
 
             echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
 
-            runImpactScan()
-
             runMainframeBuild()
 
         }
