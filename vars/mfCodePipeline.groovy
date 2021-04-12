@@ -217,11 +217,7 @@ def initialize(execParms){
             "Correct the branch name to reflect naming conventions."
     }
 
-    applicationQualifier = ispwConfig.ispwApplication.application
-
-    if(pipelineParms.executionEnvironment == 'cwc2'){
-        applicationQualifier = 'CWC2.' + applicationQualifier
-    }
+    applicationQualifier = synchConfig.ispw.libraryQualifier + ispwConfig.ispwApplication.application
 
     buildCocoParms(BRANCH_NAME)
 }

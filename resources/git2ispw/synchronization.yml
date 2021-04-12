@@ -11,6 +11,7 @@ executionEnvironments:
       xlr:
         template:               'GITDEMO_CWCC'
     ispw:
+      libraryQualifier:         ''    
       mfProject:
         rootFolder:             './GenAppCore'
         sourcesFolder:          '/Sources'
@@ -83,6 +84,7 @@ executionEnvironments:
       xlr:
         template:               'GITDEMO_CWC2'
     ispw:
+      libraryQualifier:         'CWC2.'
       mfProject:
         rootFolder:             './GenAppCore'
         sourcesFolder:          '/Sources'
