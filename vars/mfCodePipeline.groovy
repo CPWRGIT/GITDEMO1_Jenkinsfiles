@@ -575,7 +575,7 @@ def runSonarScan() {
             ' -Dsonar.projectVersion=1.0' +
             ' -Dsonar.sources=' + sonarCobolFolder + 
             ' -Dsonar.cobol.copy.directories=' + sonarCopybookFolder +
-            ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result,scenario' + 
+            ' -Dsonar.cobol.file.suffixes=cbl,testsuite,testscenario,stub,result,scenario,context' + 
             ' -Dsonar.cobol.copy.suffixes=cpy' +
             sonarTestsParm +
             sonarTestReportsParm +
