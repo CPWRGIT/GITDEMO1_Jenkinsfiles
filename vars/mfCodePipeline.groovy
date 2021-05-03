@@ -528,7 +528,7 @@ def runSonarScan() {
             readFile(file: sonarCodeCoverageFile)
             sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
         }
-        catch{
+        catch(Exception e){
             sonarCodeCoverageParm   = ''
         }
     }
