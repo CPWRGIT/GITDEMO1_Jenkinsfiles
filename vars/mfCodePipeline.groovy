@@ -523,8 +523,14 @@ def runSonarScan() {
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
         //sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarTestResults + '"'
         sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarResultsFolder + '/' + sonarResultsFileVt + '"'
-        sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
 
+        try{
+            readFile(file: sonarCodeCoverageFile)
+            sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
+        }
+        catch{
+            sonarCodeCoverageParm   = ''
+        }
     }
 
     withSonarQubeEnv(synchConfig.environment.sonar.server) {
