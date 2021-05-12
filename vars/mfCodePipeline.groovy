@@ -431,7 +431,6 @@ def runIntegrationTests(){
                 createResult:                       true, 
                 createSonarReport:                  true,
                 contextVariables:                   '"nvt_ispw_app=' + applicationQualifier + 
-                synchConfig
                                                     ',nvt_ispw_level1=' + synchConfig.ttt.loadLibQualfiers[ispwTargetLevel].level1 + 
                                                     ',nvt_ispw_level2=' + synchConfig.ttt.loadLibQualfiers[ispwTargetLevel].level2 + 
                                                     ',nvt_ispw_level3=' + synchConfig.ttt.loadLibQualfiers[ispwTargetLevel].level3 + 
