@@ -431,10 +431,11 @@ def runIntegrationTests(){
                 createResult:                       true, 
                 createSonarReport:                  true,
                 contextVariables:                   '"nvt_ispw_app=' + applicationQualifier + 
-                                                    ',nvt_ispw_level1=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level1 + 
-                                                    ',nvt_ispw_level2=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level2 + 
-                                                    ',nvt_ispw_level3=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level3 + 
-                                                    ',nvt_ispw_level4=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level4 + 
+                synchConfig
+                                                    ',nvt_ispw_level1=' + synchConfig.ttt.loadLibQualfiers[ispwTargetLevel].level1 + 
+                                                    ',nvt_ispw_level2=' + synchConfig.ttt.loadLibQualfiers[ispwTargetLevel].level2 + 
+                                                    ',nvt_ispw_level3=' + synchConfig.ttt.loadLibQualfiers[ispwTargetLevel].level3 + 
+                                                    ',nvt_ispw_level4=' + synchConfig.ttt.loadLibQualfiers[ispwTargetLevel].level4 + 
                                                     '"',                
                 collectCodeCoverage:                true,
                 collectCCRepository:                pipelineParms.ccRepo,
