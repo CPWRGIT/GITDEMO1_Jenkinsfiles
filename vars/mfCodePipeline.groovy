@@ -430,7 +430,12 @@ def runIntegrationTests(){
                 createReport:                       true, 
                 createResult:                       true, 
                 createSonarReport:                  true,
-                contextVariables:                   '"ll_ispw_app=' + applicationQualifier + ',ll_ispw_low_level=' + ispwTargetLevel + ',ll_ispw_high_level=' + ispwTargetLevel + '"',                
+                contextVariables:                   '"nvt_ispw_app=' + applicationQualifier + 
+                                                    ',nvt_ispw_level1=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level1 + 
+                                                    ',nvt_ispw_level2=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level2 + 
+                                                    ',nvt_ispw_level3=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level3 + 
+                                                    ',nvt_ispw_level4=' + pipelineParms.ttt.loadLibQualfiers[ispwTargetLevel].level4 + 
+                                                    '"',                
                 collectCodeCoverage:                true,
                 collectCCRepository:                pipelineParms.ccRepo,
                 collectCCSystem:                    ccSystemId,
@@ -519,11 +524,10 @@ def runSonarScan() {
 
     if(executionFlags.executeVt){
 
-        //sonarTestResults        = getSonarResults(sonarResultsFileList)
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
-        //sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarTestResults + '"'
         sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarResultsFolder + '/' + sonarResultsFileVt + '"'
 
+        // Check if Code Coverage results have been retrieved. If not do not fail the build, as this is likely due to no tests been found
         try{
             readFile(file: sonarCodeCoverageFile)
             sonarCodeCoverageParm   = ' -Dsonar.coverageReportPaths=' + sonarCodeCoverageFile
@@ -552,30 +556,6 @@ def runSonarScan() {
 
     }
 }
-
-// May be removed after testing fix for TTT CLI
-// def getSonarResults(resultsFileList){
-
-//     def resultsList         = ''
-
-//     resultsFileList.each{
-
-//         def resultsFileContent
-//         def resultsFileName = it
-//         resultsFileContent  = readFile(file: sonarResultsFolder + '/' + it)
-//         resultsFileContent  = resultsFileContent.substring(resultsFileContent.indexOf('\n') + 1)
-//         def testExecutions  = new XmlSlurper().parseText(resultsFileContent)
-//         /* For now - only pass VT sonar results to sonar */
-//         testExecutions.file.each {
-            
-//             if(resultsFileName.contains('.vt.')){
-//                 resultsList = resultsList + it.@path.toString().replace('.Jenkins.result', '.sonar.xml') + ','
-//             }
-//         }
-//     }
-
-//     return resultsList
-// }
 
 def getMainAssignmentId(automaticBuildFile){
 
