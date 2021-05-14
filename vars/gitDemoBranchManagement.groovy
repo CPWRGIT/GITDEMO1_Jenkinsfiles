@@ -8,8 +8,8 @@ node {
 
     stage("Initialize"){
 
-        ispwFtLevelRepl = "." + IspwTargetLevel + "."
-        ispwUtLevelRepl = ".UT" + IspwTargetLevel.substring(2, 3) + "."
+        ispwFtLevelRepl = IspwTargetLevel
+        ispwUtLevelRepl = IspwTargetLevel.substring(2, 3)
 
         HostUserId          = HostUserId.toUpperCase()
 
@@ -82,7 +82,7 @@ node {
 
         gitRepo         = "https://github.com/CPWRGIT/${HostUserId}.git"
 
-        currentBuild.displayName = "Branch Action ${BranchAction} for Branch ${localBranchName} in CPWRGIT/${HostUserId}"
+        currentBuild.displayName = "${BranchAction} Branch ${localBranchName} in CPWRGIT/${HostUserId}"
 
         dir("./"){
             deleteDir()
@@ -146,14 +146,15 @@ node {
                     echo "[Info] - Modifying file: " + it.path
                     
                     def contextFileContent  = readFile(file: it.path)
-                    contextFileContent      = contextFileContent.replace(".FT1.", ispwFtLevelRepl)
-                    contextFileContent      = contextFileContent.replace(".UT1.", ispwUtLevelRepl)
-                    contextFileContent      = contextFileContent.replace(".FT2.", ispwFtLevelRepl)
-                    contextFileContent      = contextFileContent.replace(".UT2.", ispwUtLevelRepl)
-                    contextFileContent      = contextFileContent.replace(".FT3.", ispwFtLevelRepl)
-                    contextFileContent      = contextFileContent.replace(".UT3.", ispwUtLevelRepl)
-                    contextFileContent      = contextFileContent.replace(".FT4.", ispwFtLevelRepl)
-                    contextFileContent      = contextFileContent.replace(".UT4.", ispwUtLevelRepl)
+
+                    contextFileContent      = contextFileContent.replace(".FT1.", "." + ispwFtLevelRepl + ".")
+                    contextFileContent      = contextFileContent.replace(".UT1.", "." + ispwFtLevelRepl + ".")
+                    contextFileContent      = contextFileContent.replace(".FT2.", "." + ispwFtLevelRepl + ".")
+                    contextFileContent      = contextFileContent.replace(".UT2.", "." + ispwFtLevelRepl + ".")
+                    contextFileContent      = contextFileContent.replace(".FT3.", "." + ispwFtLevelRepl + ".")
+                    contextFileContent      = contextFileContent.replace(".UT3.", "." + ispwFtLevelRepl + ".")
+                    contextFileContent      = contextFileContent.replace(".FT4.", "." + ispwFtLevelRepl + ".")
+                    contextFileContent      = contextFileContent.replace(".UT4.", "." + ispwFtLevelRepl + ".")
                     contextFileContent      = contextFileContent.replace("<Value>UT1</Value>", "<Value>${ispwUtLevelRepl}</Value>")
                     contextFileContent      = contextFileContent.replace("<Value>UT2</Value>", "<Value>${ispwUtLevelRepl}</Value>")
                     contextFileContent      = contextFileContent.replace("<Value>UT3</Value>", "<Value>${ispwUtLevelRepl}</Value>")

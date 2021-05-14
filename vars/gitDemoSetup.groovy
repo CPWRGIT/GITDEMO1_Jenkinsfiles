@@ -22,7 +22,7 @@ def environmentSettings         = [
                                         'lparName':                 'CWCC',
                                         'hostName':                 'cwcc.compuware.com',
                                         'xgSsid':                   'MXG1',
-                                        'sonarProjectName':         "GITDEMO1_${IspwApp}",
+                                        'sonarScannerName':         'scanner',
                                         'gitHubRepo':               HostUserId, 
                                         'tttExecutionEnvironment':  '5b508b8a787be73b59238d38',
                                         
@@ -33,7 +33,7 @@ def environmentSettings         = [
                                     'CWC2': [
                                         'lparName':                 'CWC2',                                    
                                         'hostName':                 'cwc2.nasa.cpwr.corp',
-                                        'xgSsid':                   'MXG2',                                        
+                                        'xgSsid':                   'MXG2',   
                                         'sonarProjectName':         "GITDEMO1_CWC2_${IspwApp}",
                                         'gitHubRepo':               HostUserId + '_CWC2', 
                                         'tttExecutionEnvironment':  '5c519facfba8720a90ccc645',
@@ -325,6 +325,8 @@ node{
         
         dir("./")
         {
+            bat(returnStdout: true, script: 'git config user.email "cpwrgit@compuware.com"')
+            bat(returnStdout: true, script: 'git config user.name "CPWRGIT"')
             //bat(returnStdout: true, script: 'git config --global credential.helper wincred')
             bat(returnStdout: true, script: 'git commit -a -m ' + message)
             bat(returnStdout: true, script: "git push  https://" + GitHubAdminUser + ":" + GitHubAdminPassword + "@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
