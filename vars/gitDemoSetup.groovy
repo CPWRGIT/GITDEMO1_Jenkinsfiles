@@ -265,7 +265,6 @@ node{
             ['${lpar_name}', environmentSettings[TargetEnvironment].lparName],
             ['${mf_userid}', HostUserId],
             ['${ispw_app_value}', IspwApp],
-            ['${ispw_level_value}', DefaultFtLevel],
             ['${xg_ssid}', environmentSettings[TargetEnvironment].xgSsid]
         ]
 
