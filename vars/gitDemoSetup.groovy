@@ -22,7 +22,7 @@ def environmentSettings         = [
                                         'lparName':                 'CWCC',
                                         'hostName':                 'cwcc.compuware.com',
                                         'xgSsid':                   'MXG1',
-                                        'sonarScannerName':         'scanner',
+                                        'sonarProjectName':         "GITDEMO1_${IspwApp}",
                                         'gitHubRepo':               HostUserId, 
                                         'tttExecutionEnvironment':  '5b508b8a787be73b59238d38',
                                         
