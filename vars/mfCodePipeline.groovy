@@ -407,7 +407,7 @@ def runIntegrationTests(){
 
             def envType     = it.key
             def envId       = it.value
-            def targetFile  = synchConfig.ttt.results.sonar.targetFiles.nonVirtualized[envType]
+            //def targetFile  = synchConfig.ttt.results.sonar.targetFiles.nonVirtualized[envType]
 
             totaltest(
                 connectionId:                       synchConfig.environment.hci.connectionId,
