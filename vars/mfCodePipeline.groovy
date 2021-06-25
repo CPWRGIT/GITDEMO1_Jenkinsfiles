@@ -11,10 +11,8 @@ String ispwTargetLevel
 String ccDdioOverrides     
 String sonarCobolFolder        
 String sonarCopybookFolder     
-//String sonarResultsFile   
 String sonarResultsFileVt
-String sonarResultsFileNvtBatch
-String sonarResultsFileNvtCics
+String sonarResultsFileNvt
 String sonarResultsFileList     
 String sonarCodeCoverageFile   
 String jUnitResultsFile
@@ -178,10 +176,8 @@ def initialize(execParms){
     sonarCopybookFolder         = synchConfig.ispw.mfProject.rootFolder + synchConfig.ispw.mfProject.sourcesFolder
 
     sonarResultsFolder          = synchConfig.ttt.results.sonar.folder
-//    sonarResultsFile            = synchConfig.ttt.results.sonar.origFile
-    sonarResultsFileVt          = synchConfig.ttt.folders.virtualizedTests      + '.' + synchConfig.ttt.results.sonar.targetFileNameBase.virtualized
-    sonarResultsFileNvtBatch    = synchConfig.ttt.folders.nonVirtualizedTests   + '.' + synchConfig.ttt.results.sonar.targetFileNameBase.nonVirtualized.batch
-    sonarResultsFileNvtBatch    = synchConfig.ttt.folders.nonVirtualizedTests   + '.' + synchConfig.ttt.results.sonar.targetFileNameBase.nonVirtualized.cics
+    sonarResultsFileVt          = synchConfig.ttt.folders.virtualizedTests      + '.' + synchConfig.ttt.results.sonar.fileNameBase
+    sonarResultsFileNvt         = synchConfig.ttt.folders.nonVirtualizedTests   + '.' + synchConfig.ttt.results.sonar.fileNameBase
     sonarResultsFileList        = []        
 
     sonarCodeCoverageFile       = synchConfig.coco.results.sonar.folder + '/' + synchConfig.coco.results.sonar.file
