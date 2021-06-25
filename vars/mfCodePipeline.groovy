@@ -11,7 +11,7 @@ String ispwTargetLevel
 String ccDdioOverrides     
 String sonarCobolFolder        
 String sonarCopybookFolder     
-String sonarResultsFile   
+//String sonarResultsFile   
 String sonarResultsFileVt
 String sonarResultsFileNvtBatch
 String sonarResultsFileNvtCics
@@ -170,18 +170,18 @@ def initialize(execParms){
     //*********************************************************************************
 
     ispwConfigFile              = synchConfig.ispw.configFile.folder    + '/' + synchConfig.ispw.configFile.name
-    tttRootFolder               = synchConfig.ispw.mfProject.rootFolder + synchConfig.ttt.folders.root
-    tttVtFolder                 = tttRootFolder                         + synchConfig.ttt.folders.virtualizedTests
-    tttNvtFolder                = tttRootFolder                         + synchConfig.ttt.folders.nonVirtualizedTests
+    tttRootFolder               = synchConfig.ispw.mfProject.rootFolder + '/' + synchConfig.ttt.folders.root
+    tttVtFolder                 = tttRootFolder                         + '/' + synchConfig.ttt.folders.virtualizedTests
+    tttNvtFolder                = tttRootFolder                         + '/' + synchConfig.ttt.folders.nonVirtualizedTests
     ccSources                   = synchConfig.ispw.mfProject.rootFolder + synchConfig.ispw.mfProject.sourcesFolder
     sonarCobolFolder            = synchConfig.ispw.mfProject.rootFolder + synchConfig.ispw.mfProject.sourcesFolder
     sonarCopybookFolder         = synchConfig.ispw.mfProject.rootFolder + synchConfig.ispw.mfProject.sourcesFolder
 
     sonarResultsFolder          = synchConfig.ttt.results.sonar.folder
-    sonarResultsFile            = synchConfig.ttt.results.sonar.origFile
-    sonarResultsFileVt          = synchConfig.ttt.results.sonar.targetFiles.virtualized
-    sonarResultsFileNvtBatch    = synchConfig.ttt.results.sonar.targetFiles.nonVirtualized.batch
-    sonarResultsFileNvtCics     = synchConfig.ttt.results.sonar.targetFiles.nonVirtualized.cics
+//    sonarResultsFile            = synchConfig.ttt.results.sonar.origFile
+    sonarResultsFileVt          = synchConfig.ttt.folders.virtualizedTests      + '.' + synchConfig.ttt.results.sonar.targetFileNameBase.virtualized
+    sonarResultsFileNvtBatch    = synchConfig.ttt.folders.nonVirtualizedTests   + '.' + synchConfig.ttt.results.sonar.targetFileNameBase.nonVirtualized.batch
+    sonarResultsFileNvtBatch    = synchConfig.ttt.folders.nonVirtualizedTests   + '.' + synchConfig.ttt.results.sonar.targetFileNameBase.nonVirtualized.cics
     sonarResultsFileList        = []        
 
     sonarCodeCoverageFile       = synchConfig.coco.results.sonar.folder + '/' + synchConfig.coco.results.sonar.file
@@ -390,7 +390,7 @@ def runUnitTests() {
             logLevel:                           'INFO'
         )
 
-        secureResultsFile(sonarResultsFileVt, "Virtualized")
+        //secureResultsFile(sonarResultsFileVt, "Virtualized")
 
         junit allowEmptyResults: true, keepLongStdio: true, testResults: synchConfig.ttt.results.jUnit.folder + '/*.xml'
     }
@@ -444,7 +444,7 @@ def runIntegrationTests(){
                 logLevel:                           'INFO'
             )
 
-            secureResultsFile(targetFile, "Non Virtualized " + envType.toUpperCase())
+            //secureResultsFile(targetFile, "Non Virtualized " + envType.toUpperCase())
 
         }
     }
@@ -458,7 +458,7 @@ def runIntegrationTests(){
 // Each execution of totaltest will create a Sonar Results file with the same name (generated.cli.suite.sonar.xml)
 // Therefore, if totaltest is being executed several time within one build, the corresponding result files need to be
 // renamed to prevent overwriting
-def secureResultsFile(resultsFileNameNew, resultsFileType) {
+/* def secureResultsFile(resultsFileNameNew, resultsFileType) {
 
     try {
 
@@ -484,7 +484,7 @@ def secureResultsFile(resultsFileNameNew, resultsFileType) {
 
     return
 }
-
+ */
 def getCocoResults() {
 
     step([
