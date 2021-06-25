@@ -22,7 +22,7 @@ def environmentSettings         = [
                                         'lparName':                 'CWCC',
                                         'hostName':                 'cwcc.compuware.com',
                                         'xgSsid':                   'MXG1',
-                                        'sonarScannerName':         'scanner',
+                                        'sonarProjectName':         "GITDEMO1_${IspwApp}",
                                         'gitHubRepo':               HostUserId, 
                                         'tttExecutionEnvironment':  '5b508b8a787be73b59238d38',
                                         
@@ -62,11 +62,7 @@ node{
 
         gitHubAdminUserCheck = gitHubAdminUserTmp
         gitHubAdminPwCheck = gitHubAdminPwTmp
-echo gitHubAdminUserCheck
-echo gitHubAdminPwCheck
 
-echo GitHubAdminUser
-echo GitHubAdminPassword
         if(
             !(GitHubAdminUser       == gitHubAdminUserCheck) ||
             !(GitHubAdminPassword   == gitHubAdminPwCheck)
@@ -269,7 +265,6 @@ echo GitHubAdminPassword
             ['${lpar_name}', environmentSettings[TargetEnvironment].lparName],
             ['${mf_userid}', HostUserId],
             ['${ispw_app_value}', IspwApp],
-            ['${ispw_level_value}', DefaultFtLevel],
             ['${xg_ssid}', environmentSettings[TargetEnvironment].xgSsid]
         ]
 
@@ -322,7 +317,7 @@ echo GitHubAdminPassword
             echo "Sonar project ${sonarProjectName} already exists."
         }
     }
-
+    
     stage("Push to GitHub and create new branches"){
         
         def message     = '"Inital Setup"'

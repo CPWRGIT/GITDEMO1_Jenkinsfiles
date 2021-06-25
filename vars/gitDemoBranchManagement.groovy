@@ -146,6 +146,7 @@ node {
                     echo "[Info] - Modifying file: " + it.path
                     
                     def contextFileContent  = readFile(file: it.path)
+
                     contextFileContent      = contextFileContent.replace(".FT1.", "." + ispwFtLevelRepl + ".")
                     contextFileContent      = contextFileContent.replace(".UT1.", "." + ispwFtLevelRepl + ".")
                     contextFileContent      = contextFileContent.replace(".FT2.", "." + ispwFtLevelRepl + ".")

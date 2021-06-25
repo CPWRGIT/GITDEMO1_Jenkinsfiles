@@ -14,31 +14,31 @@ def call(){
 
         echo "[Info] - Running Unit Tests."
 
-        dir(javaRootFolder) {
+        // dir(javaRootFolder) {
 
-            def stdOut = bat(
-                script:         'gradlew test',
-                returnStdout:   true
-            )
+        //     def stdOut = bat(
+        //         script:         'gradlew test',
+        //         returnStdout:   true
+        //     )
 
-            echo stdOut
+        //     echo stdOut
 
-        }
+        // }
     }
 
     stage('Build') {
 
         echo "[Info] - Building Java Code."
 
-        dir(javaRootFolder) {
+        // dir(javaRootFolder) {
 
-            def stdOut = bat(
-                script:         'gradlew build',
-                returnStdout:   true
-            )
+        //     def stdOut = bat(
+        //         script:         'gradlew build',
+        //         returnStdout:   true
+        //     )
 
-            echo stdOut
+        //     echo stdOut
 
-        }
+        // }
     }
 }
