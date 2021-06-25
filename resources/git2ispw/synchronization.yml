@@ -92,12 +92,7 @@ executionEnvironments:
       results:
         sonar:
           folder:               './TTTSonar'    
-          origFileNameBase:     'cli.suite.sonar.xml'
-          targetFileNameBase:
-            virtualized:        'cli.vt.suite.sonar.xml'
-            nonVirtualized:
-              batch:            'cli.nvt.batch.suite.sonar.xml'
-              cics:             'cli.nvt.cics.suite.sonar.xml'
+          fileNameBase:         'cli.suite.sonar.xml'
         jUnit:
           folder:               '**/TTTUnit'
           fileNameBase:         'cli.suite.junit.xml'
@@ -230,12 +225,7 @@ executionEnvironments:
       results:
         sonar:
           folder:               './TTTSonar'    
-          origFileNameBase:     'cli.suite.sonar.xml'
-          targetFileNameBase:
-            virtualized:        'cli.vt.suite.sonar.xml'
-            nonVirtualized:
-              batch:            'cli.nvt.batch.suite.sonar.xml'
-              cics:             'cli.nvt.cics.suite.sonar.xml'
+          fileNameBase:         'cli.suite.sonar.xml'
         jUnit:
           folder:               '**/TTTUnit'
           fileNameBase:         'cli.suite.junit.xml'
