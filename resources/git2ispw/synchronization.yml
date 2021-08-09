@@ -147,6 +147,42 @@ executionEnvironments:
           ispwLevel:            MAIN
           mapRule:              per-branch
     ttt:
+      loadLibQualfiers:
+        FT1:
+          level1:               FT1
+          level2:               FT1
+          level3:               DEVL
+          level4:               MAIN
+        FT2:
+          level1:               FT2
+          level2:               FT2
+          level3:               DEVL
+          level4:               MAIN
+        FT3:
+          level1:               FT3
+          level2:               FT3
+          level3:               DEVL
+          level4:               MAIN
+        FT4:
+          level1:               FT4
+          level2:               FT4
+          level3:               DEVL
+          level4:               MAIN
+        HFIX:
+          level1:               HFIX
+          level2:               HFIX
+          level3:               HFIX
+          level4:               MAIN
+        DEVL:
+          level1:               DEVL
+          level2:               DEVL
+          level3:               DEVL
+          level4:               MAIN
+        MAIN:
+          level1:               MAIN
+          level2:               MAIN
+          level3:               MAIN
+          level4:               MAIN
       folders:               
         root:                   'Tests'
         virtualizedTests:       'Unit'
@@ -213,6 +249,42 @@ executionEnvironments:
           ispwLevel:            MAIN
           mapRule:              per-branch
     ttt:
+      loadLibQualfiers:
+        FT1:
+          level1:               FT1
+          level2:               FT1
+          level3:               DEVL
+          level4:               MAIN
+        FT2:
+          level1:               FT2
+          level2:               FT2
+          level3:               DEVL
+          level4:               MAIN
+        FT3:
+          level1:               FT3
+          level2:               FT3
+          level3:               DEVL
+          level4:               MAIN
+        FT4:
+          level1:               FT4
+          level2:               FT4
+          level3:               DEVL
+          level4:               MAIN
+        HFIX:
+          level1:               HFIX
+          level2:               HFIX
+          level3:               HFIX
+          level4:               MAIN
+        DEVL:
+          level1:               DEVL
+          level2:               DEVL
+          level3:               DEVL
+          level4:               MAIN
+        MAIN:
+          level1:               MAIN
+          level2:               MAIN
+          level3:               MAIN
+          level4:               MAIN
       folders:               
         root:                   'Tests'
         virtualizedTests:       'Unit'
