@@ -191,7 +191,7 @@ executionEnvironments:
         virtualized:            5c519facfba8720a90ccc645
         nonVirtualized:
           batch:                5c519facfba8720a90ccc645
-          cics:                 5b5f2a71787be73b59238d7b
+          cics:                 5c51a46afba8720a90ccc64d
       results:
         sonar:
           folder:               './TTTSonar'    
