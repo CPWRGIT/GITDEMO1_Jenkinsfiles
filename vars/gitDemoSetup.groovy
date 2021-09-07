@@ -1,21 +1,24 @@
 import groovy.json.JsonSlurper
 
 String hostName
-String hciConnectionId          = '196de681-04d7-4170-824f-09a5457c5cda'
-String gitHubAdminCredentials   = 'CPWRGIT'
-String gitHubAdminUserCheck     = ''
-String gitHubAdminPwCheck       = ''
+String hciConnectionId              = '196de681-04d7-4170-824f-09a5457c5cda'
+String gitHubTokenCredentials       = 'CPWRGIT_GitHub_New'
+String gitHubPasswordCredentials    = 'CPWRGIT_Password'
+String gitHubAdminUserCheck         = ''
+String gitHubAdminPwCheck           = ''
+String gitHubAdminUser              = ''
+String gitHubAdminToken             = ''
 
-String jenkinsfile              = "./Jenkinsfile.jenkinsfile"
-String ispwConfigFile           = "./GenAppCore/ispwconfig.yml"
-String projectSettingsFile      = "./GenAppCore/.settings/GenAppCore.prefs"
+String jenkinsfile                  = "./Jenkinsfile.jenkinsfile"
+String ispwConfigFile               = "./GenAppCore/ispwconfig.yml"
+String projectSettingsFile          = "./GenAppCore/.settings/GenAppCore.prefs"
 
-String sonarServerUrl           = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
-String sonarQualityGateId       = "AXY8wyJYYfaPLsZ5QP7_"
-String sonarQubeToken           = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
+String sonarServerUrl               = "http://dtw-sonarqube-cwcc.nasa.cpwr.corp:9000"        
+String sonarQualityGateId           = "AXY8wyJYYfaPLsZ5QP7_"
+String sonarQubeToken               = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
 
-String repoTemplate             = 'GITDEMO1_Template'
-String gitHubToken              = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
+String repoTemplate                 = 'GITDEMO1_Template'
+String gitHubToken                  = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
 
 def environmentSettings         = [
                                     'CWCC': [
@@ -52,7 +55,7 @@ node{
     withCredentials(
         [
             usernamePassword(
-                credentialsId:      gitHubAdminCredentials, 
+                credentialsId:      gitHubPasswordCredentials, 
                 passwordVariable:   'gitHubAdminPwTmp', 
                 usernameVariable:   'gitHubAdminUserTmp'
             )
@@ -60,8 +63,8 @@ node{
     )
     {
 
-        gitHubAdminUserCheck = gitHubAdminUserTmp
-        gitHubAdminPwCheck = gitHubAdminPwTmp
+        gitHubAdminUserCheck    = gitHubAdminUserTmp
+        gitHubAdminPwCheck      = gitHubAdminPwTmp
 
         if(
             !(GitHubAdminUser       == gitHubAdminUserCheck) ||
@@ -70,6 +73,22 @@ node{
         {
             error '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
         }
+    }
+
+    withCredentials(
+        [
+            usernamePassword(
+                credentialsId:      gitHubTokenCredentials, 
+                passwordVariable:   'gitHubTokenTmp', 
+                usernameVariable:   'gitHubUserTmp'
+            )
+        ]
+    )
+    {
+
+        gitHubAdminUser     = gitHubUserTmp
+        gitHubAdminToken    = gitHubTokenTmp
+
     }
 
     TargetEnvironment   = TargetEnvironment.toUpperCase()
@@ -328,15 +347,15 @@ node{
             bat(returnStdout: true, script: 'git config user.name "CPWRGIT"')
             //bat(returnStdout: true, script: 'git config --global credential.helper wincred')
             bat(returnStdout: true, script: 'git commit -a -m ' + message)
-            bat(returnStdout: true, script: "git push  https://" + GitHubAdminUser + ":" + GitHubAdminPassword + "@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
+            bat(returnStdout: true, script: "git push  https://" + gitHubAdminUser + ":" + gitHubAdminToken + "@github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
             //bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} HEAD:main -f")
             
             bat(returnStdout: true, script: 'git branch development')
-            bat(returnStdout: true, script: "git push  https://" + GitHubAdminUser + ":" + GitHubAdminPassword + "@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
+            bat(returnStdout: true, script: "git push  https://" + gitHubAdminUser + ":" + gitHubAdminToken + "@github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
             //bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/development:refs/heads/development -f")
 
             bat(returnStdout: true, script: 'git branch feature/' + DefaultFtLevel + '/demo_feature')
-            bat(returnStdout: true, script: "git push  https://" + GitHubAdminUser + ":" + GitHubAdminPassword + "@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
+            bat(returnStdout: true, script: "git push  https://" + gitHubAdminUser + ":" + gitHubAdminToken + "@github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
             //bat(returnStdout: true, script: "git push  https://github.com/CPWRGIT/${gitHubRepo} refs/heads/feature/${DefaultFtLevel}/demo_feature:refs/heads/feature/${DefaultFtLevel}/demo_feature -f")
             
         }
