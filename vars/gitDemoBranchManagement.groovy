@@ -3,6 +3,8 @@ def consoleMessage
 def ispwFtLevelRepl
 def ispwUtLevelRepl
 def gitRepo
+def gitHubUserName
+def gitHubToken
 
 node {
 
@@ -31,15 +33,9 @@ node {
 
         }
 
-        if(GitHubUserName == ''){
+        if(GitHubCredentialsId == ''){
 
-            error "[ERROR] - The GitHub User Name needs to be specified. Aborting execution."
-
-        }
-
-        if(GitHubPassword == ''){
-
-            error "[ERROR] - The GitHub Password needs to be specified. Aborting execution."
+            error "[ERROR] - The GitHub Credentials ID needs to be specified. Aborting execution."
 
         }
 
@@ -177,6 +173,20 @@ node {
 
     stage("Branch Action"){
 
+        withCredentials(
+            [
+                usernamePassword(
+                    credentialsId:      GitHubCredentialsId, 
+                    passwordVariable:   'tmpPw', 
+                    usernameVariable:   'tmpUser'
+                )
+            ]
+        ) 
+        {
+            gitHubUserName  = tmpUser
+            gitHubToken     = tmpPw
+        }
+
         if(BranchAction == 'Create'){
 
             dir("./")
@@ -188,7 +198,7 @@ node {
                 echo consoleMessage
                 consoleMessage  = bat(returnStdout: true, script: 'git commit -a -m ' + message)
                 echo consoleMessage
-                consoleMessage  = bat(returnStdout: true, script: 'git push https://' + GitHubUserName + ':' + GitHubPassword + "@github.com/CPWRGIT/${HostUserId} refs/heads/${localBranchName}:refs/heads/${localBranchName} -f")
+                consoleMessage  = bat(returnStdout: true, script: 'git push https://' + gitHubUserName + ':' + gitHubToken + "@github.com/CPWRGIT/${HostUserId} refs/heads/${localBranchName}:refs/heads/${localBranchName} -f")
                 echo consoleMessage
             }
         }
@@ -199,12 +209,9 @@ node {
                 echo "[INFO] - Deleting branch " + localBranchName + " from remote repository."
 
                 def message     = '"Delete Branch ' + localBranchName + '"'
-                consoleMessage  = bat(returnStdout: true, script: 'git push https://' + GitHubUserName + ':' + GitHubPassword + "@github.com/CPWRGIT/${HostUserId} --delete refs/heads/${localBranchName} -f")
+                consoleMessage  = bat(returnStdout: true, script: 'git push https://' + gitHubUserName + ':' + gitHubToken + "@github.com/CPWRGIT/${HostUserId} --delete refs/heads/${localBranchName} -f")
                 echo consoleMessage
             }
-
-
         }
-
     }
 }
