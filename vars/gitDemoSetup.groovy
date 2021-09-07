@@ -18,7 +18,7 @@ String sonarQualityGateId           = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken               = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
 
 String repoTemplate                 = 'GITDEMO1_Template'
-String gitHubToken                  = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
+//String gitHubToken                  = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
 
 def environmentSettings         = [
                                     'CWCC': [
@@ -116,7 +116,7 @@ node{
                 consoleLogResponseBody: true, 
                 customHeaders:          [
                     [maskValue: false,  name: 'content-type',   value: 'application/json'], 
-                    [maskValue: true,   name: 'authorization',  value: gitHubToken], 
+                    [maskValue: true,   name: 'authorization',  value: gitHubAdminToken], 
                     [maskValue: false,  name: 'accept',         value: 'application/vnd.github.v3+json'], 
                     [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
                 ], 
@@ -155,7 +155,7 @@ node{
                 consoleLogResponseBody:     true, 
                 customHeaders:              [
                     [maskValue: false,  name: 'content-type',   value: 'application/json'], 
-                    [maskValue: true,   name: 'authorization',  value: 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'], 
+                    [maskValue: true,   name: 'authorization',  value: gitHubAdminToken], 
                     [maskValue: false,  name: 'accept',         value: 'application/vnd.github.baptiste-preview+json'], 
                     [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
                 ], 
