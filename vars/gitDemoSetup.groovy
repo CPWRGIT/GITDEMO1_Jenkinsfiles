@@ -151,6 +151,8 @@ node{
                     "private":  false
                 }'''
 
+            echo requestBody.toString()
+
             httpRequest(
                 consoleLogResponseBody:     true, 
                 customHeaders:              [
