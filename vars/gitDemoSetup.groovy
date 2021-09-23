@@ -7,7 +7,7 @@ String gitHubPasswordCredentials    = 'CPWRGIT_Password'
 String gitHubAdminUserCheck         = ''
 String gitHubAdminPwCheck           = ''
 String gitHubAdminUser              = ''
-String gitHubAdminToken             = 'Basic Y3B3cmdpdDpnaHBfelJNUW9qakhmazBIWnZQSGlZTWh6UFhIVFozZWtQM05NdkZK'
+String gitHubAdminToken             = ''
 
 String jenkinsfile                  = "./Jenkinsfile.jenkinsfile"
 String ispwConfigFile               = "./GenAppCore/ispwconfig.yml"
@@ -18,7 +18,7 @@ String sonarQualityGateId           = "AXY8wyJYYfaPLsZ5QP7_"
 String sonarQubeToken               = 'Basic NDk5NDM5ZmI2NTYwZWFlZGYxNDdmNjJhOTQ1NjQ2ZDE2YWQzYWU1Njo=' //499439fb6560eaedf147f62a945646d16ad3ae56
 
 String repoTemplate                 = 'GITDEMO1_Template'
-//String gitHubToken                  = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
+String gitHubRestToken               = 'Basic Y3B3cmdpdDpkMmU0ZDZiZTBlZTg2ODgzMzgwZGU3MWI2M2YyZmQ0ZmQ3MThmZjk4'
 
 def environmentSettings         = [
                                     'CWCC': [
@@ -74,7 +74,7 @@ node{
             error '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
         }
     }
-/*
+
     withCredentials(
         [
             usernamePassword(
@@ -90,8 +90,7 @@ node{
         gitHubAdminToken    = gitHubTokenTmp
 
     }
-*/
-    gitHubAdminUser     = GitHubAdminUser
+
     TargetEnvironment   = TargetEnvironment.toUpperCase()
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
@@ -117,7 +116,7 @@ node{
                 consoleLogResponseBody: true, 
                 customHeaders:          [
                     [maskValue: false,  name: 'content-type',   value: 'application/json'], 
-                    [maskValue: true,   name: 'authorization',  value: gitHubAdminToken], 
+                    [maskValue: true,   name: 'authorization',  value: gitHubRestToken], 
                     [maskValue: false,  name: 'accept',         value: 'application/vnd.github.v3+json'], 
                     [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
                 ], 
@@ -158,7 +157,7 @@ node{
                 consoleLogResponseBody:     true, 
                 customHeaders:              [
                     [maskValue: false,  name: 'content-type',   value: 'application/json'], 
-                    [maskValue: true,   name: 'authorization',  value: gitHubAdminToken], 
+                    [maskValue: true,   name: 'authorization',  value: gitHubRestToken], 
                     [maskValue: false,  name: 'accept',         value: 'application/vnd.github.baptiste-preview+json'], 
                     [maskValue: false,  name: 'user-agent',     value: 'cpwrgit']
                 ], 
