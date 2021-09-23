@@ -7,7 +7,7 @@ String gitHubPasswordCredentials    = 'CPWRGIT_Password'
 String gitHubAdminUserCheck         = ''
 String gitHubAdminPwCheck           = ''
 String gitHubAdminUser              = ''
-String gitHubAdminToken             = ''
+String gitHubAdminToken             = 'Basic Y3B3cmdpdDpnaHBfelJNUW9qakhmazBIWnZQSGlZTWh6UFhIVFozZWtQM05NdkZK'
 
 String jenkinsfile                  = "./Jenkinsfile.jenkinsfile"
 String ispwConfigFile               = "./GenAppCore/ispwconfig.yml"
@@ -74,7 +74,7 @@ node{
             error '[Error] - The specified GitHub credentials could not be verified. Aborting process.'
         }
     }
-
+/*
     withCredentials(
         [
             usernamePassword(
@@ -90,7 +90,8 @@ node{
         gitHubAdminToken    = gitHubTokenTmp
 
     }
-
+*/
+    gitHubAdminUser     = GitHubAdminUser
     TargetEnvironment   = TargetEnvironment.toUpperCase()
     HostUserId          = HostUserId.toUpperCase()
     IspwApp             = IspwApp.toUpperCase()
