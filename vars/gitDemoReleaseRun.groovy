@@ -124,18 +124,22 @@ node
         }
     }
 
-    stage("Decide"){
+    stage("Evaluation - Manual Input"){
 
-        continueRelease = input(
-            message: 'Uncheck box and click \n"Proceed" to fallback the release.\nOtherwise, leave the box checked and also click "Proceed" to resume the release', 
+        def releaseStatus
+
+        releaseStatus = input(
+            message: 'Select the status for the release from the options below and click "Proceed"', 
             parameters: [
-                booleanParam(
-                    defaultValue: true, 
-                    description: '', name: 'continue Release'
-                )
-            ]
+                choice(choices: ['Successful Release', 'Fallback Release'], description: 'Options', name: 'releaseOption')]        
         )
 
+        if(releaseStatus == 'Successful Release'){
+            continueRelease = true
+        }
+        else{
+            continueRelease = false
+        }
     }
 
     if(continueRelease){
