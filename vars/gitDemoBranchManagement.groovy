@@ -120,18 +120,6 @@ node {
 
             def contextFileList = findFiles(glob: '**/Tests/**/*.context')
 
-            if (BranchType == "Feature")
-            {
-
-                localBranchName = 'feature/' + IspwTargetLevel + '/' + BranchName
-
-            }
-            else{
-
-                localBranchName = 'bugfix'
-
-            }
-
             echo "[INFO] - Modifying .context files for branch " + localBranchName + "."
             echo "[INFO] - Setting load library UT and FT level qualifiers to " + ispwUtLevelRepl + " and " + ispwFtLevelRepl + "."
 
@@ -194,11 +182,13 @@ node {
                 echo "[INFO] - Creating branch " + localBranchName + " on remote repository."
 
                 def message     = '"Inital Setup for Branch ' + localBranchName + '"'
-                consoleMessage  = bat(returnStdout: true, script: 'git status')
-                echo consoleMessage
-                consoleMessage  = bat(returnStdout: true, script: 'git commit -a -m ' + message)
-                echo consoleMessage
-                consoleMessage  = bat(returnStdout: true, script: 'git push https://' + gitHubUserName + ':' + gitHubToken + "@github.com/CPWRGIT/${HostUserId} refs/heads/${localBranchName}:refs/heads/${localBranchName} -f")
+                consoleMessage  = bat(
+                    returnStdout: true, 
+                    script: '''
+                        git status
+                        git commit -a -m ''' + message * '''
+                        git push https://''' + gitHubUserName + ''':''' + gitHubToken + '''@github.com/CPWRGIT/''' + HostUserId + ''' refs/heads/''' + localBranchName + ''':refs/heads/''' + localBranchName ''' -f
+                    '''
                 echo consoleMessage
             }
         }
