@@ -182,14 +182,16 @@ node {
                 echo "[INFO] - Creating branch " + localBranchName + " on remote repository."
 
                 def message     = '"Inital Setup for Branch ' + localBranchName + '"'
+                
                 consoleMessage  = bat(
                     returnStdout: true, 
                     script: '''
                         git status
-                        git commit -a -m ''' + message * '''
+                        git commit -a -m ''' + message + '''
                         git push https://''' + gitHubUserName + ''':''' + gitHubToken + '''@github.com/CPWRGIT/''' + HostUserId + ''' refs/heads/''' + localBranchName + ''':refs/heads/''' + localBranchName + ''' -f
                     '''
                 )
+                
                 echo consoleMessage
             }
         }
