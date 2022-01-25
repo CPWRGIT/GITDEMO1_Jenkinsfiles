@@ -189,6 +189,7 @@ node {
                         git commit -a -m ''' + message * '''
                         git push https://''' + gitHubUserName + ''':''' + gitHubToken + '''@github.com/CPWRGIT/''' + HostUserId + ''' refs/heads/''' + localBranchName + ''':refs/heads/''' + localBranchName + ''' -f
                     '''
+                )
                 echo consoleMessage
             }
         }
