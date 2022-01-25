@@ -6,6 +6,10 @@ def continueRelease         = false
 
 node
 {
+    dir('./') {
+        deleteDir()
+    }
+
     currentBuild.displayName = ISPW_Application + "/" + Owner_Id + ", Release: " + ispwRelease + "/Tag: " + gitTagName
     
     stage("Create ISPW Release"){
@@ -169,6 +173,35 @@ node
 
         }
 
+        stage("Close Release"){
+
+            ispwOperation(
+                connectionId:           Host_Connection, 
+                credentialsId:          Jenkins_CES_Credentials, 
+                consoleLogResponseBody: true,             
+                ispwAction:             'CloseRelease', 
+                ispwRequestBody:        """
+                    runtimeConfiguration=ispw
+                    releaseId=${ispwRelease}
+                """
+            )
+
+        }
+
+        stage("Create Bugfix Branch"){
+            build(
+                job: '../GITDEMO_Workflow/GITDEMO_Branch_Managenent', 
+                parameters: [
+                    string(name: 'BranchAction', value: 'Create'), 
+                    string(name: 'HostUserId', value: gitRepo), 
+                    string(name: 'GitHubCredentialsId', value: gitCredentials), 
+                    string(name: 'BranchType', value: 'Bugfix'), 
+                    string(name: 'BranchName', value: 'failed_' + gitTagName), 
+                    booleanParam(name: 'DeleteAssignment', value: false)
+                ]
+            )
+        }
+
         stage("Clone Repo"){
             
             checkout(
@@ -190,7 +223,7 @@ node
             )
         }
 
-        stage("Remove Tag and Create Bugfix Branch"){
+        stage("Remove Tag"){
           
             withCredentials(
                 [
@@ -206,13 +239,10 @@ node
                 stdOut = bat(
                     returnStdout: true, 
                     script: '''
-                        git reset --hard ''' + gitTagName + '''~
                         git remote set-url origin https://''' + gitHubUser + ''':''' + gitHubPassword + '''@github.com/CPWRGIT/''' + gitRepo + '''.git
+                        git reset --hard ''' + gitTagName + '''~
                         git push --delete origin ''' + gitTagName + '''
-                        git push origin -f
-                        git branch bugfix/failed_''' + gitTagName + '''
-                        git checkout checkout bugfix/failed_''' + gitTagName + '''
-                        git push origin -f
+                        git push origin HEAD:main -f
                     '''
                 )
 

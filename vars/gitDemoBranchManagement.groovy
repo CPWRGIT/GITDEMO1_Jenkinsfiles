@@ -57,7 +57,7 @@ node {
             }
             else{
                 
-                localBranchName = 'bugfix'
+                localBranchName = 'bugfix/' + BranchName
             
             }
         }
@@ -70,7 +70,7 @@ node {
             }
             else{
 
-                localBranchName = branchName
+                localBranchName = BranchName
 
             }
 
