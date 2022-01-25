@@ -24,7 +24,7 @@ node
                 stream=GITDEMO1
                 application=${ISPW_Application}
                 releaseId=${ispwRelease}
-                description=${ispwRelease}
+                description=RELEASE ${ispwRelease} FOR GITDEMO1 APP ${ISPW_Application}
             """
         )
     }
