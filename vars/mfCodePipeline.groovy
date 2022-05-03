@@ -579,7 +579,7 @@ def triggerXlRelease(){
     {
 
         def assignmentId = getMainAssignmentId(synchConfig.ispw.automaticBuildFile)
-
+/*
         echo    "XLRelease / digital.ai release is currently not available in the demo environment \n" + 
                 "Instead use Jenkins job http://sonarqube.nasa.cpwr.corp:8080/view/Git2Ispw_Demo/job/GITDEMO_Workflow/job/GITDEMO_Run_Release/ to run a similar process. \n" + 
                 "Use 'Build with parameters' and provide the following parameter values:\n" +
@@ -593,8 +593,8 @@ def triggerXlRelease(){
                 "- Release_Number           : " + "A 6 digit release number. This has to be unique within your ISPW demo application.\n" +
                 "                             " + "The resulting release name in ISPW will be '" + ispwConfig.ispwApplication.application + "<Release_Number>',\n" + 
                 "                             " + "and your Git repository will be tagged with 'v<Release_Number>."
+*/
 
-        /*
         xlrCreateRelease(
             releaseTitle:       "GITDEMO - Release for ${ispwConfig.ispwApplication.application}", 
             serverCredentials:  'admin', 
@@ -627,6 +627,5 @@ def triggerXlRelease(){
                 ] 
             ]
         )
-        */
     }
 }
