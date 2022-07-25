@@ -307,3 +307,106 @@ executionEnvironments:
         sonar:
           folder:               './Coverage'
           file:                 'CodeCoverage.xml'    
+  local:
+    environment:
+      hci:
+        connectionId:           'CWCC'
+      ces:
+        url:                    http://cwcc.compuware.com:2020
+      sonar:
+        scanner:                SonarScanner
+        server:                 sonar
+      xlr:
+        template:               'GITDEMO_CWC2'
+    ispw:
+      libraryQualifier:         'CWC2.'
+      mfProject:
+        rootFolder:             './GenAppCore'
+        sourcesFolder:          '/Sources'
+      configFile:
+        folder:                 './GenAppCore'
+        name:                   'ispwconfig.yml'
+      impactScanFile:           './git2ispw/impact_scan.jcl'
+      automaticBuildFile:       './automaticBuildParams.txt'
+      changedProgramsFile:      './changedPrograms.json'
+      branchInfo:
+        feature/FT1:
+          ispwLevel:            FT1
+          mapRule:              per-branch
+        feature/FT2:
+          ispwLevel:            FT2
+          mapRule:              per-branch
+        feature/FT3:
+          ispwLevel:            FT3
+          mapRule:              per-branch
+        feature/FT4:
+          ispwLevel:            FT4
+          mapRule:              per-branch
+        bugfix:
+          ispwLevel:            HFIX
+          mapRule:              per-branch
+        development:
+          ispwLevel:            DEVL
+          mapRule:              per-branch
+        main:
+          ispwLevel:            MAIN
+          mapRule:              per-branch
+    ttt:
+      loadLibQualfiers:
+        FT1:
+          level1:               FT1
+          level2:               FT1
+          level3:               DEVL
+          level4:               MAIN
+        FT2:
+          level1:               FT2
+          level2:               FT2
+          level3:               DEVL
+          level4:               MAIN
+        FT3:
+          level1:               FT3
+          level2:               FT3
+          level3:               DEVL
+          level4:               MAIN
+        FT4:
+          level1:               FT4
+          level2:               FT4
+          level3:               DEVL
+          level4:               MAIN
+        HFIX:
+          level1:               HFIX
+          level2:               HFIX
+          level3:               HFIX
+          level4:               MAIN
+        DEVL:
+          level1:               DEVL
+          level2:               DEVL
+          level3:               DEVL
+          level4:               MAIN
+        MAIN:
+          level1:               MAIN
+          level2:               MAIN
+          level3:               MAIN
+          level4:               MAIN
+      folders:               
+        root:                   'Tests'
+        virtualizedTests:       'Unit'
+        nonVirtualizedTests:    'Integration'
+      environmentIds:
+        virtualized:            5c519facfba8720a90ccc645
+        nonVirtualized:
+          batch:                5c519facfba8720a90ccc645
+          cics:                 5c51a46afba8720a90ccc64d
+      results:
+        sonar:
+          folder:               './TTTSonar'    
+          fileNameBase:         'cli.suite.sonar.xml'
+        jUnit:
+          folder:               '**/TTTUnit'
+          fileNameBase:         'cli.suite.junit.xml'
+    coco:  
+      ccThreshold:              '70'
+      results:
+        sonar:
+          folder:               './Coverage'
+          file:                 'CodeCoverage.xml'    
