@@ -463,7 +463,9 @@ def prepMainframeBuild(){
         def taskSourceInfo 
 
         /* Determine task info based in task id */
+        echo "Comparing with " + taskId
         for(task in taskList) {
+            echo task.taskId
             if(task.taskId == taskId){
                 taskSourceInfo = task
             }
