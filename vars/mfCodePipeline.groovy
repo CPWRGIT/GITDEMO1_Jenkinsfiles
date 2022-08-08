@@ -381,7 +381,7 @@ def prepMainframeBuild(){
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
+            consoleLogResponseBody: false, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
@@ -399,7 +399,7 @@ def prepMainframeBuild(){
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
+            consoleLogResponseBody: false, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
@@ -441,12 +441,12 @@ def prepMainframeBuild(){
             }
         }
 
-        /* Get task information for assignment */
+        /* Get task information from source assignment */
         response = httpRequest(
-            url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks",
+            url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + taskSourceAssignmentId + "/tasks",
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
+            consoleLogResponseBody: false, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
@@ -486,15 +486,18 @@ def prepMainframeBuild(){
 
         def jsonBody = writeJSON(returnText: true, json: taskGenInfo)
 
-        echo "JSON Body:"
-        echo jsonBody
-    /*
+        echo "[Info] - Setting Generate Parms for component"
+        echo "[Info] - Component                : " + taskGenInfo.moduleName
+        echo "[Info] - Residing in Assignment   : " + currentAssignmentId
+        echi "[Info] - at level                 : " + taskGenInfo.currentLevel
+        echo "[Info] - Based on level           : " + taskGenInfo.startingLevel
+
         response = httpRequest(
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks",
             httpMode:               'POST',
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
+            consoleLogResponseBody: false, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
@@ -505,7 +508,6 @@ def prepMainframeBuild(){
             responseHandle:         'NONE',         
             wrapAsMultipart:        false
         )
-    */
     }
 }
 
