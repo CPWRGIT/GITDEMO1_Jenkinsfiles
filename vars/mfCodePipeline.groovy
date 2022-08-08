@@ -408,14 +408,12 @@ def prepMainframeBuild(){
     componentVersions.each {
         if(it.level == ispwTargetLevel){
             taskSourceLevel = it.path
-            break
         }
     }
 
     componentVersions.each {
         if(it.level == taskSourceLevel){
             taskSourceAssignmentId = it.assignmentId
-            break
         }
     }
 
