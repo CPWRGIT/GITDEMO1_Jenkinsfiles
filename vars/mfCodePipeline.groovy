@@ -370,7 +370,7 @@ def prepMainframeBuild(){
     def taskId              = taskIds[0]
 
     def response = httpRequest(
-        url:                    synchConfig.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
         acceptType:             'APPLICATION_JSON', 
         contentType:            'APPLICATION_JSON', 
         consoleLogResponseBody: true, 
@@ -387,7 +387,7 @@ def prepMainframeBuild(){
     def taskInfo = response.getContent()
     
     response = httpRequest(
-        url:                    synchConfig.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
         acceptType:             'APPLICATION_JSON', 
         contentType:            'APPLICATION_JSON', 
         consoleLogResponseBody: true, 
