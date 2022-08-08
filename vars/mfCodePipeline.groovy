@@ -413,9 +413,9 @@ def prepMainframeBuild(){
         def componentVersions = readJSON(text: response.getContent()).componentVersions
 
         /* Find current version, i.e. with the ISPW target level and determine the path level */
-        componentVersions.each {
-            if(it.level == ispwTargetLevel){
-                taskPath = it.path
+        for(version in componentVersions) {
+            if(version.level == ispwTargetLevel){
+                taskPath = version.path
             }
         }
 
@@ -437,9 +437,9 @@ def prepMainframeBuild(){
         }
 
         /* Determine Assignment ID based on source level */
-        componentVersions.each {
-            if(it.level == taskSourceLevel){
-                taskSourceAssignmentId = it.assignmentId
+        for(version in componentVersions) {
+            if(version.level == taskSourceLevel){
+                taskSourceAssignmentId = version.assignmentId
             }
         }
 
@@ -463,9 +463,9 @@ def prepMainframeBuild(){
         def taskSourceInfo 
 
         /* Determine task info based in task id */
-        taskList.each {
-            if(it.taskId == taskId){
-                taskSourceInfo = it
+        for(task in taskList) {
+            if(task.taskId == taskId){
+                taskSourceInfo = task
             }
         }
 
