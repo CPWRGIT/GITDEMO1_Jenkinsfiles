@@ -393,6 +393,8 @@ def prepMainframeBuild(){
         )
         
         def taskInfo = readJSON(text: response.getContent())
+
+
         
         /* Get all versions for task */
         response = httpRequest(
@@ -462,22 +464,30 @@ def prepMainframeBuild(){
         def taskList        = readJSON(text: response.getContent()).tasks
         def taskSourceInfo 
 
-        /* Determine task info based in task id */
-        echo "Comparing with " + taskId
+        /* Build generate parms based on parms from source level */
+        taskGenInfo.stream          = ispwConfig.ispwApplication.stream
+        taskGenInfo.application     = ispwConfig.ispwApplication.application
+        taskGenInfo.moduleName      = taskInfo.moduleName
+        taskGenInfo.moduleType      = taskInfo.moduleType
+        taskGenInfo.currentLevel    = ispwTargetLevel
+        taskGenInfo.startingLevel   = taskSourceLevel
+
+        /* Determine task info based pervious info */
         for(task in taskList) {
-            echo task.taskId
-            if(task.taskId == taskId){
+            if(
+
+                task.stream          == taskGenInfo.stream       
+                task.application     == taskGenInfo.application  
+                task.moduleName      == taskGenInfo.moduleName   
+                task.moduleType      == taskGenInfo.moduleType   
+                task.level           == taskGenInfo.currentLevel 
+                task.startingLevel   == taskGenInfo.startingLevel
+
+            ){
                 taskSourceInfo = task
             }
         }
 
-        /* Build generate parms based on parms from source level */
-        taskGenInfo.application     = ispwConfig.ispwApplication.application
-        taskGenInfo.moduleName      = taskInfo.moduleName
-        taskGenInfo.moduleType      = taskInfo.moduleType
-        taskGenInfo.stream          = ispwConfig.ispwApplication.stream
-        taskGenInfo.currentLevel    = ispwTargetLevel
-        taskGenInfo.startingLevel   = taskSourceLevel
         taskGenInfo.cics            = taskSourceInfo.cics
         taskGenInfo.sql             = taskSourceInfo.sql
         taskGenInfo.ims             = taskSourceInfo.ims
