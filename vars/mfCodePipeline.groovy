@@ -477,13 +477,12 @@ def prepMainframeBuild(){
 
             echo "checking"
 
-            echo    task.stream        + "vs. " + taskGenInfo.stream         
-            echo    task.application   + "vs. " + taskGenInfo.application    
-            echo    task.moduleName    + "vs. " + taskGenInfo.moduleName     
-            echo    task.moduleType    + "vs. " + taskGenInfo.moduleType     
-            echo    task.level         + "vs. " + taskGenInfo.currentLevel   
-            echo    task.startingLevel + "vs. " + taskGenInfo.startingLevel
-
+            echo    task.stream        + " vs. " + taskGenInfo.stream         
+            echo    task.application   + " vs. " + taskGenInfo.application    
+            echo    task.moduleName    + " vs. " + taskGenInfo.moduleName     
+            echo    task.moduleType    + " vs. " + taskGenInfo.moduleType     
+            echo    task.level         + " vs. " + taskGenInfo.currentLevel   
+            echo    task.startingLevel + " vs. " + taskGenInfo.startingLevel
 
             if(
 
@@ -491,8 +490,7 @@ def prepMainframeBuild(){
                 task.application     == taskGenInfo.application     &&
                 task.moduleName      == taskGenInfo.moduleName      &&
                 task.moduleType      == taskGenInfo.moduleType      &&
-                task.level           == taskGenInfo.currentLevel    &&
-                task.startingLevel   == taskGenInfo.startingLevel
+                task.level           == taskGenInfo.startingLevel
 
             ){
                 taskSourceInfo = task
