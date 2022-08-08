@@ -349,7 +349,7 @@ def checkForBuildParams(automaticBuildFile){
 /* Determine Generate Parms for the different Tasks */
 def prepMainframeBuild(){
 
-    def automaticBuildInfo = readJSON(file: automaticBuildFile)
+    def automaticBuildInfo = readJSON(file: synchConfig.ispw.automaticBuildFile)
 
     echo "Test: " + automaticBuildInfo.containerId
 
