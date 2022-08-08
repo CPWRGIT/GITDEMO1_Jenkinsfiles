@@ -369,8 +369,8 @@ def prepMainframeBuild(){
     def currentAssignmentId     = automaticBuildInfo.containerId 
     def taskIds                 = automaticBuildInfo.taskIds
     
-    taskIds.each {
-        def taskId                  = it
+    for(taskId in taskIds) {
+        
         def taskGenInfo             = [:]
         def taskPath                = ''
         def taskSourceLevel         = ''
@@ -428,8 +428,10 @@ def prepMainframeBuild(){
         switch (ispwTargetLevel) {
             case "MAIN":
                 taskSourceLevel = "DEVL"
+                break
             case "DEVL":
                 taskSourceLevel = "FT" + taskPath.substring(taskPath.length() - 1, taskPath.length())
+                break
             default:
                 taskSourceLevel = taskPath
         }
