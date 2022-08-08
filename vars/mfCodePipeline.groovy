@@ -349,24 +349,59 @@ def checkForBuildParams(automaticBuildFile){
 /* Determine Generate Parms for the different Tasks */
 def prepMainframeBuild(){
 
-    def automaticBuildInfo = readJSON(file: synchConfig.ispw.automaticBuildFile)
+    def cesToken 
+
+    withCredentials(
+        [
+            string(
+                credentialsId: pipelineParms.cesCredentialsId, 
+                variable: 'cesTmp'
+            )
+        ]
+    ) {
+        
+        cesToken    = cesTmp
+
+    }
+
+    def automaticBuildInfo  = readJSON(file: synchConfig.ispw.automaticBuildFile)
+    def currentAssignmentId = automaticBuildInfo.containerId 
+    def taskIds             = automaticBuildInfo.taskIds
+    def taskId              = taskIds[0]
 
     def response = httpRequest(
-        url:                    "http://cwcc.compuware.com:2020/ispw/ispw/assignments/" + automaticBuildInfo.containerId + "/tasks/" + automaticBuildInfo.taskIds[0],
+        url:                    synchConfig.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
         acceptType:             'APPLICATION_JSON', 
-        contentType: 'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
         consoleLogResponseBody: true, 
         customHeaders: [[
-            maskValue: true, 
-            name: 'authorization', 
-            value: '665fc9fb-39de-428a-8a67-a3619752873d'
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
         ]], 
-        ignoreSslErrors: true, 
-        responseHandle: 'NONE',         
-        wrapAsMultipart: false
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
     )
     
-    echo "RESPONSE: " + response.toString()
+    def taskInfo = response.getContent()
+    
+    response = httpRequest(
+        url:                    synchConfig.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
+        acceptType:             'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
+        consoleLogResponseBody: true, 
+        customHeaders: [[
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
+        ]], 
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
+    )
+    
+    def taskVersions = response.getContent()
 
 }
 
