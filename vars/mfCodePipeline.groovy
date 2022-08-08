@@ -417,10 +417,69 @@ def prepMainframeBuild(){
         }
     }
 
-    echo "Found"
-    echo taskSourceLevel
-    echo taskSourceAssignmentId
+    response = httpRequest(
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId,
+        acceptType:             'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
+        consoleLogResponseBody: true, 
+        customHeaders: [[
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
+        ]], 
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
+    )
 
+    def taskList        = readJSON(text: response.getContent()).tasks
+    def taskSourceInfo 
+
+    taskList.each {
+        if(it.taskId == taskId){
+            taskSourceInfo = it
+        }
+    }
+
+    def taskGenInfo             = []
+    taskGenInfo.application     = ispwConfig.ispwApplication.application
+    taskGenInfo.moduleName      = taskInfo.moduleName
+    taskGenInfo.moduleType      = taskInfo.moduleType
+    taskGenInfo.stream          = ispwConfig.ispwApplication.stream
+    taskGenInfo.currentLevel    = ispwTargetLevel
+    taskGenInfo.startingLevel   = taskSourceLevel
+    taskGenInfo.cics            = taskSourceInfo.cics
+    taskGenInfo.sql             = taskSourceInfo.sql
+    taskGenInfo.ims             = taskSourceInfo.ims
+    taskGenInfo.option1         = taskSourceInfo.option1
+    taskGenInfo.option2         = taskSourceInfo.option2
+    taskGenInfo.option3         = taskSourceInfo.option3
+    taskGenInfo.option4         = taskSourceInfo.option4
+    taskGenInfo.option5         = taskSourceInfo.option5
+    taskGenInfo.program         = taskSourceInfo.program
+
+    def jsonBody = writeJSON(returnText: true, json: taskGenInfo)
+
+    echo "JSON Body:"
+    echo jsonBody
+/*
+    response = httpRequest(
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks",
+        httpMode:               'POST',
+        acceptType:             'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
+        consoleLogResponseBody: true, 
+        customHeaders: [[
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
+        ]], 
+        requestBody:            jsonBody,        
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
+    )
+*/
 }
 
 /* Build mainframe code */
