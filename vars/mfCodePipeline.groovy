@@ -384,7 +384,7 @@ def prepMainframeBuild(){
         wrapAsMultipart:        false
     )
     
-    def taskInfo = response.getContent()
+    def taskInfo = readJSON(text: response.getContent())
     
     response = httpRequest(
         url:                    synchConfig.environment.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
@@ -401,7 +401,7 @@ def prepMainframeBuild(){
         wrapAsMultipart:        false
     )
     
-    def taskVersions = response.getContent()
+    def taskVersions = readJSON(text: response.getContent())
 
 }
 
