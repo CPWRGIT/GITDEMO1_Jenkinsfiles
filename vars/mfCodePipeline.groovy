@@ -441,7 +441,7 @@ def prepMainframeBuild(){
         }
     }
 
-    def taskGenInfo             = []
+    def taskGenInfo             = [:]
     taskGenInfo.application     = ispwConfig.ispwApplication.application
     taskGenInfo.moduleName      = taskInfo.moduleName
     taskGenInfo.moduleType      = taskInfo.moduleType
