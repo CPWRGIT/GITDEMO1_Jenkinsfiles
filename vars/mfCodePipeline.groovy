@@ -351,7 +351,12 @@ def prepMainframeBuild(){
 
     def automaticBuildInfo = readJSON(file: synchConfig.ispw.automaticBuildFile)
 
-    echo "Test: " + automaticBuildInfo.containerId
+    def response = httpRequest(
+        url:            "http://cwcc.compuware.com:2020/ispw/ispw/assignments/" + automaticBuildInfo.containerId + "/tasks/" + automaticBuildInfo.taskIds[0],
+        contentType:    "APPLCIATION_JSON",
+        authentication: "665fc9fb-39de-428a-8a67-a3619752873d"
+
+    echo "RESPONSE: " + response.toString()
 
 }
 
