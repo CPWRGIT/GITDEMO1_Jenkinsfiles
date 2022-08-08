@@ -418,7 +418,7 @@ def prepMainframeBuild(){
     }
 
     response = httpRequest(
-        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId,
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks",
         acceptType:             'APPLICATION_JSON', 
         contentType:            'APPLICATION_JSON', 
         consoleLogResponseBody: true, 
