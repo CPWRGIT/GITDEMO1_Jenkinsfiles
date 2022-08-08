@@ -381,7 +381,7 @@ def prepMainframeBuild(){
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: false, 
+            consoleLogResponseBody: true, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
@@ -399,7 +399,7 @@ def prepMainframeBuild(){
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: false, 
+            consoleLogResponseBody: true, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
@@ -446,7 +446,7 @@ def prepMainframeBuild(){
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + taskSourceAssignmentId + "/tasks",
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: false, 
+            consoleLogResponseBody: true, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
@@ -497,7 +497,7 @@ def prepMainframeBuild(){
             httpMode:               'POST',
             acceptType:             'APPLICATION_JSON', 
             contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: false, 
+            consoleLogResponseBody: true, 
             customHeaders: [[
                 maskValue:          true, 
                 name:               'authorization', 
