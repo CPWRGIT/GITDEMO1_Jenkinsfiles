@@ -364,10 +364,12 @@ def prepMainframeBuild(){
 
     }
 
-    def automaticBuildInfo  = readJSON(file: synchConfig.ispw.automaticBuildFile)
-    def currentAssignmentId = automaticBuildInfo.containerId 
-    def taskIds             = automaticBuildInfo.taskIds
-    def taskId              = taskIds[0]
+    def automaticBuildInfo      = readJSON(file: synchConfig.ispw.automaticBuildFile)
+    def currentAssignmentId     = automaticBuildInfo.containerId 
+    def taskIds                 = automaticBuildInfo.taskIds
+    def taskId                  = taskIds[0]
+    def taskSourceLevel         = ''
+    def taskSourceAssignmentId  = ''
 
     def response = httpRequest(
         url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
@@ -401,7 +403,25 @@ def prepMainframeBuild(){
         wrapAsMultipart:        false
     )
     
-    def taskVersions = readJSON(text: response.getContent())
+    def componentVersions = readJSON(text: response.getContent()).componentVersions
+
+    componentVersions.each {
+        if(it.level == ispwTargetLevel){
+            taskSourceLevel = it.path
+            break
+        }
+    }
+
+    componentVersions.each {
+        if(it.level == taskSourceLevel){
+            taskSourceAssignmentId = it.assignmentId
+            break
+        }
+    }
+
+    echo "Found"
+    echo taskSourceLevel
+    echo taskSourceAssignmentId
 
 }
 
