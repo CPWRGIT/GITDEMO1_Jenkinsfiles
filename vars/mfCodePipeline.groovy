@@ -476,11 +476,11 @@ def prepMainframeBuild(){
         for(task in taskList) {
             if(
 
-                task.stream          == taskGenInfo.stream       
-                task.application     == taskGenInfo.application  
-                task.moduleName      == taskGenInfo.moduleName   
-                task.moduleType      == taskGenInfo.moduleType   
-                task.level           == taskGenInfo.currentLevel 
+                task.stream          == taskGenInfo.stream          &&
+                task.application     == taskGenInfo.application     &&
+                task.moduleName      == taskGenInfo.moduleName      &&
+                task.moduleType      == taskGenInfo.moduleType      &&
+                task.level           == taskGenInfo.currentLevel    &&
                 task.startingLevel   == taskGenInfo.startingLevel
 
             ){
