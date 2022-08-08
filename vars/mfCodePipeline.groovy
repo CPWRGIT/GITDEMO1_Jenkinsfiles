@@ -369,6 +369,8 @@ def prepMainframeBuild(){
     def currentAssignmentId     = automaticBuildInfo.containerId 
     def taskIds                 = automaticBuildInfo.taskIds
     
+    automaticBuildInfo.taskIds  = []
+
     for(taskId in taskIds) {
         
         def taskGenInfo             = [:]
@@ -394,8 +396,6 @@ def prepMainframeBuild(){
         
         def taskInfo = readJSON(text: response.getContent())
 
-
-        
         /* Get all versions for task */
         response = httpRequest(
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
@@ -531,7 +531,11 @@ def prepMainframeBuild(){
             responseHandle:         'NONE',         
             wrapAsMultipart:        false
         )
+
+        automaticBuildInfo.taskIds.add(readJSON(text: response.getContent()).taskId)
     }
+
+    writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
 }
 
 /* Build mainframe code */
