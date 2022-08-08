@@ -73,6 +73,10 @@ def call(Map execParms){
 
         if(executionFlags.mainframeChanges){
 
+            echo "[Info] - Determining Generate Parms for Components."
+
+            prepMainframeBuild()
+
             echo "[Info] - Building code at mainframe level " + ispwTargetLevel + "."
 
             runMainframeBuild()
@@ -340,6 +344,15 @@ def checkForBuildParams(automaticBuildFile){
         skipReason                      = skipReason + "\n[Info] - No changes to mainframe code."
 
     }
+}
+
+/* Determine Generate Parms for the different Tasks */
+def prepMainframeBuild(){
+
+    def automaticBuildInfo = readJSON(file: automaticBuildFile)
+
+    echo "Test: " + automaticBuildInfo.containerId
+
 }
 
 /* Build mainframe code */
