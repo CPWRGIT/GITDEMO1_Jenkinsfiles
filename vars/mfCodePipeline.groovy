@@ -474,6 +474,17 @@ def prepMainframeBuild(){
 
         /* Determine task info based pervious info */
         for(task in taskList) {
+
+            echo "checking"
+
+            echo    task.stream        + "vs. " + taskGenInfo.stream         
+            echo    task.application   + "vs. " + taskGenInfo.application    
+            echo    task.moduleName    + "vs. " + taskGenInfo.moduleName     
+            echo    task.moduleType    + "vs. " + taskGenInfo.moduleType     
+            echo    task.level         + "vs. " + taskGenInfo.currentLevel   
+            echo    task.startingLevel + "vs. " + taskGenInfo.startingLevel
+
+
             if(
 
                 task.stream          == taskGenInfo.stream          &&
