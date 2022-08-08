@@ -512,7 +512,7 @@ def prepMainframeBuild(){
         echo "[Info] - Setting Generate Parms for component"
         echo "[Info] - Component                : " + taskGenInfo.moduleName
         echo "[Info] - Residing in Assignment   : " + currentAssignmentId
-        echi "[Info] - at level                 : " + taskGenInfo.currentLevel
+        echo "[Info] - at level                 : " + taskGenInfo.currentLevel
         echo "[Info] - Based on level           : " + taskGenInfo.startingLevel
 
         response = httpRequest(
