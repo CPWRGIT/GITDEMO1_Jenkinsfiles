@@ -423,13 +423,18 @@ def prepMainframeBuild(){
 
         /* Determine source level from current ISPW target level */
         /* If current target level is 
-           MAIN => source level is DEVL
+           MAIN => source level is DEVL or HFIX
            DEVL => source level is a FTx level, based on the "path" UTx
            FTx  => source level is the corresponding UTx, i.e. "path" level
         */
         switch (ispwTargetLevel) {
             case "MAIN":
-                taskSourceLevel = "DEVL"
+                if (taskPath == "BUG1") {
+                    taskSourceLevel = "HFIX"
+                }
+                else {
+                    taskSourceLevel = "DEVL"
+                }
                 break
             case "DEVL":
                 taskSourceLevel = "FT" + taskPath.substring(taskPath.length() - 1, taskPath.length())
@@ -472,7 +477,7 @@ def prepMainframeBuild(){
         taskGenInfo.currentLevel    = ispwTargetLevel
         taskGenInfo.startingLevel   = taskSourceLevel
 
-        /* Determine task info based pervious info */
+        /* Determine task to take info from */
         for(task in taskList) {
 
             if(
@@ -488,6 +493,7 @@ def prepMainframeBuild(){
             }
         }
 
+        /* Set info based on the task determined before */
         taskGenInfo.cics            = taskSourceInfo.cics
         taskGenInfo.sql             = taskSourceInfo.sql
         taskGenInfo.ims             = taskSourceInfo.ims
