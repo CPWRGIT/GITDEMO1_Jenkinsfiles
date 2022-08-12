@@ -512,7 +512,7 @@ def determineSourceBranch(targetBranch) {
 
     if (numberCommits > 0) {
 
-        def stdout          = bat(returnStdout: true, script: 'git log -2 --right-only --all --oneline'
+        def stdout          = bat(returnStdout: true, script: 'git log -2 --right-only --all --oneline')
         def commits         = response.split("\n")
         def sourceCommit    = commits[1]
         def branchInfo      = sourcCommit.substring(sourceCommit.indexOf"(") + 1,sourceCommit.indexOf(")")
