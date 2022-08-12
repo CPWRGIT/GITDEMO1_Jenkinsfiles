@@ -365,7 +365,6 @@ def prepMainframeBuild(){
         
         def taskGenInfo             = [:]
         def taskPath                = ''
-        def taskSourceLevel         = ''
         def taskSourceAssignmentId  = ''
 
         /* Get current task info from ISPW target level */
@@ -435,7 +434,7 @@ def prepMainframeBuild(){
         taskGenInfo.moduleName      = taskInfo.moduleName
         taskGenInfo.moduleType      = taskInfo.moduleType
         taskGenInfo.currentLevel    = ispwTargetLevel
-        taskGenInfo.startingLevel   = taskSourceLevel
+        taskGenInfo.startingLevel   = sourceIspwLevel
 
         /* Determine task to take info from */
         for(task in taskList) {
