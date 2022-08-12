@@ -405,7 +405,7 @@ def prepMainframeBuild(){
         def componentVersions = readJSON(text: response.getContent()).componentVersions
 
         for(version in componentVersions) {
-            if(version.level == ispwSourceLevel){
+            if(version.level == sourceIspwLevel){
                 taskSourceAssignmentId = version.assignmentId                
             }
         }
