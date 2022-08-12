@@ -572,7 +572,7 @@ def determineSourceIspwLevel(sourceBranch) {
         error "[Error] - The ISPW level for source branch " + sourceBranch + " for this build could not be determined. Pipeline will be aborted"
     }
 
-    echo "[Info] - Determined ISPW level " + ispwLevel + " for source branch " + sourceBranch "."
+    echo "[Info] - Determined ISPW level " + ispwLevel + " for source branch " + sourceBranch + "."
     return ispwLevel
 }
 
