@@ -471,7 +471,7 @@ def prepMainframeBuild(){
         echo "[Info] - Residing in Assignment   : " + currentAssignmentId
         echo "[Info] - at level                 : " + taskGenInfo.currentLevel
         echo "[Info] - Based on level           : " + taskGenInfo.startingLevel
-/*
+
         response = httpRequest(
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks",
             httpMode:               'POST',
@@ -493,7 +493,7 @@ def prepMainframeBuild(){
     }
 
     writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
-*/
+
     error "Preliminary Stop"
 }
 
