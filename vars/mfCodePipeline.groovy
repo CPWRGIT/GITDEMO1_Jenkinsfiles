@@ -562,7 +562,7 @@ def determineSourceIspwLevel(sourceBranch) {
 
             if (setting[0] == "ispwMappingLevel") {
 
-                ispwLevel = setting[1]
+                ispwLevel = setting[1].trim()
 
             }
         }
