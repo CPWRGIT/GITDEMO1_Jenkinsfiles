@@ -349,20 +349,10 @@ def checkForBuildParams(automaticBuildFile){
 /* Determine Generate Parms for the different Tasks */
 def prepMainframeBuild(){
 
-    def cesToken 
+    def sourceBranch            = determineSourceBranch(BRANCH_NAME)
+    def sourceIspwLevel         = determineSourceIspwLevel(sourceBranch)
+    def cesToken                = getCesToken(pipelineParms.cesCredentialsId)
 
-    withCredentials(
-        [
-            string(
-                credentialsId: pipelineParms.cesCredentialsId, 
-                variable: 'cesTmp'
-            )
-        ]
-    ) {
-        
-        cesToken    = cesTmp
-
-    }
 
     /* Read list of task IDs after loading modified sources to ISPW */
     def automaticBuildInfo      = readJSON(file: synchConfig.ispw.automaticBuildFile)
@@ -414,39 +404,9 @@ def prepMainframeBuild(){
         
         def componentVersions = readJSON(text: response.getContent()).componentVersions
 
-        /* Find current version, i.e. with the ISPW target level and determine the path level */
         for(version in componentVersions) {
-            if(version.level == ispwTargetLevel){
-                taskPath = version.path
-            }
-        }
-
-        /* Determine source level from current ISPW target level */
-        /* If current target level is 
-           MAIN => source level is DEVL or HFIX
-           DEVL => source level is a FTx level, based on the "path" UTx
-           FTx  => source level is the corresponding UTx, i.e. "path" level
-        */
-        switch (ispwTargetLevel) {
-            case "MAIN":
-                if (taskPath == "BUG1") {
-                    taskSourceLevel = "HFIX"
-                }
-                else {
-                    taskSourceLevel = "DEVL"
-                }
-                break
-            case "DEVL":
-                taskSourceLevel = "FT" + taskPath.substring(taskPath.length() - 1, taskPath.length())
-                break
-            default:
-                taskSourceLevel = taskPath
-        }
-
-        /* Determine Assignment ID based on source level */
-        for(version in componentVersions) {
-            if(version.level == taskSourceLevel){
-                taskSourceAssignmentId = version.assignmentId
+            if(version.level == ispwSourceLevel){
+                taskSourceAssignmentId = version.assignmentId                
             }
         }
 
@@ -511,7 +471,7 @@ def prepMainframeBuild(){
         echo "[Info] - Residing in Assignment   : " + currentAssignmentId
         echo "[Info] - at level                 : " + taskGenInfo.currentLevel
         echo "[Info] - Based on level           : " + taskGenInfo.startingLevel
-
+/*
         response = httpRequest(
             url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks",
             httpMode:               'POST',
@@ -533,6 +493,105 @@ def prepMainframeBuild(){
     }
 
     writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
+*/
+    error "Preliminary Stop"
+}
+
+
+def determineSourceBranch(targetBranch) {
+
+    def numberCommits = 0
+    def sourceBranch
+
+    if(targetBranch == "main"){
+        numberCommits = 3
+    }
+    else if (targetBranch == "development") {
+        numberCommits = 3
+    }
+
+    if (numberCommits > 0) {
+
+        def stdout          = bat(returnStdout: true, script: 'git log -2 --right-only --all --oneline'
+        def commits         = response.split("\n")
+        def sourceCommit    = commits[1]
+        def branchInfo      = sourcCommit.substring(sourceCommit.indexOf"(") + 1,sourceCommit.indexOf(")")
+        def branchList      = branchInfo.split(" ")
+        
+        for (branch in branchList) {
+            if (branch.indexOf("origin") >= 0) {
+                sourceBranch = branch.replace(",", "").replace("origin/", "")
+            }
+        }
+    }
+    else {
+        sourceBranch = targetBranch
+    }
+
+    if(sourceBranch == null) {
+        error "[Error] - The source branch for this build could not be determined. Pipeline will be aborted"
+    }
+
+    return sourceBranch
+}
+
+def determineSourceIspwLevel(sourceBranch) {
+
+    def ispwLevel
+
+    if (
+        sourceBranch == "main"          |
+        sourceBranch == "development"
+        ) {
+ 
+        branchInfo.each {
+            if(sourceBranch.contains(it.key)) {
+
+                ispwLevel = it.value.ispwLevel
+                
+            }
+        }    
+    }
+    else {
+        def projectProperties = readFile(file: './GenAppCore/.settings/GenAppCore.prefs').split("\n")
+
+        for (property in projectProperties) {
+
+            setting = property.split("=")
+
+            if (setting[0] == "ispwMappingLevel") {
+
+                ispwLevel = setting[1]
+
+            }
+        }
+    }
+
+    if(ispwLevel == null) {
+        error "[Error] - The ISPW level for source branch " + sourceBranch + " for this build could not be determined. Pipeline will be aborted"
+    }
+
+    return ispwLevel
+}
+
+def getCesToken(credentialsId) {
+
+    def token
+
+    withCredentials(
+        [
+            string(
+                credentialsId: credentialsId, 
+                variable: 'cesTmp'
+            )
+        ]
+    ) {
+        
+        token    = cesTmp
+
+    }
+
+    return token
 }
 
 /* Build mainframe code */
