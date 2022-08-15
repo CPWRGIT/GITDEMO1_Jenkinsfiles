@@ -16,8 +16,6 @@ String sonarResultsFileNvt
 String sonarResultsFileList     
 String sonarCodeCoverageFile   
 String jUnitResultsFile
-String skipReason
-
 String applicationQualifier
 
 def pipelineParms
@@ -27,7 +25,7 @@ def synchConfig
 def CC_TEST_ID_MAX_LEN
 def CC_SYSTEM_ID_MAX_LEN
 
-def executionFlags
+def executionBehavior
 
 def call(Map execParms){
 
@@ -53,7 +51,7 @@ def call(Map execParms){
 
     stage('Load code to mainframe') {
 
-        if(executionFlags.mainframeChanges) {
+        if(executionBehavior.mainframeChanges) {
 
             echo "[Info] - Loading code to mainframe level " + ispwTargetLevel + "."
 
@@ -71,7 +69,7 @@ def call(Map execParms){
 
     stage('Build mainframe code') {
 
-        if(executionFlags.mainframeChanges){
+        if(executionBehavior.mainframeChanges){
 
             echo "[Info] - Determining Generate Parms for Components."
 
@@ -89,7 +87,7 @@ def call(Map execParms){
         }
     }
 
-    if(executionFlags.executeVt){
+    if(executionBehavior.executeVt){
 
         stage('Execute Unit Tests') {           
 
@@ -98,7 +96,7 @@ def call(Map execParms){
         }
     }
 
-    if(executionFlags.executeNvt){
+    if(executionBehavior.executeNvt){
 
         stage('Execute Module Integration Tests') {
 
@@ -107,7 +105,7 @@ def call(Map execParms){
         }
     }
 
-    if(executionFlags.mainframeChanges){
+    if(executionBehavior.mainframeChanges){
 
         getCocoResults()
 
@@ -119,7 +117,7 @@ def call(Map execParms){
 
     }   
 
-    if(executionFlags.executeXlr){
+    if(executionBehavior.executeXlr){
 
         stage("Trigger Release - View Console Log for Instructions") {
 
@@ -137,13 +135,6 @@ def initialize(execParms){
 
     CC_TEST_ID_MAX_LEN          = 15
     CC_SYSTEM_ID_MAX_LEN        = 15
-
-    executionFlags              = [
-            mainframeChanges: true,
-            executeVt:        true,
-            executeNvt:       true,
-            executeXlr:       true
-        ]
 
     branchMappingString         = ''
     ispwTargetLevel             = ''    
@@ -200,7 +191,7 @@ def initialize(execParms){
     // convert the text to yaml
     ispwConfig                  = readYaml(text: tmpText)
 
-    determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
+    executionBehavior              = determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
 
     processBranchInfo(synchConfig.ispw.branchInfo, ispwConfig.ispwApplication.application)
 
@@ -224,51 +215,56 @@ def initialize(execParms){
 /* If main branch and mainfgrame changes have been applied, trigger XLR */
 def determinePipelineBehavior(branchName, buildNumber){
 
+    def behavior = [
+            mainframeChanges: true,
+            executeVt:        true,
+            executeNvt:       true,
+            executeXlr:       true,
+            skipReason:       ""    
+        ]
+
     if (buildNumber == "1") {
 
-        executionFlags.mainframeChanges = false
-        executionFlags.executeVt        = false
-        executionFlags.executeNvt       = false
-        executionFlags.executeXlr       = false
-
-        skipReason                      = "[Info] - First build for branch '${branchName}'. Only sources will be scanned by SonarQube"
+        behavior.mainframeChanges  = false
+        behavior.executeVt         = false
+        behavior.executeNvt        = false
+        behavior.executeXlr        = false
+        behavior.skipReason        = "[Info] - First build for branch '${branchName}'. Only sources will be scanned by SonarQube"
     }    
     else if (BRANCH_NAME.contains("feature")) {
 
-        executionFlags.mainframeChanges = true
-        executionFlags.executeVt        = true
-        executionFlags.executeNvt       = false
-        executionFlags.executeXlr       = false
-
-        skipReason                      = "[Info] - '${branchName}' is a feature branch."
+        behavior.mainframeChanges  = true
+        behavior.executeVt         = true
+        behavior.executeNvt        = false
+        behavior.executeXlr        = false
+        behavior.skipReason        = "[Info] - '${branchName}' is a feature branch."
     }
     else if (BRANCH_NAME.contains("bugfix")) {
 
-        executionFlags.mainframeChanges = true
-        executionFlags.executeVt        = true
-        executionFlags.executeNvt       = false
-        executionFlags.executeXlr       = false
-
-        skipReason                      = "[Info] - Branch '${branchName}'."
+        behavior.mainframeChanges  = true
+        behavior.executeVt         = true
+        behavior.executeNvt        = false
+        behavior.executeXlr        = false
+        behavior.skipReason        = "[Info] - Branch '${branchName}'."
     }
     else if (BRANCH_NAME.contains("development")) {
 
-        executionFlags.mainframeChanges = true
-        executionFlags.executeVt        = true
-        executionFlags.executeNvt       = true
-        executionFlags.executeXlr       = false
-
-        skipReason                      = "[Info] - Branch '${branchName}'."
+        behavior.mainframeChanges  = true
+        behavior.executeVt         = true
+        behavior.executeNvt        = true
+        behavior.executeXlr        = false
+        behavior.skipReason        = "[Info] - Branch '${branchName}'."
     }
     else if (BRANCH_NAME.contains("main")) {
 
-        executionFlags.mainframeChanges = true
-        executionFlags.executeVt        = false
-        executionFlags.executeNvt       = true
-        executionFlags.executeXlr       = true
-
-        skipReason                      = "[Info] - Branch '${branchName}'."
+        behavior.mainframeChanges  = true
+        behavior.executeVt         = false
+        behavior.executeNvt        = true
+        behavior.executeXlr        = true
+        behavior.skipReason        = "[Info] - Branch '${branchName}'."
     }
+
+    return behavior
 }
 
 //*********************************************************************************
@@ -336,12 +332,11 @@ def checkForBuildParams(automaticBuildFile){
         echo "[Info] - No Automatic Build Params file was found.  Meaning, no mainframe sources have been changed.\n" +
         "[Info] - Mainframe Build and Test steps will be skipped. Sonar scan will be executed against code only."
 
-        executionFlags.mainframeChanges = false
-        executionFlags.executeVt        = false
-        executionFlags.executeNvt       = false
-        executionFlags.executeXlr       = false        
-
-        skipReason                      = skipReason + "\n[Info] - No changes to mainframe code."
+        executionBehavior.mainframeChanges = false
+        executionBehavior.executeVt        = false
+        executionBehavior.executeNvt       = false
+        executionBehavior.executeXlr       = false        
+        executionBehavior.skipReason       = executionBehavior.skipReason + "\n[Info] - No changes to mainframe code."
 
     }
 }
@@ -609,7 +604,7 @@ def runMainframeBuild(){
 
 def runUnitTests() {
 
-    if(executionFlags.executeVt){
+    if(executionBehavior.executeVt){
 
         echo "[Info] - Execute Unit Tests at mainframe level " + ispwTargetLevel + "."
 
@@ -645,14 +640,14 @@ def runUnitTests() {
     }
     else{
 
-        echo skipReason + "\n[Info] - Skipping Unit Tests."
+        echo executionBehavior.skipReason + "\n[Info] - Skipping Unit Tests."
 
     }
 }
 
 def runIntegrationTests(){
 
-    if(executionFlags.executeNvt){
+    if(executionBehavior.executeNvt){
 
         echo "[Info] - Execute Module Integration Tests at mainframe level " + ispwTargetLevel + "."
 
@@ -699,7 +694,7 @@ def runIntegrationTests(){
     }
     else{
 
-        echo skipReason + "\n[Info] - Skipping Integration Tests."
+        echo executionBehavior.skipReason + "\n[Info] - Skipping Integration Tests."
 
     }
 }
@@ -771,7 +766,7 @@ def runSonarScan() {
     
     }
 
-    if(executionFlags.executeVt){
+    if(executionBehavior.executeVt){
 
         sonarTestsParm          = ' -Dsonar.tests="' + tttRootFolder + '"'
         sonarTestReportsParm    = ' -Dsonar.testExecutionReportPaths="' + sonarResultsFolder + '/' + sonarResultsFileVt + '"'
