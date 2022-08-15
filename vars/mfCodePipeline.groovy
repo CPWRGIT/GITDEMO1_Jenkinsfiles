@@ -440,6 +440,7 @@ def prepMainframeBuild(){
         def taskGenInfo             = [:]
         def taskPath                = ''
         def taskSourceAssignmentId  = ''
+        def startingLevel           = ''
 
         def taskInfo                = getCurrentTaskInfo(currentAssignmentId, taskId, cesToken)
 
@@ -453,6 +454,29 @@ def prepMainframeBuild(){
         }
 
         def taskList                = getTasksForAssignment(taskSourceAssignmentId, cesToken)
+
+        switch (ispwSourceLevel) {
+            case 'DEVL':
+                startingLevel = 'UT1'
+                break
+            case 'HFIX':
+                startingLevel = 'BUG1'
+                break
+            case 'FT1':
+                startingLevel = 'UT1'
+                break
+            case 'FT2':
+                startingLevel = 'UT2'
+                break
+            case 'FT3':
+                startingLevel = 'UT3'
+                break
+            case 'FT4':
+                startingLevel = 'UT4'
+                break
+            default:
+                startingLevel = ispwSourceLevel
+        }
 
         /* Build generate parms based on parms from source level */
         taskGenInfo.stream          = ispwConfig.ispwApplication.stream
