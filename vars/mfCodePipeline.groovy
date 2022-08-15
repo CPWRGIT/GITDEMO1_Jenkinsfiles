@@ -331,7 +331,7 @@ def getGitSourceBranch(targetBranch) {
         def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits.toString() + ' --right-only --oneline')
 
 echo "Git Log:"
-echo stdout
+echo "'" + stdout + "'"
 
         def commits         = stdout.split("\n")
         def sourceCommitId  = commits[numberCommits].split(" ")
