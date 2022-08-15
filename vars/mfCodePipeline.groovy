@@ -620,11 +620,12 @@ def setNewTaskInfo(assignmentId, taskInfo, cesToken) {
 
     def jsonBody = writeJSON(returnText: true, json: taskInfo)
 
-    echo "[Info] - Setting Generate Parms for component"
-    echo "[Info] - Component                : " + taskInfo.moduleName
-    echo "[Info] - Residing in Assignment   : " + assignmentId
-    echo "[Info] - at level                 : " + taskInfo.currentLevel
-    echo "[Info] - Based on level           : " + taskInfo.startingLevel
+    echo "[Info] - Setting Generate Parms for component\n"
+        "[Info] - Component                : " + taskInfo.moduleName        + "\n"
+        "[Info] - Residing in Assignment   : " + assignmentId               + "\n"
+        "[Info] - at level                 : " + taskInfo.currentLevel      + "\n"
+        "[Info] - Based on level           : " + ispwSourceLevel            + "\n"
+        "[Info] - Starting Level           : " + taskInfo.startingLevel     + "\n"
 
     response = httpRequest(
         url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + assignmentId + "/tasks",
