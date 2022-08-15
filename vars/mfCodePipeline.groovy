@@ -8,6 +8,8 @@ String executionEnvironment
 String synchConfigFile         
 String branchMappingString     
 String ispwTargetLevel
+String ispwSourceLevel
+String gitSourceBranch
 String ccDdioOverrides     
 String sonarCobolFolder        
 String sonarCopybookFolder     
@@ -22,6 +24,7 @@ def pipelineParms
 def ispwConfig
 def synchConfig
 
+def cocoParms
 def CC_TEST_ID_MAX_LEN
 def CC_SYSTEM_ID_MAX_LEN
 
@@ -193,23 +196,55 @@ def initialize(execParms){
 
     executionBehavior           = determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
 
-    echo "Behavior:"
-    echo executionBehavior.toString()
+    branchMappingString         = buildBranchMappingString(synchConfig.ispw.branchInfo, ispwConfig.ispwApplication.application)
 
-    processBranchInfo(synchConfig.ispw.branchInfo, ispwConfig.ispwApplication.application)
+    gitSourceBranch             = getGitSourceBranch(BRANCH_NAME)
+
+    if(gitSourceBranch == null) {
+        error "[Error] - The source branch for this build could not be determined. Pipeline will be aborted"
+    }
+
+    echo "[Info] - Determined source branch " + sourceBranch
+
+    ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
 
     //*********************************************************************************
     // If target level is empty the branch name could not be mapped
     //*********************************************************************************
     if(ispwTargetLevel == ''){
 
-        error "No branch mapping for branch ${BRANCH_NAME} was found. Execution will be aborted.\n" +
+        error "[Error] - No branch mapping for target branch ${BRANCH_NAME} was found. Execution will be aborted.\n" +
             "Correct the branch name to reflect naming conventions."
     }
 
-    applicationQualifier = synchConfig.ispw.libraryQualifier + ispwConfig.ispwApplication.application
+    echo "[Info] - Determined ISPW target level " + ispwTargetLevel
 
-    buildCocoParms(BRANCH_NAME)
+    if (
+        gitSourceBranch.contains('feature') |
+        gitSourceBranch.contains('bugfix')
+        ) {
+        
+        ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)
+    }
+    else {
+        ispwSourceLevel         = getIspwLevelFromSettings(synchConfig.ispw.settingsFile.folder + '/' + synchConfig.ispw.settingsFile.name)
+    }
+
+    //*********************************************************************************
+    // If source level is empty the branch name could not be mapped
+    //*********************************************************************************
+    if(ispwSourceLevel == ''){
+
+        error "[Error] - No branch mapping for source branch ${gitSourceBranch} was found. Execution will be aborted."
+    }
+
+    echo "[Info] - Determined ISPW source level " + ispwSourceLevel
+
+    applicationQualifier        = synchConfig.ispw.libraryQualifier + ispwConfig.ispwApplication.application
+
+    cocoParms                   = buildCocoParms(BRANCH_NAME)
+echo "CoCo Parms"    
+echo cocoParms.toString()
 }
 
 /* Determine execution type of the pipeline */
@@ -272,22 +307,95 @@ def determinePipelineBehavior(branchName, buildNumber){
 
 //*********************************************************************************
 // Build branch mapping string to be used as parameter in the gitToIspwIntegration
-// Build load library name from configuration, replacing application marker by actual name
 //*********************************************************************************
-def processBranchInfo(branchInfo, ispwApplication){
+def buildBranchMappingString(branchInfo){
+
+    def mappingString = ''
+
+    for (info in branchInfo) {
+
+        mappingString = mappingString + info.key + '** => ' + info.value.ispwLevel + ',' + info.value.mapRule + '\n'
+
+    }
+echo "Mapping String:"
+echo mappingString
+    return mappingString
+}
+
+def getGitSourceBranch(branch) {
+
+    def numberCommits   = 0
+    def sourceBranch    = ''
+
+    if(targetBranch == "main"){
+        numberCommits = 3
+    }
+    else if (targetBranch == "development") {
+        numberCommits = 2
+    }
+
+    if (numberCommits > 0) {
+
+        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --all --oneline')
+        def commits         = response.split("\n")
+        def sourceCommit    = commits[numberCommits - 1]
+        def branchInfo      = sourcCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
+        def branchList      = branchInfo.split(" ")
+        
+        for (branch in branchList) {
+            if (branch.indexOf("origin") >= 0) {
+                sourceBranch = branch.replace(",", "").replace("origin/", "")
+                break
+            }
+        }
+    }
+    else {
+        sourceBranch = targetBranch
+    }
+
+    return sourceBranch
+}
+
+//*********************************************************************************
+// Get ISPW level from Git branch name
+//*********************************************************************************
+def getIspwLevelFromBranchName(branchName, branchInfo){
+
+    def ispwLevel = ''
 
     branchInfo.each {
 
-        branchMappingString = branchMappingString + it.key + '** => ' + it.value.ispwLevel + ',' + it.value.mapRule + '\n'
+        /* Get ISPW Level from branch Mapping info for Git branch */
+        if(branchName.contains(it.key)) {
 
-        /* Get target Level and load bib for VTs from branch Mapping info for current build cranch */
-        if(BRANCH_NAME.contains(it.key)) {
-
-            ispwTargetLevel     = it.value.ispwLevel
+            ispwLevel     = it.value.ispwLevel
             
         }
     }
+
+    return ispwLevel
 }
+
+
+def getIspwLevelFromSettings(fileName) {
+
+    def ispwLevel           = ''
+    def projectProperties   = readFile(file: fileName).split("\n")
+
+    for (property in projectProperties) {
+
+        setting = property.split("=")
+
+        if (setting[0] == "ispwMappingLevel") {
+
+            ispwLevel = setting[1].trim()
+
+        }
+    }
+
+    return ispwLevel
+}
+
 
 //*********************************************************************************
 // Build Code Coverage System ID from current branch, System ID must not be longer than 15 characters
@@ -295,15 +403,18 @@ def processBranchInfo(branchInfo, ispwApplication){
 //*********************************************************************************
 def buildCocoParms(executionBranch){
 
+    def parms = [:]
+
     if(executionBranch.length() > CC_SYSTEM_ID_MAX_LEN) {
-        ccSystemId  = executionBranch.substring(executionBranch.length() - CC_SYSTEM_ID_MAX_LEN)
+        parms.systemId  = executionBranch.substring(executionBranch.length() - CC_SYSTEM_ID_MAX_LEN)
     }
     else {
-        ccSystemId  = executionBranch
+        parms.systemId  = executionBranch
     }
     
-    ccTestId    = BUILD_NUMBER
+    parms.testId    = BUILD_NUMBER
 
+    return parms
 }
 
 def runMainframeLoad() {
@@ -347,10 +458,7 @@ def checkForBuildParams(automaticBuildFile){
 /* Determine Generate Parms for the different Tasks */
 def prepMainframeBuild(){
 
-    def sourceBranch            = determineSourceBranch(BRANCH_NAME)
-    def sourceIspwLevel         = determineSourceIspwLevel(sourceBranch)
     def cesToken                = getCesToken(pipelineParms.cesCredentialsId)
-
 
     /* Read list of task IDs after loading modified sources to ISPW */
     def automaticBuildInfo      = readJSON(file: synchConfig.ispw.automaticBuildFile)
@@ -402,7 +510,7 @@ def prepMainframeBuild(){
         def componentVersions = readJSON(text: response.getContent()).componentVersions
 
         for(version in componentVersions) {
-            if(version.level == sourceIspwLevel){
+            if(version.level == ispwSourceLevel){
                 taskSourceAssignmentId = version.assignmentId                
             }
         }
@@ -432,7 +540,7 @@ def prepMainframeBuild(){
         taskGenInfo.moduleName      = taskInfo.moduleName
         taskGenInfo.moduleType      = taskInfo.moduleType
         taskGenInfo.currentLevel    = ispwTargetLevel
-        taskGenInfo.startingLevel   = sourceIspwLevel
+        taskGenInfo.startingLevel   = ispwSourceLevel
 
         /* Determine task to take info from */
         for(task in taskList) {
@@ -492,85 +600,6 @@ def prepMainframeBuild(){
     writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
 
     error "Preliminary Stop"
-}
-
-
-def determineSourceBranch(targetBranch) {
-
-    def numberCommits = 0
-    def sourceBranch
-
-    if(targetBranch == "main"){
-        numberCommits = 3
-    }
-    else if (targetBranch == "development") {
-        numberCommits = 3
-    }
-
-    if (numberCommits > 0) {
-
-        def stdout          = bat(returnStdout: true, script: 'git log -2 --right-only --all --oneline')
-        def commits         = response.split("\n")
-        def sourceCommit    = commits[1]
-        def branchInfo      = sourcCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
-        def branchList      = branchInfo.split(" ")
-        
-        for (branch in branchList) {
-            if (branch.indexOf("origin") >= 0) {
-                sourceBranch = branch.replace(",", "").replace("origin/", "")
-            }
-        }
-    }
-    else {
-        sourceBranch = targetBranch
-    }
-
-    if(sourceBranch == null) {
-        error "[Error] - The source branch for this build could not be determined. Pipeline will be aborted"
-    }
-
-    echo "[Info] - Determined source branch " + sourceBranch
-    return sourceBranch
-}
-
-def determineSourceIspwLevel(sourceBranch) {
-
-    def ispwLevel
-
-    if (
-        sourceBranch == "main"          |
-        sourceBranch == "development"
-        ) {
- 
-        branchInfo.each {
-            if(sourceBranch.contains(it.key)) {
-
-                ispwLevel = it.value.ispwLevel
-                
-            }
-        }    
-    }
-    else {
-        def projectProperties = readFile(file: './GenAppCore/.settings/GenAppCore.prefs').split("\n")
-
-        for (property in projectProperties) {
-
-            setting = property.split("=")
-
-            if (setting[0] == "ispwMappingLevel") {
-
-                ispwLevel = setting[1].trim()
-
-            }
-        }
-    }
-
-    if(ispwLevel == null) {
-        error "[Error] - The ISPW level for source branch " + sourceBranch + " for this build could not be determined. Pipeline will be aborted"
-    }
-
-    echo "[Info] - Determined ISPW level " + ispwLevel + " for source branch " + sourceBranch + "."
-    return ispwLevel
 }
 
 def getCesToken(credentialsId) {

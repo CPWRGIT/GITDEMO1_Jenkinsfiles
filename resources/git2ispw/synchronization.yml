@@ -18,6 +18,9 @@ executionEnvironments:
       configFile:
         folder:                 './GenAppCore'
         name:                   'ispwconfig.yml'
+      settingsFile:
+        folder:                 './GenAppCore/.settings'
+        name:                   'GenAppCore.prefs'
       impactScanFile:           './git2ispw/impact_scan.jcl'
       automaticBuildFile:       './automaticBuildParams.txt'
       changedProgramsFile:      './changedPrograms.json'
@@ -121,6 +124,9 @@ executionEnvironments:
       configFile:
         folder:                 './GenAppCore'
         name:                   'ispwconfig.yml'
+      settingsFile:
+        folder:                 './GenAppCore/.settings'
+        name:                   'GenAppCore.prefs'
       impactScanFile:           './git2ispw/impact_scan.jcl'
       automaticBuildFile:       './automaticBuildParams.txt'
       changedProgramsFile:      './changedPrograms.json'
