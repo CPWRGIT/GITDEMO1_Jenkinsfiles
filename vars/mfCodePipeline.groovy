@@ -243,9 +243,8 @@ def initialize(execParms){
 
     applicationQualifier        = synchConfig.ispw.libraryQualifier + ispwConfig.ispwApplication.application
 
-    cocoParms                   = buildCocoParms(BRANCH_NAME)
-echo "CoCo Parms"    
-echo cocoParms.toString()
+    cocoParms.systemId          = ispwTargetLevel
+    cocoParms.testId            = BUILD_NUMBER
 }
 
 /* Determine execution type of the pipeline */
@@ -318,8 +317,7 @@ def buildBranchMappingString(branchInfo){
         mappingString = mappingString + info.key + '** => ' + info.value.ispwLevel + ',' + info.value.mapRule + '\n'
 
     }
-echo "Mapping String:"
-echo mappingString
+
     return mappingString
 }
 
@@ -396,27 +394,6 @@ def getIspwLevelFromSettings(fileName) {
     return ispwLevel
 }
 
-
-//*********************************************************************************
-// Build Code Coverage System ID from current branch, System ID must not be longer than 15 characters
-// Build Code Coverage Test ID from Build Number
-//*********************************************************************************
-def buildCocoParms(executionBranch){
-
-    def parms = [:]
-
-    if(executionBranch.length() > CC_SYSTEM_ID_MAX_LEN) {
-        parms.systemId  = executionBranch.substring(executionBranch.length() - CC_SYSTEM_ID_MAX_LEN)
-    }
-    else {
-        parms.systemId  = executionBranch
-    }
-    
-    parms.testId    = BUILD_NUMBER
-
-    return parms
-}
-
 def runMainframeLoad() {
 
     gitToIspwIntegration( 
@@ -473,66 +450,17 @@ def prepMainframeBuild(){
         def taskPath                = ''
         def taskSourceAssignmentId  = ''
 
-        /* Get current task info from ISPW target level */
-        def response = httpRequest(
-            url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
-            acceptType:             'APPLICATION_JSON', 
-            contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
-            customHeaders: [[
-                maskValue:          true, 
-                name:               'authorization', 
-                value:              cesToken
-            ]], 
-            ignoreSslErrors:        true, 
-            responseHandle:         'NONE',         
-            wrapAsMultipart:        false
-        )
-        
-        def taskInfo = readJSON(text: response.getContent())
+        def taskInfo                = getCurrentTaskInfo(currentAssignmentId, taskId, cesToken)
+        def componentVersions       = getComponentVersions(ispwConfig.ispwApplication.application, taskInfo.moduleName, taskInfo.moduleType, cesToken)
 
-        /* Get all versions for task */
-        response = httpRequest(
-            url:                    synchConfig.environment.ces.url + "/ispw/ispw/componentVersions/list?application=" + ispwConfig.ispwApplication.application + "&mname=" + taskInfo.moduleName + "&mtype=" + taskInfo.moduleType,
-            acceptType:             'APPLICATION_JSON', 
-            contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
-            customHeaders: [[
-                maskValue:          true, 
-                name:               'authorization', 
-                value:              cesToken
-            ]], 
-            ignoreSslErrors:        true, 
-            responseHandle:         'NONE',         
-            wrapAsMultipart:        false
-        )
-        
-        def componentVersions = readJSON(text: response.getContent()).componentVersions
-
+        /* Determine the Assignment ID of the source ISPW level */
         for(version in componentVersions) {
             if(version.level == ispwSourceLevel){
                 taskSourceAssignmentId = version.assignmentId                
             }
         }
 
-        /* Get task information from source assignment */
-        response = httpRequest(
-            url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + taskSourceAssignmentId + "/tasks",
-            acceptType:             'APPLICATION_JSON', 
-            contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
-            customHeaders: [[
-                maskValue:          true, 
-                name:               'authorization', 
-                value:              cesToken
-            ]], 
-            ignoreSslErrors:        true, 
-            responseHandle:         'NONE',         
-            wrapAsMultipart:        false
-        )
-
-        def taskList        = readJSON(text: response.getContent()).tasks
-        def taskSourceInfo 
+        def taskList                = getTasksForAssignment(taskSourceAssignmentId, cesToken)
 
         /* Build generate parms based on parms from source level */
         taskGenInfo.stream          = ispwConfig.ispwApplication.stream
@@ -542,21 +470,7 @@ def prepMainframeBuild(){
         taskGenInfo.currentLevel    = ispwTargetLevel
         taskGenInfo.startingLevel   = ispwSourceLevel
 
-        /* Determine task to take info from */
-        for(task in taskList) {
-
-            if(
-
-                task.stream          == taskGenInfo.stream          &&
-                task.application     == taskGenInfo.application     &&
-                task.moduleName      == taskGenInfo.moduleName      &&
-                task.moduleType      == taskGenInfo.moduleType      &&
-                task.level           == taskGenInfo.startingLevel
-
-            ){
-                taskSourceInfo = task
-            }
-        }
+        def taskSourceInfo          = getTaskSourceInfo(taskList, taskGenInfo)
 
         /* Set info based on the task determined before */
         taskGenInfo.cics            = taskSourceInfo.cics
@@ -569,32 +483,9 @@ def prepMainframeBuild(){
         taskGenInfo.option5         = taskSourceInfo.option5
         taskGenInfo.program         = taskSourceInfo.program
 
-        def jsonBody = writeJSON(returnText: true, json: taskGenInfo)
-
-        echo "[Info] - Setting Generate Parms for component"
-        echo "[Info] - Component                : " + taskGenInfo.moduleName
-        echo "[Info] - Residing in Assignment   : " + currentAssignmentId
-        echo "[Info] - at level                 : " + taskGenInfo.currentLevel
-        echo "[Info] - Based on level           : " + taskGenInfo.startingLevel
-
-        response = httpRequest(
-            url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks",
-            httpMode:               'POST',
-            acceptType:             'APPLICATION_JSON', 
-            contentType:            'APPLICATION_JSON', 
-            consoleLogResponseBody: true, 
-            customHeaders: [[
-                maskValue:          true, 
-                name:               'authorization', 
-                value:              cesToken
-            ]], 
-            requestBody:            jsonBody,        
-            ignoreSslErrors:        true, 
-            responseHandle:         'NONE',         
-            wrapAsMultipart:        false
-        )
-
-        automaticBuildInfo.taskIds.add(readJSON(text: response.getContent()).taskId)
+        def newTaskId               = setNewTaskInfo(taskGenInfo)
+        
+        automaticBuildInfo.taskIds.add(currentAssignmentId, newTaskId, cesToken)
     }
 
     writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
@@ -620,6 +511,123 @@ def getCesToken(credentialsId) {
     }
 
     return token
+}
+
+/* Get current task info from ISPW target level */
+def getCurrentTaskInfo(currentAssignmentId, taskId, cesToken) {
+
+    def response = httpRequest(
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + currentAssignmentId + "/tasks/" + taskId,
+        acceptType:             'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
+        consoleLogResponseBody: true, 
+        customHeaders: [[
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
+        ]], 
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
+    )
+
+    return readJSON(text: response.getContent())
+}
+
+/* Get all versions for task */
+def getComponentVersions(application, moduleName, moduleType, cesToken) {
+
+    response = httpRequest(
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/componentVersions/list?application=" + application + "&mname=" + moduleName + "&mtype=" + moduleType,
+        acceptType:             'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
+        consoleLogResponseBody: true, 
+        customHeaders: [[
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
+        ]], 
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
+    )
+
+    return readJSON(text: response.getContent()).componentVersions
+}
+
+/* Get task list from assignment */
+def getTasksForAssignment(assignmentId, cesToken) {
+
+    response = httpRequest(
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + assignmentId + "/tasks",
+        acceptType:             'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
+        consoleLogResponseBody: true, 
+        customHeaders: [[
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
+        ]], 
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
+    )
+
+    return readJSON(text: response.getContent()).tasks
+}
+
+/* Determine task to take info from and return info*/
+def getTaskSourceInfo(taskList, compareInfo) {
+
+    def sourceTask
+
+    for(task in taskList) {
+
+        if(
+
+            task.stream          == compareInfo.stream          &&
+            task.application     == compareInfo.application     &&
+            task.moduleName      == compareInfo.moduleName      &&
+            task.moduleType      == compareInfo.moduleType      &&
+            task.level           == compareInfo.startingLevel
+
+        ){
+            sourceTask = task
+            break
+        }
+    }
+
+    return sourceTask
+}
+
+def setNewTaskInfo(assignmentId, taskInfo, cesToken) {
+
+    def jsonBody = writeJSON(returnText: true, json: taskInfo)
+
+    echo "[Info] - Setting Generate Parms for component"
+    echo "[Info] - Component                : " + taskInfo.moduleName
+    echo "[Info] - Residing in Assignment   : " + currentAssignmentId
+    echo "[Info] - at level                 : " + taskInfo.currentLevel
+    echo "[Info] - Based on level           : " + taskInfo.startingLevel
+
+    response = httpRequest(
+        url:                    synchConfig.environment.ces.url + "/ispw/ispw/assignments/" + assignmentId + "/tasks",
+        httpMode:               'POST',
+        acceptType:             'APPLICATION_JSON', 
+        contentType:            'APPLICATION_JSON', 
+        consoleLogResponseBody: true, 
+        customHeaders: [[
+            maskValue:          true, 
+            name:               'authorization', 
+            value:              cesToken
+        ]], 
+        requestBody:            jsonBody,        
+        ignoreSslErrors:        true, 
+        responseHandle:         'NONE',         
+        wrapAsMultipart:        false
+    )
+
+    return readJSON(text: response.getContent()).taskId
 }
 
 /* Build mainframe code */
