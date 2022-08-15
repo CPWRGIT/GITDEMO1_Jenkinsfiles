@@ -323,24 +323,20 @@ def getGitSourceBranch(targetBranch) {
         numberCommits = 2
     }
     else if (targetBranch == "development") {
-        numberCommits = 2
+        numberCommits = 1
     }
 
     if (numberCommits > 0) {
         
-        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits.toString() + ' --right-only --oneline')
-        def sourceCommitId  = stdout.split("\n")[numberCommits + 1].split(" ")[0]
-echo "'" + sourceCommitId + "'"
-        stdout              = bat(returnStdout: true, script: 'git branch -a --contains ' + sourceCommitId)
-
+        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --oneline --decorate=no')
+        def commitInfos     = stdout.split("\n")
+echo "Git Log:"
 echo stdout
-        
-        def branchInfo      = sourceCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
-        def branchList      = branchInfo.split(" ")
-        
-        for (branch in branchList) {
-            if (branch.indexOf("origin") >= 0) {
-                sourceBranch = branch.replace(",", "").replace("origin/", "")
+        for (info in commitInfos) {
+
+            if(info.contains("Merge pull request")) {
+
+                def sourceBranch = info.substring(info.indexOf("from") + "from".length() + 1, info.length())
                 break
             }
         }
