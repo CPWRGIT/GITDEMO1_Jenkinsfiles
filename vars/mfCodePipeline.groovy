@@ -326,7 +326,8 @@ def getGitSourceBranch(targetBranch) {
     }
 
     if (numberCommits > 0) {
-
+        
+        bat(returnStdout: false, script: 'git rev-parse "refs/remotes/origin/' + BRANCH_NAME + '^{commit}"'
         def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits.toString() + ' --right-only --decorate=short --pretty=oneline')
 
 echo "Git Log:"
