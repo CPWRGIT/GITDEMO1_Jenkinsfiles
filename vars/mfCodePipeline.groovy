@@ -133,7 +133,8 @@ def initialize(execParms){
     pipelineParms               = execParms
     cocoParms                   = [:]
     branchMappingString         = ''
-    ispwTargetLevel             = ''    
+    ispwTargetLevel             = ''
+    ispwSourceLevel             = ''    
     ccDdioOverrides             = ''
 
     //*********************************************************************************
@@ -200,7 +201,16 @@ def initialize(execParms){
 
     echo "[Info] - Determined source branch " + gitSourceBranch
 
+
+echo "Using"
+echo BRANCH_NAME
+echo synchConfig.ispw.branchInfo
+
     ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
+
+echo "Using"
+echo BRANCH_NAME
+echo synchConfig.ispw.branchInfo
     ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)                
 
     //*********************************************************************************
