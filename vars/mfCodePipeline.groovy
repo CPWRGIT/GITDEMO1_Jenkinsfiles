@@ -25,9 +25,6 @@ def ispwConfig
 def synchConfig
 
 def cocoParms
-def CC_TEST_ID_MAX_LEN
-def CC_SYSTEM_ID_MAX_LEN
-
 def executionBehavior
 
 def call(Map execParms){
@@ -133,13 +130,8 @@ def call(Map execParms){
 def initialize(execParms){
 
     synchConfigFile             = './git2ispw/synchronization.yml'
-
     pipelineParms               = execParms
-
     cocoParms                   = [:]
-    CC_TEST_ID_MAX_LEN          = 15
-    CC_SYSTEM_ID_MAX_LEN        = 15
-
     branchMappingString         = ''
     ispwTargetLevel             = ''    
     ccDdioOverrides             = ''
@@ -483,9 +475,9 @@ def prepMainframeBuild(){
         taskGenInfo.option5         = taskSourceInfo.option5
         taskGenInfo.program         = taskSourceInfo.program
 
-        def newTaskId               = setNewTaskInfo(taskGenInfo)
+        def newTaskId               = setNewTaskInfo(currentAssignmentId, taskGenInfo, cesToken)
         
-        automaticBuildInfo.taskIds.add(currentAssignmentId, newTaskId, cesToken)
+        automaticBuildInfo.taskIds.add(newTaskId)
     }
 
     writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
