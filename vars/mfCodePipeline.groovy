@@ -196,7 +196,7 @@ def initialize(execParms){
 
     executionBehavior           = determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
 
-    branchMappingString         = buildBranchMappingString(synchConfig.ispw.branchInfo, ispwConfig.ispwApplication.application)
+    branchMappingString         = buildBranchMappingString(synchConfig.ispw.branchInfo)
 
     gitSourceBranch             = getGitSourceBranch(BRANCH_NAME)
 
