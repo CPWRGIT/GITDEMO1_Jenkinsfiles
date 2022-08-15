@@ -212,6 +212,7 @@ echo "Using"
 echo BRANCH_NAME
 echo synchConfig.ispw.branchInfo.toString()
 
+    ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
     ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)                
 
     //*********************************************************************************
@@ -323,7 +324,7 @@ def buildBranchMappingString(branchInfo){
 
     }
 
-    return mappingString
+    return mappingString.trim()
 }
 
 def getGitSourceBranch(targetBranch) {
@@ -352,7 +353,7 @@ def getGitSourceBranch(targetBranch) {
         sourceBranch = targetBranch
     }
 
-    return sourceBranch
+    return sourceBranch.trim()
 }
 
 //*********************************************************************************
@@ -372,7 +373,7 @@ def getIspwLevelFromBranchName(branchName, branchInfo) {
         }
     }
 
-    return ispwLevel
+    return ispwLevel.trim()
 }
 
 def getIspwLevelFromSettings(fileName) {
@@ -391,7 +392,7 @@ def getIspwLevelFromSettings(fileName) {
         }
     }
 
-    return ispwLevel
+    return ispwLevel.trim()
 }
 
 def runMainframeLoad() {
@@ -511,7 +512,7 @@ def getCesToken(credentialsId) {
 
     }
 
-    return token
+    return token.trim()
 }
 
 /* Get current task info from ISPW target level */
@@ -598,7 +599,7 @@ def getTaskSourceInfo(taskList, compareInfo) {
         }
     }
 
-    return sourceTask
+    return sourceTask.trim()
 }
 
 def setNewTaskInfo(assignmentId, taskInfo, cesToken) {
@@ -846,7 +847,7 @@ def getMainAssignmentId(automaticBuildFile){
 
     def automaticBuildFileContent = readJSON(file: automaticBuildFile)
 
-    return automaticBuildFileContent.containerId
+    return automaticBuildFileContent.containerId.trim()
     
 }
 
