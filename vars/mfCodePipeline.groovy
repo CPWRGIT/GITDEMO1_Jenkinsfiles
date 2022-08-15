@@ -336,7 +336,7 @@ echo stdout
 
             if(info.contains("Merge pull request")) {
 
-                def sourceBranch = info.substring(info.indexOf("from") + "from".length() + 1, info.length())
+                sourceBranch = info.substring(info.indexOf("from") + "from".length() + 1, info.length())
                 break
             }
         }
