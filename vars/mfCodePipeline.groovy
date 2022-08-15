@@ -484,7 +484,7 @@ def prepMainframeBuild(){
         taskGenInfo.moduleName      = taskInfo.moduleName
         taskGenInfo.moduleType      = taskInfo.moduleType
         taskGenInfo.currentLevel    = ispwTargetLevel
-        taskGenInfo.startingLevel   = ispwSourceLevel
+        taskGenInfo.startingLevel   = startingLevel
 
         def taskSourceInfo          = getTaskSourceInfo(taskList, taskGenInfo)
 
