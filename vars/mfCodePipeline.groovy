@@ -327,7 +327,7 @@ def getGitSourceBranch(targetBranch) {
 
     if (numberCommits > 0) {
 
-        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --decorate=short --oneline')
+        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits.toString() + ' --right-only --decorate=short --pretty=oneline')
 
 echo "Git Log:"
 echo stdout
