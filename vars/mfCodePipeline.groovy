@@ -328,13 +328,14 @@ def getGitSourceBranch(targetBranch) {
 
     if (numberCommits > 0) {
         
-        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits.toString() + ' --right-only --decorate=short --pretty=oneline')
+        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits.toString() + ' --right-only --oneline')
 
 echo "Git Log:"
 echo stdout
 
         def commits         = stdout.split("\n")
         def sourceCommitId  = commits[numberCommits - 1].split(" ")
+echo 'git branch -a --contains ' + sourceCommitId
 
         stdout              = bat(returnStdout: true, script: 'git branch -a --contains ' + sourceCommitId)
 
