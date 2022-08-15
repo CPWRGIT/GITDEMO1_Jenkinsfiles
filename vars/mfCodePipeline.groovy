@@ -334,12 +334,11 @@ echo "Git Log:"
 echo stdout
 
         def commits         = stdout.split("\n")
-        def sourceCommitId  = commits[numberCommits - 1].split(" ")
-echo 'git branch -a --contains ' + sourceCommitId
+        def sourceCommitId  = commits[numberCommits].split(" ")
 
         stdout              = bat(returnStdout: true, script: 'git branch -a --contains ' + sourceCommitId)
 
-        echo stdout
+echo stdout
         
         def branchInfo      = sourceCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
         def branchList      = branchInfo.split(" ")
