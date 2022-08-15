@@ -482,8 +482,6 @@ def prepMainframeBuild(){
     }
 
     writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
-
-    error "Preliminary Stop"
 }
 
 def getCesToken(credentialsId) {
