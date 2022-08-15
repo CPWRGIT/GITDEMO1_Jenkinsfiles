@@ -214,8 +214,8 @@ def initialize(execParms){
     echo "[Info] - Determined ISPW target level " + ispwTargetLevel
 
     if (
-        gitTargetBranch.contains('feature') |
-        gitTargetBranch.contains('bugfix')
+        BRANCH_NAME.contains('feature') |
+        BRANCH_NAME.contains('bugfix')
         ) {    
         
         ispwSourceLevel         = getIspwLevelFromSettings(synchConfig.ispw.settingsFile.folder + '/' + synchConfig.ispw.settingsFile.name)
