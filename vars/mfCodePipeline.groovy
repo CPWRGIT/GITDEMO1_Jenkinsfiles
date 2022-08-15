@@ -204,13 +204,14 @@ def initialize(execParms){
 
 echo "Using"
 echo BRANCH_NAME
-echo synchConfig.ispw.branchInfo
+echo synchConfig.ispw.branchInfo.toString()
 
     ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
 
 echo "Using"
 echo BRANCH_NAME
-echo synchConfig.ispw.branchInfo
+echo synchConfig.ispw.branchInfo.toString()
+
     ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)                
 
     //*********************************************************************************
