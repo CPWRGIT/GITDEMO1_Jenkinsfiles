@@ -60,7 +60,7 @@ def call(Map execParms){
         }
         else {
 
-            echo skipReason + "\n[Info] - No code will be loaded to the mainframe."
+            echo executionBehavior.skipReason + "\n[Info] - No code will be loaded to the mainframe."
 
         }
     }
@@ -82,7 +82,7 @@ def call(Map execParms){
         }
         else{
 
-            echo skipReason + "\n[Info] - Skipping Mainframe Build."
+            echo executionBehavior.skipReason + "\n[Info] - Skipping Mainframe Build."
 
         }
     }
