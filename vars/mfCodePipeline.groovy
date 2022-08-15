@@ -322,7 +322,7 @@ echo mappingString
     return mappingString
 }
 
-def getGitSourceBranch(branch) {
+def getGitSourceBranch(targetBranch) {
 
     def numberCommits   = 0
     def sourceBranch    = ''
@@ -336,8 +336,7 @@ def getGitSourceBranch(branch) {
 
     if (numberCommits > 0) {
 
-        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --all --oneline')
-        def commits         = response.split("\n")
+        def commits         = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --all --oneline').split("\n")
         def sourceCommit    = commits[numberCommits - 1]
         def branchInfo      = sourcCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
         def branchList      = branchInfo.split(" ")
