@@ -201,6 +201,7 @@ def initialize(execParms){
     echo "[Info] - Determined source branch " + gitSourceBranch
 
     ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
+    ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)                
 
     //*********************************************************************************
     // If target level is empty the branch name could not be mapped
