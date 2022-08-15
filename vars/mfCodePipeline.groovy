@@ -237,6 +237,7 @@ def initialize(execParms){
 
     cocoParms.systemId          = ispwTargetLevel
     cocoParms.testId            = BUILD_NUMBER
+
 }
 
 /* Determine execution type of the pipeline */
@@ -327,14 +328,18 @@ def getGitSourceBranch(targetBranch) {
 
     if (numberCommits > 0) {
         
-        bat(returnStdout: false, script: 'git rev-parse "refs/remotes/origin/' + BRANCH_NAME + '^{commit}"')
         def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits.toString() + ' --right-only --decorate=short --pretty=oneline')
 
 echo "Git Log:"
 echo stdout
 
         def commits         = stdout.split("\n")
-        def sourceCommit    = commits[numberCommits - 1]
+        def sourceCommitId  = commits[numberCommits - 1].split(" ")
+
+        stdout              = bat(returnStdout: true, script: 'git branch -a --contains ' + sourceCommitId)
+
+        echo stdout
+        
         def branchInfo      = sourceCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
         def branchList      = branchInfo.split(" ")
         
@@ -488,6 +493,8 @@ def prepMainframeBuild(){
     }
 
     writeJSON(file: synchConfig.ispw.automaticBuildFile, json: automaticBuildInfo)
+
+    error "Preliminary Stop"
 }
 
 def getCesToken(credentialsId) {
