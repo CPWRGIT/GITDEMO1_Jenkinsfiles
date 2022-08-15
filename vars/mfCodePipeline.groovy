@@ -24,7 +24,7 @@ def pipelineParms
 def ispwConfig
 def synchConfig
 
-def cocoParms = [:]
+def cocoParms
 def CC_TEST_ID_MAX_LEN
 def CC_SYSTEM_ID_MAX_LEN
 
@@ -136,6 +136,7 @@ def initialize(execParms){
 
     pipelineParms               = execParms
 
+    cocoParms                   = [:]
     CC_TEST_ID_MAX_LEN          = 15
     CC_SYSTEM_ID_MAX_LEN        = 15
 
