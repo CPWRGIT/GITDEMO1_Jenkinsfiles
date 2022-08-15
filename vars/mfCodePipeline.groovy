@@ -319,7 +319,7 @@ def getGitSourceBranch(targetBranch) {
     def sourceBranch    = ''
 
     if(targetBranch == "main"){
-        numberCommits = 3
+        numberCommits = 2
     }
     else if (targetBranch == "development") {
         numberCommits = 2
@@ -327,7 +327,7 @@ def getGitSourceBranch(targetBranch) {
 
     if (numberCommits > 0) {
 
-        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --all --oneline')
+        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --decorate=short --oneline')
 
 echo "Git Log:"
 echo stdout
