@@ -441,20 +441,20 @@ def prepMainframeBuild(){
         def taskGenInfo             = [:]
         def taskPath                = ''
         def taskSourceAssignmentId  = ''
-echo "Current Assignment ID: " + currentAssignmentId
+
         def taskInfo                = getCurrentTaskInfo(currentAssignmentId, taskId, cesToken)
-echo "Current Assignment ID: " + currentAssignmentId        
+
         def componentVersions       = getComponentVersions(ispwConfig.ispwApplication.application, taskInfo.moduleName, taskInfo.moduleType, cesToken)
-echo "Current Assignment ID: " + currentAssignmentId
+
         /* Determine the Assignment ID of the source ISPW level */
         for(version in componentVersions) {
             if(version.level == ispwSourceLevel){
                 taskSourceAssignmentId = version.assignmentId                
             }
         }
-echo "Current Assignment ID: " + currentAssignmentId
+
         def taskList                = getTasksForAssignment(taskSourceAssignmentId, cesToken)
-echo "Current Assignment ID: " + currentAssignmentId
+
         /* Build generate parms based on parms from source level */
         taskGenInfo.stream          = ispwConfig.ispwApplication.stream
         taskGenInfo.application     = ispwConfig.ispwApplication.application
@@ -462,9 +462,9 @@ echo "Current Assignment ID: " + currentAssignmentId
         taskGenInfo.moduleType      = taskInfo.moduleType
         taskGenInfo.currentLevel    = ispwTargetLevel
         taskGenInfo.startingLevel   = ispwSourceLevel
-echo "Current Assignment ID: " + currentAssignmentId
+
         def taskSourceInfo          = getTaskSourceInfo(taskList, taskGenInfo)
-echo "Current Assignment ID: " + currentAssignmentId
+
         /* Set info based on the task determined before */
         taskGenInfo.cics            = taskSourceInfo.cics
         taskGenInfo.sql             = taskSourceInfo.sql
@@ -475,9 +475,9 @@ echo "Current Assignment ID: " + currentAssignmentId
         taskGenInfo.option4         = taskSourceInfo.option4
         taskGenInfo.option5         = taskSourceInfo.option5
         taskGenInfo.program         = taskSourceInfo.program
-echo "Current Assignment ID: " + currentAssignmentId
+
         def newTaskId               = setNewTaskInfo(currentAssignmentId, taskGenInfo, cesToken)
-echo "Current Assignment ID: " + currentAssignmentId        
+
         automaticBuildInfo.taskIds.add(newTaskId)
     }
 
@@ -599,7 +599,7 @@ def setNewTaskInfo(assignmentId, taskInfo, cesToken) {
 
     echo "[Info] - Setting Generate Parms for component"
     echo "[Info] - Component                : " + taskInfo.moduleName
-    echo "[Info] - Residing in Assignment   : " + currentAssignmentId
+    echo "[Info] - Residing in Assignment   : " + assignmentId
     echo "[Info] - at level                 : " + taskInfo.currentLevel
     echo "[Info] - Based on level           : " + taskInfo.startingLevel
 
