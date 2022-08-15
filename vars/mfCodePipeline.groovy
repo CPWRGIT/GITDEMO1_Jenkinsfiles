@@ -166,18 +166,19 @@ def initialize(execParms){
     //*********************************************************************************
 
     ispwConfigFile              = synchConfig.ispw.configFile.folder    + '/' + synchConfig.ispw.configFile.name
+
     tttRootFolder               = synchConfig.ispw.mfProject.rootFolder + '/' + synchConfig.ttt.folders.root
     tttVtFolder                 = tttRootFolder                         + '/' + synchConfig.ttt.folders.virtualizedTests
     tttNvtFolder                = tttRootFolder                         + '/' + synchConfig.ttt.folders.nonVirtualizedTests
+
     ccSources                   = synchConfig.ispw.mfProject.rootFolder + synchConfig.ispw.mfProject.sourcesFolder
+
     sonarCobolFolder            = synchConfig.ispw.mfProject.rootFolder + synchConfig.ispw.mfProject.sourcesFolder
     sonarCopybookFolder         = synchConfig.ispw.mfProject.rootFolder + synchConfig.ispw.mfProject.sourcesFolder
-
     sonarResultsFolder          = synchConfig.ttt.results.sonar.folder
     sonarResultsFileVt          = synchConfig.ttt.folders.virtualizedTests      + '.' + synchConfig.ttt.results.sonar.fileNameBase
     sonarResultsFileNvt         = synchConfig.ttt.folders.nonVirtualizedTests   + '.' + synchConfig.ttt.results.sonar.fileNameBase
     sonarResultsFileList        = []        
-
     sonarCodeCoverageFile       = synchConfig.coco.results.sonar.folder + '/' + synchConfig.coco.results.sonar.file
     
     jUnitResultsFile            = synchConfig.ttt.results.jUnit.folder  + '/' + synchConfig.ttt.results.jUnit.file
@@ -219,10 +220,8 @@ def initialize(execParms){
 
     echo "[Info] - Determined ISPW target level " + ispwTargetLevel
 
-    if (
-        gitSourceBranch.contains('feature') |
-        gitSourceBranch.contains('bugfix')
-        ) {
+//    if (gitSourceBranch.contains('feature') | gitSourceBranch.contains('bugfix')) {
+    if (gitSourceBranch.contains('feature')) {    
         
         ispwSourceLevel         = getIspwLevelFromSettings(synchConfig.ispw.settingsFile.folder + '/' + synchConfig.ispw.settingsFile.name)
 
