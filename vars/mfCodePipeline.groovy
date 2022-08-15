@@ -191,7 +191,10 @@ def initialize(execParms){
     // convert the text to yaml
     ispwConfig                  = readYaml(text: tmpText)
 
-    executionBehavior              = determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
+    executionBehavior           = determinePipelineBehavior(BRANCH_NAME, BUILD_NUMBER)
+
+    echo "Behavior:"
+    echo executionBehavior.toString()
 
     processBranchInfo(synchConfig.ispw.branchInfo, ispwConfig.ispwApplication.application)
 
