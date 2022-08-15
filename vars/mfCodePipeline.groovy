@@ -204,7 +204,7 @@ def initialize(execParms){
         error "[Error] - The source branch for this build could not be determined. Pipeline will be aborted"
     }
 
-    echo "[Info] - Determined source branch " + sourceBranch
+    echo "[Info] - Determined source branch " + gitSourceBranch
 
     ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
 
