@@ -213,10 +213,7 @@ def initialize(execParms){
 
     echo "[Info] - Determined ISPW target level " + ispwTargetLevel
 
-    if (
-        BRANCH_NAME.contains('feature') |
-        BRANCH_NAME.contains('bugfix')
-        ) {    
+    if (BRANCH_NAME.contains('feature')) {    
         
         ispwSourceLevel         = getIspwLevelFromSettings(synchConfig.ispw.settingsFile.folder + '/' + synchConfig.ispw.settingsFile.name)
 
