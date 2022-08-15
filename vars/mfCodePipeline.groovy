@@ -215,6 +215,7 @@ def initialize(execParms){
 
     if (BRANCH_NAME.contains('feature')) {    
         
+        ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)                
         ispwSourceLevel         = getIspwLevelFromSettings(synchConfig.ispw.settingsFile.folder + '/' + synchConfig.ispw.settingsFile.name)
 
     }
@@ -324,8 +325,8 @@ def getGitSourceBranch(targetBranch) {
         
         def stdout          = bat(returnStdout: true, script: 'git log -1 --right-only --oneline --decorate=no')
         def commitInfos     = stdout.split("\n")
-echo "Git Log:"
-echo stdout
+    echo "Git Log:"
+    echo stdout
         for (info in commitInfos) {
 
             if(info.contains("Merge pull request")) {
@@ -345,7 +346,7 @@ echo stdout
 //*********************************************************************************
 // Get ISPW level from Git branch name
 //*********************************************************************************
-def getIspwLevelFromBranchName(branchName, branchInfo){
+def getIspwLevelFromBranchName(branchName, branchInfo) {
 
     def ispwLevel = ''
 
@@ -361,7 +362,6 @@ def getIspwLevelFromBranchName(branchName, branchInfo){
 
     return ispwLevel
 }
-
 
 def getIspwLevelFromSettings(fileName) {
 
