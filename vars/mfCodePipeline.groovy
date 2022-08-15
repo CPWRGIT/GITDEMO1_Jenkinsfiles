@@ -201,19 +201,7 @@ def initialize(execParms){
 
     echo "[Info] - Determined source branch " + gitSourceBranch
 
-
-echo "Using"
-echo BRANCH_NAME
-echo synchConfig.ispw.branchInfo.toString()
-
     ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
-
-echo "Using"
-echo BRANCH_NAME
-echo synchConfig.ispw.branchInfo.toString()
-
-    ispwTargetLevel             = getIspwLevelFromBranchName(BRANCH_NAME, synchConfig.ispw.branchInfo)
-    ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)                
 
     //*********************************************************************************
     // If target level is empty the branch name could not be mapped
@@ -228,12 +216,11 @@ echo synchConfig.ispw.branchInfo.toString()
 
     if (BRANCH_NAME.contains('feature')) {    
         
-        ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)                
         ispwSourceLevel         = getIspwLevelFromSettings(synchConfig.ispw.settingsFile.folder + '/' + synchConfig.ispw.settingsFile.name)
 
     }
     else {
-        ispwSourceLevel         = getIspwLevelfromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)        
+        ispwSourceLevel         = getIspwLevelFromBranchName(gitSourceBranch, synchConfig.ispw.branchInfo)        
     }
 
     //*********************************************************************************
