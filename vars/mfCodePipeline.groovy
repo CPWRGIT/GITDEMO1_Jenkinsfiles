@@ -329,7 +329,7 @@ def getGitSourceBranch(targetBranch) {
 
         def commits         = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --all --oneline').split("\n")
         def sourceCommit    = commits[numberCommits - 1]
-        def branchInfo      = sourcCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
+        def branchInfo      = sourceCommit.substring(sourceCommit.indexOf("(") + 1,sourceCommit.indexOf(")"))
         def branchList      = branchInfo.split(" ")
         
         for (branch in branchList) {
