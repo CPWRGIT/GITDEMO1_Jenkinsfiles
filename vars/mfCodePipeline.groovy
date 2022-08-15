@@ -486,7 +486,7 @@ def prepMainframeBuild(){
         taskGenInfo.currentLevel    = ispwTargetLevel
         taskGenInfo.startingLevel   = startingLevel
 
-        def taskSourceInfo          = getTaskSourceInfo(taskList, taskGenInfo)
+        def taskSourceInfo          = getTaskSourceInfo(taskList, taskGenInfo, ispwSourceLevel)
 
         /* Set info based on the task determined before */
         taskGenInfo.cics            = taskSourceInfo.cics
@@ -593,7 +593,7 @@ def getTasksForAssignment(assignmentId, cesToken) {
 }
 
 /* Determine task to take info from and return info*/
-def getTaskSourceInfo(taskList, compareInfo) {
+def getTaskSourceInfo(taskList, compareInfo, sourceLevel) {
 
     def sourceTask
 
@@ -605,7 +605,7 @@ def getTaskSourceInfo(taskList, compareInfo) {
             task.application     == compareInfo.application     &&
             task.moduleName      == compareInfo.moduleName      &&
             task.moduleType      == compareInfo.moduleType      &&
-            task.level           == compareInfo.startingLevel
+            task.level           == sourceLevel
 
         ){
             sourceTask = task
