@@ -318,19 +318,14 @@ def buildBranchMappingString(branchInfo){
 
 def getGitSourceBranch(targetBranch) {
 
-    def numberCommits   = 0
     def sourceBranch    = ''
 
-    if(targetBranch == "main"){
-        numberCommits = 2
-    }
-    else if (targetBranch == "development") {
-        numberCommits = 1
-    }
-
-    if (numberCommits > 0) {
+    if(
+        targetBranch == "main"          | 
+        targetBranch == "development"
+        ) {
         
-        def stdout          = bat(returnStdout: true, script: 'git log -' + numberCommits + ' --right-only --oneline --decorate=no')
+        def stdout          = bat(returnStdout: true, script: 'git log -1 --right-only --oneline --decorate=no')
         def commitInfos     = stdout.split("\n")
 echo "Git Log:"
 echo stdout
