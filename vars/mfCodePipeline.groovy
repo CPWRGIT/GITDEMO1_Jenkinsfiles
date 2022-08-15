@@ -659,8 +659,8 @@ def runUnitTests() {
             contextVariables:                   '"ispw_app=' + applicationQualifier + ',ispw_level=' + ispwTargetLevel + '"',
             collectCodeCoverage:                true,
             collectCCRepository:                pipelineParms.ccRepo,
-            collectCCSystem:                    ccSystemId,
-            collectCCTestID:                    ccTestId,
+            collectCCSystem:                    cocoParms.systemId,
+            collectCCTestID:                    cocoParms.testId,
             clearCodeCoverage:                  false,
             logLevel:                           'INFO'
         )
@@ -713,8 +713,8 @@ def runIntegrationTests(){
                                                     '"',                
                 collectCodeCoverage:                true,
                 collectCCRepository:                pipelineParms.ccRepo,
-                collectCCSystem:                    ccSystemId,
-                collectCCTestID:                    ccTestId,
+                collectCCSystem:                    cocoParms.systemId,
+                collectCCTestID:                    cocoParms.testId,
                 clearCodeCoverage:                  false,
                 logLevel:                           'INFO'
             )
@@ -769,8 +769,8 @@ def getCocoResults() {
         analysisProperties: """
             cc.sources=${ccSources}
             cc.repos=${pipelineParms.ccRepo}
-            cc.system=${ccSystemId}
-            cc.test=${ccTestId}
+            cc.system=${cocoParms.systemId}
+            cc.test=${cocoParms.testId}
             cc.ddio.overrides=${ccDdioOverrides}
         """
     ])
