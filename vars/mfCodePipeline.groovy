@@ -344,14 +344,18 @@ def checkForBuildParams(automaticBuildFile){
 
 /* Build mainframe code */
 def runMainframeBuild(){
-
-    ispwOperation(
-        connectionId:           synchConfig.environment.hci.connectionId, 
-        credentialsId:          pipelineParms.cesCredentialsId,       
-        consoleLogResponseBody: true, 
-        ispwAction:             'BuildTask', 
-        ispwRequestBody:        '''buildautomatically = true'''
-    )
+    try{
+        ispwOperation(
+            connectionId:           synchConfig.environment.hci.connectionId, 
+            credentialsId:          pipelineParms.cesCredentialsId,       
+            consoleLogResponseBody: true, 
+            ispwAction:             'BuildTask', 
+            ispwRequestBody:        '''buildautomatically = true'''
+        )
+    }
+    catch(Exception e) {
+        
+    }
 }
 
 def runUnitTests() {
