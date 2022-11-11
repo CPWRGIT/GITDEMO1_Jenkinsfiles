@@ -38,6 +38,7 @@ def call(Map execParms){
     stage ('Initialize') {
 
         // If other than 1st build, the code will run in a parallel node and will have to unstash the workspace
+/*
         if(!(BUILD_NUMBER == "1")) {
 
             dir('./') {
@@ -47,7 +48,7 @@ def call(Map execParms){
             unstash name: 'workspace'
 
         }
-        
+*/        
         initialize(execParms)
     }
 
