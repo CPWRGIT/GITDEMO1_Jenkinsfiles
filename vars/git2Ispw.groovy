@@ -19,8 +19,9 @@ def call(Map execParms){
 
             checkout scm
 
+            mfCodePipeline(execParms)
         }
-
+/*
         if(BUILD_NUMBER == "1") {
 
             mfCodePipeline(execParms)
@@ -46,5 +47,6 @@ def call(Map execParms){
 
             )
         }
+*/        
     }
 }
