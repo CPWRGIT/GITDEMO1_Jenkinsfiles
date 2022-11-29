@@ -9,7 +9,7 @@ node{
     stage("Release"){
 
         ispwOperation(
-            connectionId:           '196de681-04d7-4170-824f-09a5457c5cda', 
+            connectionId:           'de2ad7c3-e924-4dc2-84d5-d0c3afd3e756', 
             credentialsId:          CesCredentials,
             consoleLogResponseBody: true, 
             ispwAction:             'CloseRelease', 
