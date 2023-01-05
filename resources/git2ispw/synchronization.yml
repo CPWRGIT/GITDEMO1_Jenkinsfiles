@@ -4,7 +4,7 @@ executionEnvironments:
       hci:
         connectionId:           de2ad7c3-e924-4dc2-84d5-d0c3afd3e756
       ces:
-        url:                    http://cwcc.compuware.com:2020
+        url:                    http://cwcc.bmc.com:2020
       sonar:
         scanner:                scanner
         server:                 localhost
@@ -110,7 +110,7 @@ executionEnvironments:
       hci:
         connectionId:           38e854b0-f7d3-4a8f-bf31-2d8bfac3dbd4
       ces:
-        url:                    http://cwc2.nasa.cpwr.corp:2020
+        url:                    http://cwc2.bmc.com:2020
       sonar:
         scanner:                Scanner
         server:                 Sonar
@@ -216,7 +216,7 @@ executionEnvironments:
       hci:
         connectionId:           cwcc
       ces:
-        url:                    http://cwcc.compuware.com:2020
+        url:                    http://cwcc.bmc.com:2020
       sonar:
         scanner:                scanner
         server:                 cwcc
@@ -318,7 +318,7 @@ executionEnvironments:
       hci:
         connectionId:           'CWCC'
       ces:
-        url:                    http://cwcc.compuware.com:2020
+        url:                    http://cwcc.bmc.com:2020
       sonar:
         scanner:                SonarScanner
         server:                 sonar
