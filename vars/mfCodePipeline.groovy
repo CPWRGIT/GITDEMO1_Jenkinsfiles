@@ -350,7 +350,8 @@ def runMainframeBuild(){
             credentialsId:          pipelineParms.cesCredentialsId,       
             consoleLogResponseBody: true, 
             ispwAction:             'BuildTask', 
-            ispwRequestBody:        '''buildautomatically = true'''
+            ispwRequestBody:        '''runtimeConfiguration=''' + ispwConfig.ispwApplication.runtimeConfig + '''
+            buildautomatically = true'''
         )
     }
     catch(Exception e) {
