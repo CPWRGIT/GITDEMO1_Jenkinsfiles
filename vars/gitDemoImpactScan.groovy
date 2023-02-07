@@ -9,7 +9,7 @@ def call(Map pipelineParms)
     hostCredentialsId   = 'ea48408b-b2be-4810-8f4e-5b5f35977eb1'
     synchConfigFile     = './git2ispw/synchronization.yml'
     ispwImpactScanFile  = './git2ispw/impact_scan.jcl'
-    runtimeConfig       = 'ispw'
+    runtimeConfig       = 'ICCGA'
 
     node{
 

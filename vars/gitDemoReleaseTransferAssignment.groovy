@@ -13,7 +13,7 @@ node{
             credentialsId:              CesCredentials,
             consoleLogResponseBody:     true, 
             ispwAction:                 'TransferTask', 
-            ispwRequestBody:            """runtimeConfiguration=ispw
+            ispwRequestBody:            """runtimeConfiguration=${IspwRuntimeConfig}
                                             assignmentId=${AssignmentId}
                                             level=MAIN
                                             containerId=${ReleaseId}

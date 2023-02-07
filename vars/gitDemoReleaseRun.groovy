@@ -3,6 +3,7 @@ def gitTagName              = "v" + Release_Number
 def gitRepo                 = Owner_Id
 def gitCredentials          = Jenkins_Git_Credentials
 def continueRelease         = false
+def ispwRuntimeConfig       = "ICCGA"
 
 node
 {
@@ -20,7 +21,7 @@ node
             consoleLogResponseBody: true,             
             ispwAction:             'CreateRelease', 
             ispwRequestBody: """
-                runtimeConfiguration=ispw
+                runtimeConfiguration=${ispwRuntimeConfig}
                 stream=GITDEMO1
                 application=${ISPW_Application}
                 releaseId=${ispwRelease}
@@ -37,7 +38,7 @@ node
             consoleLogResponseBody: true,             
             ispwAction:             'TransferTask', 
             ispwRequestBody:        """
-                runtimeConfiguration=ispw
+                runtimeConfiguration=${ispwRuntimeConfig}
                 assignmentId=${ISPW_Assignment}
                 level=MAIN
                 containerId=${ispwRelease}
@@ -55,7 +56,7 @@ node
             consoleLogResponseBody: true,             
             ispwAction:             'PromoteRelease', 
             ispwRequestBody:        """
-                runtimeConfiguration=ispw
+                runtimeConfiguration=${ispwRuntimeConfig}
                 releaseId=${ispwRelease}
                 level=MAIN                
             """
@@ -152,7 +153,7 @@ node
                 consoleLogResponseBody: true,             
                 ispwAction:             'CloseRelease', 
                 ispwRequestBody:        """
-                    runtimeConfiguration=ispw
+                    runtimeConfiguration=${ispwRuntimeConfig}
                     releaseId=${ispwRelease}
                 """
             )
@@ -169,7 +170,7 @@ node
                 consoleLogResponseBody: true,             
                 ispwAction:             'FallbackRelease', 
                 ispwRequestBody:        """
-                    runtimeConfiguration=ispw
+                    runtimeConfiguration=${ispwRuntimeConfig}
                     releaseId=${ispwRelease}
                     level=PROD
                 """
@@ -185,7 +186,7 @@ node
                 consoleLogResponseBody: true,             
                 ispwAction:             'CloseRelease', 
                 ispwRequestBody:        """
-                    runtimeConfiguration=ispw
+                    runtimeConfiguration=${ispwRuntimeConfig}
                     releaseId=${ispwRelease}
                 """
             )

@@ -14,7 +14,7 @@ node{
             consoleLogResponseBody: true, 
             ispwAction:             'CloseRelease', 
             ispwRequestBody: """
-                runtimeConfiguration=ispw
+                runtimeConfiguration=${IspwRuntimeConfig}
                 releaseId=${ReleaseId}"""
         )
     }
